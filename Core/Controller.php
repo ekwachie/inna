@@ -71,7 +71,7 @@ class Controller
     }
 
 
-    public function registerMiddleware(BaseMiddleware $middleware){
+    public function middleware(BaseMiddleware $middleware){
         $this->middlewares[] = $middleware;
     }
 

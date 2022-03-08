@@ -20,17 +20,21 @@ use app\Core\Utils\DUtil;
 use app\Core\Response;
 use app\Core\Application;
 use app\Core\Utils\Session;
-use app\Core\Middlewares\AuthMiddleware;
+use app\Core\Middlewares\AdminMiddleware;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->registerMiddleware(new AuthMiddleware());
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware(new AdminMiddleware());
+    // }
     public function login(Request $request)
     {
-        
+            echo '<pre>';
+            $body = $request->getRouteParams();
+            // var_dump($request->getRouteParams());
+            echo $body['username'];
+            echo '</pre>';
         $user = new User;
         if ($request->isPost()) {
             # code...

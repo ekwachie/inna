@@ -44,6 +44,61 @@ class Router
     }
 
     /**
+     * get callback 
+     */
+    public function getCallback()
+    {
+        $path = $this->request->getPath();
+        $method = $this->request->method();
+
+        // trim slashes
+        $url = trim($path, characters: '/');
+
+        // get ll routes from the current request method
+        $routes = $this->routes[$method] ?? [];
+
+        $routeParams = false;
+
+        // start iterating registered routes
+        foreach ($routes as $route => $callback) {
+                $route = trim($route, characters: '/');
+                $routeNames = [];
+
+                if(!$route){
+                    continue;
+                }
+                // /login/{id}
+                // /
+                // Find all route names from route and save in $routeNames
+            if (preg_match_all('/\{(\w+)(:[^}]+)?}/', $route, $matches)) {
+                $routeNames = $matches[1];
+            }
+
+            // // Convert route name into regex pattern
+            $routeRegex = "@^" . preg_replace_callback('/\{\w+(:([^}]+))?}/', fn($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
+            
+
+            // // Test and match current route against $routeRegex
+            if (preg_match_all($routeRegex, $url, $valueMatches)) {
+                $values = [];
+                for ($i = 1; $i < count($valueMatches); $i++) {
+                    $values[] = $valueMatches[$i][0];
+                }
+            
+                $routeParams = array_combine($routeNames, $values);
+
+                $this->request->setRouteParams($routeParams);
+                
+                return $callback;
+            }
+
+        }
+        return false;
+
+
+    }
+
+    /**
      * resolving request
      */
     public function resolve()
@@ -52,10 +107,13 @@ class Router
         $method = $this->request->method();
         $callback = $this->routes[$method][$path] ?? false;
 
-        if ($callback == false) {
-            return $this->render('404');
-            // exit;
+        if(!$callback){
+            $callback = $this->getCallback();
+            if ($callback == false) {
+                return $this->render('404');
+            }
         }
+        
 
         if (is_string($callback)) {
             return $this->render($callback);
@@ -72,7 +130,7 @@ class Router
             }
            
         }
-
+       
         return call_user_func($callback, $this->request, $this->response);
     }
 
