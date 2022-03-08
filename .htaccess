@@ -1,0 +1,18 @@
+Options +FollowSymLinks
+
+#php_flag display_errors off
+#php_value error_reporting 9999
+
+RewriteEngine On
+
+# This might change depending on your environment ...
+#RewriteBase ~/webroot/mypayperlez/
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+
+#RewriteCond %{HTTPS} !=on
+#RewriteRule ^.*$ https://www.%{SERVER_NAME}%{REQUEST_URI} [R,L]
+
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]

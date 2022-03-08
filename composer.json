@@ -1,0 +1,16 @@
+{
+    "name": "mastermind/inna",
+    "authors": [{
+        "name": "Team Payperlez",
+        "email": "dev@payperlez.com"
+    }],
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "require": {
+        "twig/twig": "^3.0",
+        "vlucas/phpdotenv": "^5.4"
+    }
+}

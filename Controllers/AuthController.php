@@ -1,0 +1,122 @@
+<?php
+/**
+ * @author      Desmond Evans Kwachie Jr <iamdesmondjr@gmail.com>
+ * @copyright   Copyright (C), 2019 Desmond Evans Kwachie Jr.
+ * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
+ *              Refer to the LICENSE file distributed within the package.
+ *
+ * @todo PDO exception and error handling
+ * @category    Database
+ * @example
+ * $this->query('INSERT INTO tb (col1, col2, col3) VALUES(?,?,?)', $var1, $var2, $var3);
+ *
+ *
+ */
+namespace app\Controllers;
+use app\core\Request;
+use app\core\Controller;
+use app\models\User;
+use app\Core\Utils\DUtil;
+use app\Core\Response;
+use app\Core\Application;
+use app\Core\Utils\Session;
+
+class AuthController extends Controller
+{
+
+    public function login(Request $request)
+    {
+        $user = new User;
+        if ($request->isPost()) {
+            # code...
+            $body = $request->getBody();
+            $user->name('username')->value($_POST['username'])->required();
+            $user->name('password')->value($_POST['pass'])->required();
+            if ($user->isSuccess()) 
+            {
+                $user->authenticate($body['username'], $body['pass']);
+
+                if (!empty($user->error)) {
+                  $flash = $this->setFlash($user->error[0], $user->error[1]);
+                }
+
+            }
+            return $this->render('login',  [
+                'static' => STATIC_URL,
+                'flash' => ($flash = isset($flash) ? $flash : ''),
+                'errors' => ($errors = isset($user->errors) ? $user->errors : ''),
+                'model' => $request->getBody(),
+            ]);
+        }
+        return $this->render('login',  [
+            'static' => STATIC_URL,
+            'flash' => ($flash = isset($flash) ? $flash : ''),
+            'model' => $request->getBody(),
+        ]);
+    }
+
+    public function register(Request $request)
+    {
+        $user = new User;
+        if ($request->isPost()) {
+            $user->name('firstname')->value($_POST['fname'])->pattern('words')->required();
+            $user->name('lastname')->value($_POST['lname'])->pattern('words')->required();
+            $user->name('e-mail')->value($_POST['email']) ->required()->is_email($_POST['email']);
+            $user->name('password')->value($_POST['pass'])->pattern('alphanum')->required();
+            $user->name('confirm password')->value($_POST['passc'])->pattern('alphanum')->required();
+            $user->name('password')->value($_POST['pass'])->equal($_POST['passc']);
+
+            if ($this->user->isSuccess()) {
+                $body = $request->getBody();
+                $data = [
+                    'fname' => $body['fname'],
+                    'lname' => $body['lname'],
+                    'email' => $body['email'],
+                    'password' => DUtil::passHash($body['pass'])
+                ];
+
+                $stmt = $user->is_exist($data);
+               
+                if($stmt)
+                {
+                    $flash = $this->setFlash(
+                        'danger',
+                        'Sorry, you already have an acoount with us. Please login using your credentials'
+                    );
+                    
+                }else{
+                     $stmt = $user->createUser($data);
+                    if($stmt)
+                    {
+                        $flash = $this->setFlash(
+                            'success',
+                            'Account registered successfully'
+                        );
+                        
+                    }
+                }
+
+            }
+
+            return $this->render('register', [
+                'static' => STATIC_URL,
+                'flash' => ($flash = isset($flash) ? $flash : ''),
+                'errors' => ($errors = isset($user->errors) ? $user->errors : ''),
+                'model' => $request->getBody(),
+            ]);
+        }
+        return $this->render('register', [
+            'static' => STATIC_URL,
+            'model' => $request->getBody(),
+        ]);
+    }
+
+    public function logout(Request $request, Response $response)
+    {
+        if (Session::issert('user')) {
+            Session::destroy();
+        }
+
+        Application::$app->response->redirect('/');
+    }
+}

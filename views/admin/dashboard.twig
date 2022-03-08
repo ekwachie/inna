@@ -1,0 +1,9 @@
+{% extends 'layouts/layout.twig' %}
+{% block content %}
+  <h1>
+    {% apply upper %}Hello Moon!{% endapply %}
+  </h1>
+  <h2>
+    {{ date }}
+  </h2>
+{% endblock %}

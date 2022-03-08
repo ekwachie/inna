@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Halfmoon CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon-variables.min.css"
+      rel="stylesheet" />
+    <!--      
+    Or,
+    Use the following (no variables, supports IE11):
+    <link href="path/to/halfmoon.min.css" rel="stylesheet" />
+          -->
+    <title>
+      INNA Framework
+    </title>
+  </head>
+
+  <body>
+    <h1>
+      Hello contact!
+    </h1>
+    <form action="" method="post">
+      <!-- First row -->
+      <div class="form-row row-eq-spacing-sm">
+        <div class="col-sm">
+          <label for="first-name" class="required">First name</label>
+          <input type="text"
+            class="form-control"
+            name="fname"
+            placeholder="First name"
+            required="required" />
+        </div>
+        <div class="col-sm">
+          <label for="last-name">Last name</label>
+          <input type="text"
+            class="form-control"
+            name="lname"
+            placeholder="Last name" />
+        </div>
+      </div>
+
+      <!-- Submit button container -->
+      <div class="text-right">
+        <!-- text-right = text-align: right -->
+        <input class="btn btn-primary"
+          name="contact"
+          type="submit"
+          value="Submit" />
+      </div>
+    </form>
+    <!-- Halfmoon JS -->
+    <script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
+  </body>
+</html>

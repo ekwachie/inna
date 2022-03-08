@@ -1,0 +1,46 @@
+{% extends 'layouts/layout.twig' %} {% block content %}
+
+<!-- Navbar with content justified between -->
+<nav class="navbar justify-content-between bg-dark">
+    <!-- justify-content-between = justify-content: space-between -->
+    <!-- Navbar content with menu button -->
+    <div class="navbar-content">
+        <!-- Navbar brand -->
+        <a href="#" class="navbar-brand">
+            <img src="..." alt="...">
+        </a>
+
+        <button class="btn btn-action mr-5" type="button" onclick="halfmoon.toggleDarkMode()" aria-label="Toggle dark mode">
+        <i class="fa fa-moon-o" aria-hidden="true"></i>
+    </button>
+    </div>
+
+    <!-- Navbar content with sign up button -->
+    <div class="navbar-content">
+        <button class="btn btn-primary" type="button">Sign up</button>
+    </div>
+</nav>
+<div class="container mt-5">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>First</th>
+                <th>Last</th>
+                <th class="text-right">Password</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <th>{{ user.user_id }}</th>
+                <td>{{ user.fname }}</td>
+                <td>{{user.lname}}</td>
+                <td class="text-right">{{ user.password }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
