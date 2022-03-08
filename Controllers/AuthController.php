@@ -20,12 +20,17 @@ use app\Core\Utils\DUtil;
 use app\Core\Response;
 use app\Core\Application;
 use app\Core\Utils\Session;
+use app\Core\Middlewares\AuthMiddleware;
 
 class AuthController extends Controller
 {
-
+    public function __construct()
+    {
+        $this->registerMiddleware(new AuthMiddleware());
+    }
     public function login(Request $request)
     {
+        
         $user = new User;
         if ($request->isPost()) {
             # code...

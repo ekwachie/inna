@@ -13,10 +13,15 @@
  *
  */
 namespace app\Core;
-
+use app\Core\Middlewares\BaseMiddleware;
 class Controller
 {
+    /**
+     * @var \app\Core\Middlewares\BaseMiddleware[];
+     */
     protected array $middlewares = [];
+    public string $action = '';
+
     /** 
      * render page view
      * */    
@@ -65,8 +70,26 @@ class Controller
         }
     }
 
-    public function getMiddlewares(): array
-    {
-        return $this->middlewares;
+
+    public function registerMiddleware(BaseMiddleware $middleware){
+        $this->middlewares[] = $middleware;
     }
+
+	/**
+	 * 
+	 * @return array
+	 */
+	public function getMiddlewares(): array {
+		return $this->middlewares;
+	}
+	
+	/**
+	 * 
+	 * @param array $middlewares 
+	 * @return Controller
+	 */
+	public function setMiddlewares(array $middlewares): self {
+		$this->middlewares = $middlewares;
+		return $this;
+	}
 }
