@@ -14,6 +14,7 @@
  */
 namespace app\Core;
 use app\Core\Middlewares\BaseMiddleware;
+use Twig\Extra\String\StringExtension;
 
 class Router
 {
@@ -70,12 +71,12 @@ class Router
                 // /login/{id}
                 // /
                 // Find all route names from route and save in $routeNames
-            if (preg_match_all('/\{(\w+)(:[^}]+)?}/', $route, $matches)) {
+            if (preg_match_all('/\{(\w+[A-Za-z0-9-\/-:.\/_?&=#]+)?}/', $route, $matches)) {
                 $routeNames = $matches[1];
             }
 
             // // Convert route name into regex pattern
-            $routeRegex = "@^" . preg_replace_callback('/\{\w+(:([^}]+))?}/', fn($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
+            $routeRegex = "@^" . preg_replace_callback('/\{\w+[A-Za-z0-9-\/-:.\/_?&=#]+?}/', fn($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
             
 
             // // Test and match current route against $routeRegex
@@ -149,6 +150,7 @@ class Router
             'cache' => Application::$ROOT_DIR . '/public/runtime/',
             'auto_reload' => true,
         ]);
+        $twig->addExtension(new StringExtension());
 
         return $twig->render("$view.twig", $data);
     }

@@ -6,11 +6,12 @@
     }],
     "autoload": {
         "psr-4": {
-            "app\\": "./"
+            "app\\": "./app"
         }
     },
     "require": {
         "twig/twig": "^3.0",
-        "vlucas/phpdotenv": "^5.4"
+        "vlucas/phpdotenv": "^5.4",
+        "twig/string-extra": "^3.3"
     }
 }
