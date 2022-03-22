@@ -1,7 +1,7 @@
 <?php
 
 namespace app\ext;
-use app\core\DbModel;
+use app\Core\DbModel;
 
 
 class AppForm extends DbModel
@@ -10,8 +10,9 @@ class AppForm extends DbModel
     {
         try {
             $stmt = $this->select("SELECT * FROM users");
-            return (int) $stmt > 0 ? $stmt : false;
-        } catch (\Exception $th) {
+            return (int)$stmt > 0 ? $stmt : false;
+        }
+        catch (\Exception $th) {
             throw new \Exception('APPx001');
         }
 

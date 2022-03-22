@@ -22,18 +22,18 @@ class AdminMiddleware extends BaseMiddleware
     public function __construct(array $actions = [])
     {
         $this->actions = $actions;
-    }   
-	/**
-	 *
-	 * @return mixed
-	 */
-	public function execute() {
-        if (empty(\app\Core\Utils\Session::issert('admin'))) {
-           if(empty($this->action) || in_array(Application::$app->controller->action, $this->actions))
-           {
-            throw new \Exception('ADMIN001 - You do not have access');
+    }
+    /**
+     *
+     * @return mixed
+     */
+    public function execute()
+    {
+        if (empty(\app\Core\Utils\Session::issert('user'))) {
+            if (empty($this->action) || in_array(Application::$app->controller->action, $this->actions)) {
+                throw new \Exception('ADMIN001 - You do not have access');
             // Application::$app->response->redirect('/');
-           }
+            }
         }
-	}
+    }
 }

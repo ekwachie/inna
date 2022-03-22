@@ -14,7 +14,8 @@
  */
 namespace app\Core\Utils;
 
-class DUtil {
+class DUtil
+{
 
     /**
      * @param $input
@@ -23,7 +24,8 @@ class DUtil {
      * @param bool|true $strip_html
      * @return string
      */
-    public static function trim_text($input, $length, $ellipses = true, $strip_html = true) {
+    public static function trim_text($input, $length, $ellipses = true, $strip_html = true)
+    {
         if ($strip_html === true) {
             $input = strip_tags($input);
         }
@@ -46,28 +48,33 @@ class DUtil {
      * @param $arr
      * @return bool
      */
-    public static function is_multiArray($arr) {
-        $rv = array_filter($arr,'is_array');
-        return (count($rv)>0) ? true : false;
+    public static function is_multiArray($arr)
+    {
+        $rv = array_filter($arr, 'is_array');
+        return (count($rv) > 0) ? true : false;
     }
 
     /**
      * @return mixed
      */
-    public static function get_ip(){
-        if(function_exists('apache_request_headers')){
+    public static function get_ip()
+    {
+        if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
-        } else{
+        }
+        else {
             $headers = $_SERVER;
         }
 
-        if(array_key_exists('X-Forwarded-For', $headers) &&
-                filter_var($headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+        if (array_key_exists('X-Forwarded-For', $headers) &&
+        filter_var($headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $the_ip = $headers['X-Forwarded-For'];
-        } elseif(array_key_exists('HTTP_X_FORWARDED_FOR', $headers) &&
-                filter_var($headers['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+        }
+        elseif (array_key_exists('HTTP_X_FORWARDED_FOR', $headers) &&
+        filter_var($headers['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $the_ip = $headers['HTTP_X_FORWARDED_FOR'];
-        } else{
+        }
+        else {
             $the_ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
         }
 
@@ -78,8 +85,9 @@ class DUtil {
      * @param $data
      * @param null $filename
      */
-    public static function createCSV($data, $filename = null){
-        if(!isset($filename)){
+    public static function createCSV($data, $filename = null)
+    {
+        if (!isset($filename)) {
             $filename = "replies";
         }
 
@@ -89,7 +97,7 @@ class DUtil {
         //Set the Content-Type and Content-Disposition headers.
         header("Content-type: text/x-csv");
         header("Content-Transfer-Encoding: binary");
-        header("Content-Disposition: attachment; filename={$filename}-".date('YmdHis',strtotime('now')).".csv");
+        header("Content-Disposition: attachment; filename={$filename}-" . date('YmdHis', strtotime('now')) . ".csv");
         header("Pragma: no-cache");
         header("Expires: 0");
 
@@ -113,7 +121,8 @@ class DUtil {
      * @param $salt - The key used as salt
      * @return string - The hashed/salted data
      */
-    public static function hash_value($algo, $data, $salt) {
+    public static function hash_value($algo, $data, $salt)
+    {
         $context = hash_init($algo, HASH_HMAC, $salt);
         hash_update($context, $data);
         return hash_final($context);
@@ -124,10 +133,12 @@ class DUtil {
      * @param array $keys
      * @return bool
      */
-    public static function array_keys_exists($array, $keys) {
-        if(count(array_intersect_key(array_flip($keys), $array)) === count($keys)){
+    public static function array_keys_exists($array, $keys)
+    {
+        if (count(array_intersect_key(array_flip($keys), $array)) === count($keys)) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -137,15 +148,16 @@ class DUtil {
      *
      * @return int
      */
-    public static function hash_cost(){
+    public static function hash_cost()
+    {
         $timeTarget = 0.05;
         $cost = 8;
-        do{
+        do {
             $cost++;
             $start = microtime(true);
             password_hash("innaframeworktest", PASSWORD_BCRYPT, ["cost" => $cost]);
             $end = microtime(true);
-        } while(($end - $start) < $timeTarget);
+        } while (($end - $start) < $timeTarget);
 
         return $cost;
     }
@@ -155,12 +167,13 @@ class DUtil {
      *
      * @return string
      */
-    public static function read_stdin() {
-        $fr=fopen("php://stdin","r");   // open our file pointer to read from stdin
-        $input = fgets($fr,255);        // read a maximum of 255 characters
-        $input = rtrim($input);         // trim any trailing spaces.
-        fclose ($fr);                   // close the file handle
-        return $input;                  // return the text entered
+    public static function read_stdin()
+    {
+        $fr = fopen("php://stdin", "r"); // open our file pointer to read from stdin
+        $input = fgets($fr, 255); // read a maximum of 255 characters
+        $input = rtrim($input); // trim any trailing spaces.
+        fclose($fr); // close the file handle
+        return $input; // return the text entered
     }
 
     /**
@@ -169,7 +182,8 @@ class DUtil {
      * @param array $data
      *
      */
-    public static function debug($data = array()){
+    public static function debug($data = array())
+    {
         echo "<pre style='background:#222;color:green;padding:16px;'>";
         print_r($data);
         echo "</pre>";
@@ -185,7 +199,8 @@ class DUtil {
      * @return boolean
      *
      */
-    public static function startsWith($haystack, $needle) {
+    public static function startsWith($haystack, $needle)
+    {
         // search backwards starting from haystack length characters from the end
         return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
@@ -199,7 +214,8 @@ class DUtil {
      * @return boolean
      *
      */
-    public static function endsWith($haystack, $needle) {
+    public static function endsWith($haystack, $needle)
+    {
         // search forward starting from end minus needle length characters
         return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
     }
@@ -210,26 +226,29 @@ class DUtil {
      * @return boolean
      *
      */
-    public static function isXmlHttpRequest(){
+    public static function isXmlHttpRequest()
+    {
         return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ? true : false;
     }
 
     /**
      * Cast an array or an stdClass to another class
      *
-     * @param array|stdClass $instance
+     * @param array|stdClass; $instance
      * @param string $className
      * @return /new $className()
      */
-    public static function castToObject($instance, $className){
-        if(is_array($instance)){
+    public static function castToObject($instance, $className)
+    {
+        if (is_array($instance)) {
             return unserialize(sprintf(
                 'O:%d:"%s"%s',
                 strlen($className),
                 $className,
                 strstr(serialize($instance), ':')
             ));
-        } else if(is_object($instance)){
+        }
+        else if (is_object($instance)) {
             return unserialize(sprintf(
                 'O:%d:"%s"%s',
                 strlen($className),
@@ -246,7 +265,8 @@ class DUtil {
      * @param string $passphrase
      * @return /base64 encrypted data
      */
-    public static function encrypt($data, $passphrase){
+    public static function encrypt($data, $passphrase)
+    {
         // Set a random salt
         $salt = openssl_random_pseudo_bytes(16);
 
@@ -254,12 +274,12 @@ class DUtil {
         $dx = '';
         // Salt the key(32) and iv(16) = 48
         while (strlen($salted) < 48) {
-        $dx = hash('sha256', $dx.$passphrase.$salt, true);
-        $salted .= $dx;
+            $dx = hash('sha256', $dx . $passphrase . $salt, true);
+            $salted .= $dx;
         }
 
         $key = substr($salted, 0, 32);
-        $iv  = substr($salted, 32,16);
+        $iv = substr($salted, 32, 16);
 
         $encrypted_data = openssl_encrypt($data, 'AES-256-CBC', $key, true, $iv);
         return base64_encode($salt . $encrypted_data);
@@ -267,27 +287,28 @@ class DUtil {
 
     /**
      * decrypt AES 256
-    *
-    * @param /data $edata
-    * @param string $password
-    * @return /decrypted data
-    */
-    public static function decrypt($edata, $passphrase){
+     *
+     * @param /data $edata
+     * @param string $password
+     * @return /decrypted data
+     */
+    public static function decrypt($edata, $passphrase)
+    {
         $data = base64_decode($edata);
         $salt = substr($data, 0, 16);
         $ct = substr($data, 16);
 
         $rounds = 3; // depends on key length
-        $data00 = $passphrase.$salt;
+        $data00 = $passphrase . $salt;
         $hash = array();
         $hash[0] = hash('sha256', $data00, true);
         $result = $hash[0];
         for ($i = 1; $i < $rounds; $i++) {
-            $hash[$i] = hash('sha256', $hash[$i - 1].$data00, true);
+            $hash[$i] = hash('sha256', $hash[$i - 1] . $data00, true);
             $result .= $hash[$i];
         }
         $key = substr($result, 0, 32);
-        $iv  = substr($result, 32,16);
+        $iv = substr($result, 32, 16);
 
         return openssl_decrypt($ct, 'AES-256-CBC', $key, true, $iv);
     }
@@ -303,14 +324,16 @@ class DUtil {
      * @param array $attr Optional, additional key/value attributes to include in the IMG tag
      * @return String containing either just a URL or a complete image tag
      */
-    public static function gravatar($email, $size = 80, $imageset = 'mp', $rating = 'g', $tag = false, $attr = array()){
+    public static function gravatar($email, $size = 80, $imageset = 'mp', $rating = 'g', $tag = false, $attr = array())
+    {
         $url = 'https://www.gravatar.com/avatar/';
-        $url .= md5( strtolower( trim( $email ) ) );
+        $url .= md5(strtolower(trim($email)));
         $url .= "?s=$size&d=$imageset&r=$rating";
 
         if ($tag) {
             $url = '<img src="' . $url . '"';
-            foreach ( $attr as $key => $val ) $url .= ' ' . $key . '="' . $val . '"';
+            foreach ($attr as $key => $val)
+                $url .= ' ' . $key . '="' . $val . '"';
             $url .= ' />';
         }
 
@@ -333,7 +356,7 @@ class DUtil {
         $options = [
             'cost' => 12,
         ];
-        return password_hash($password, PASSWORD_BCRYPT,$options);
+        return password_hash($password, PASSWORD_BCRYPT, $options);
     }
 
     public static function passVerify($password, $hash)

@@ -1,7 +1,7 @@
 <?php
 
 namespace app\Models;
-use app\core\DbModel;
+use app\Core\DbModel;
 use app\Core\Utils\Session;
 use app\Core\Application;
 use app\Core\Utils\DUtil;
@@ -10,12 +10,13 @@ class User extends DbModel
 {
     public function createUser($data)
     {
-       try {
+        try {
             $stmt = $this->insert('users', $data);
-            return (int) $stmt > 0 ? true : false;
-       } catch (\Exception $th) {
-        throw new \Exception('USRx001');
-       }
+            return (int)$stmt > 0 ? true : false;
+        }
+        catch (\Exception $th) {
+            throw new \Exception('USRx001');
+        }
 
     }
 
@@ -24,7 +25,7 @@ class User extends DbModel
 
         try {
             $find = $this->findOne($username);
-            if ($find !== false ) {
+            if ($find !== false) {
                 $stmt = $this->select("SELECT concat(fname, ' ', lname) AS name, email, username, auth, role, password, county_set, country_id FROM users WHERE username = :username", array('username' => $username));
                 if (DUtil::passVerify($password, $stmt[0]['password'])) {
                     Session::set('user', $stmt);
@@ -32,15 +33,18 @@ class User extends DbModel
                         // DUtil::debug($stmt);
                         Application::$app->response->redirect('/');
                     }
-                }else{
+                }
+                else {
                     return $this->error = array('danger', 'Username / password invalid');
                 }
-                
-            }else{
-                 return $this->error =  array('danger', 'Sorry User does not exist');
+
             }
-           
-        } catch (\Throwable $th) {
+            else {
+                return $this->error = array('danger', 'Sorry User does not exist');
+            }
+
+        }
+        catch (\Throwable $th) {
             throw new \Exception('USRx002');
         }
 
@@ -50,8 +54,9 @@ class User extends DbModel
     {
         try {
             $exist = $this->select("SELECT email FROM users WHERE email = :email", array('email' => $data['email']));
-           return $exist = (count($exist) > 0 ) ? true : false ;
-        } catch (\Exception $th) {
+            return $exist = (count($exist) > 0) ? true : false;
+        }
+        catch (\Exception $th) {
             throw new \Exception('USRx003');
         }
     }
@@ -60,8 +65,9 @@ class User extends DbModel
     {
         try {
             $find = $this->select("SELECT username FROM users WHERE username = :username", array('username' => $data));
-            return $find = (count($find) > 0 ) ? true : false ;
-        } catch (\Throwable $th) {
+            return $find = (count($find) > 0) ? true : false;
+        }
+        catch (\Throwable $th) {
             throw new \Exception('USRx004');
         }
     }
