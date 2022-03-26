@@ -1,10 +1,6 @@
 {% extends 'layouts/layout.twig' %} {% block content %}
 <div class="container col-md-5 mt-5">
-    {% for err in errors %}
-    <div class="alert alert-danger">
-        {{ err }}
-    </div>
-    {% endfor %}
+    {{ errors | raw }}
     <form action="" method="post">
         <!-- First row -->
         {{ flash | raw}}

@@ -24,7 +24,7 @@ class Controller
 
     /** 
      * render page view
-     * */    
+     * */
     public function render($view, $params = [])
     {
         return Application::$app->router->render($view, $params);
@@ -34,62 +34,38 @@ class Controller
      */
     public function redirect()
     {
-       return  Application::$app->response->redirect('/');
+        return Application::$app->response->redirect('/');
     }
 
     public function setFlash($type, $msg)
     {
-        switch ($type) {
-            case 'danger':
-                return "
-                <div class='alert alert-danger'>
-                    $msg
-                    </div>
-                ";
-            case 'success':
-                return "
-                    <div class='alert alert-success'>
-                        $msg
-                    </div>
-                    ";
-            case 'info':
-                return "
-                    <div class='alert alert-info'>
-                        $msg
-                    </div>
-                    ";
-            case 'warning':
-                return "
-                    <div class='alert alert-warning'>
-                        $msg
-                    </div>
-                    ";
-            default:
-                # code...
-                break;
-        }
+        return "<div class='alert alert-{$type}'> $msg </div>";
+
     }
 
 
-    public function middleware(BaseMiddleware $middleware){
+    public function middleware(BaseMiddleware $middleware)
+    {
         $this->middlewares[] = $middleware;
     }
 
-	/**
-	 * 
-	 * @return array
-	 */
-	public function getMiddlewares(): array {
-		return $this->middlewares;
-	}
-	
-	/**
-	 * 
-	 * @param array $middlewares 
-	 * @return Controller
-	 */
-	public function setMiddlewares(array $middlewares): self {
-		$this->middlewares = $middlewares;
-		return $this;
-	}
+    /**
+     * 
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+    /**
+     * 
+     * @param array $middlewares 
+     * @return Controller
+     */
+    public function setMiddlewares(array $middlewares): self
+    {
+        $this->middlewares = $middlewares;
+        return $this;
+    }
 }

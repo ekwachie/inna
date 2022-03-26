@@ -16,8 +16,8 @@ use app\Controllers\HomeController;
 use app\Controllers\AuthController;
 use app\Core\Application;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+require_once __DIR__ . '/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
 $config = [
@@ -31,10 +31,10 @@ $config = [
 ];
 
 define('BASE_URL', 'http://' . $config['url'] . '/');
-define('STATIC_URL', BASE_URL . 'static');
-define('MEDIA_URL', BASE_URL . 'img');
+define('STATIC_URL', BASE_URL . 'public/static');
+define('MEDIA_URL', BASE_URL . 'public/img');
 
-$app = new Application(dirname(__DIR__), $config);
+$app = new Application(__DIR__, $config);
 
 $app->router->get('/', [HomeController::class , 'home']);
 $app->router->get('/contact', [HomeController::class , 'contact']);

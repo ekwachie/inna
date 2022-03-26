@@ -142,7 +142,7 @@ class Router
     {
         //   var_dump($data);
         $loader = new \Twig\Loader\FilesystemLoader(
-            Application::$ROOT_DIR . '/views/'
+            Application::$ROOT_DIR . '/public/views/'
         );
 
         // Instantiate our Twig

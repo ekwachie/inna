@@ -30,11 +30,6 @@ class AuthController extends Controller
     // }
     public function login(Request $request)
     {
-        echo '<pre>';
-        $body = $request->getRouteParams();
-        // var_dump($request->getRouteParams());
-        echo $body['username'];
-        echo '</pre>';
         $user = new User;
         if ($request->isPost()) {
             # code...
@@ -49,16 +44,12 @@ class AuthController extends Controller
                 }
 
             }
-            return $this->render('login', [
-                'static' => STATIC_URL,
-                'flash' => ($flash = isset($flash) ? $flash : ''),
-                'errors' => ($errors = isset($user->errors) ? $user->errors : ''),
-                'model' => $request->getBody(),
-            ]);
         }
+        // DUtil::debug($user->errors);
         return $this->render('login', [
             'static' => STATIC_URL,
-            'flash' => ($flash = isset($flash) ? $flash : ''),
+            'flash' => !empty($flash) ? $flash : '',
+            'errors' => !empty($user->errors) ? $this->setFlash('danger', $user->errors[0]) : '',
             'model' => $request->getBody(),
         ]);
     }

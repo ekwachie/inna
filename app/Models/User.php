@@ -40,7 +40,7 @@ class User extends DbModel
 
             }
             else {
-                return $this->error = array('danger', 'Sorry User does not exist');
+                return $this->error = array('danger', 'Invalid username or password');
             }
 
         }
