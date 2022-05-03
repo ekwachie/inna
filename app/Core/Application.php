@@ -23,6 +23,7 @@ class Application
     public Response $response;
     public Session $session;
     public Database $db;
+    public DApiController $api;
     public Controller $controller;
     public static Application $app;
 
@@ -39,10 +40,11 @@ class Application
         $this->controller = new Controller();
         $this->router = new Router($this->request, $this->response);
         $this->db = new Database($config['db']);
+        $this->api = new DApiController();
     }
     public function run()
     {
         echo $this->router->resolve();
-        
+
     }
 }

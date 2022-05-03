@@ -68,4 +68,12 @@ class Controller
         $this->middlewares = $middlewares;
         return $this;
     }
+
+    /**
+     * for APi resources
+     */
+    public function apiMessage($status, $message, $errorCode = null)
+    {
+        return Application::$app->api->message($status, $message, $errorCode);
+    }
 }
