@@ -281,7 +281,7 @@ use \PDO as PDO;
     }
 
     public function id() {
-        return PDO::lastInsertId();
+        return  Application::$app->db->pdo->lastInsertId();
     }
 
     public function numRows(){
@@ -292,7 +292,7 @@ use \PDO as PDO;
      * beginTransaction - Overloading default method
      */
     public function beginTransaction() {
-        PDO::beginTransaction();
+        Application::$app->db->pdo->beginTransaction();
         $this->activeTransaction = true;
     }
 

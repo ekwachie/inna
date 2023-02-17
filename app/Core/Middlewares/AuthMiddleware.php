@@ -13,7 +13,9 @@
  *
  */
 namespace app\Core\Middlewares;
+
 use app\Core\Application;
+use app\Core\Utils\Session;
 
 class AuthMiddleware extends BaseMiddleware
 {
@@ -22,18 +24,18 @@ class AuthMiddleware extends BaseMiddleware
     public function __construct(array $actions = [])
     {
         $this->actions = $actions;
-    }   
-	/**
-	 *
-	 * @return mixed
-	 */
-	public function execute() {
-        if (empty(\app\Core\Utils\Session::issert('user'))) {
-           if(empty($this->action) || in_array(Application::$app->controller->action, $this->actions))
-           {
-            throw new \Exception('APPx001 - You do not have access');
-            // Application::$app->response->redirect('/');
-           }
+    }
+    /**
+     *
+     * @return mixed
+     */
+    public function execute()
+    {
+        if (empty(Session::issert('user'))) {
+            if (empty($this->action) || in_array(Application::$app->controller->action, $this->actions)) {
+                throw new \Exception('APPx001 - You do not have access');
+                // Application::$app->response->redirect('/');
+            }
         }
-	}
+    }
 }

@@ -242,7 +242,7 @@ class Model
             $this->file['error'] != 4 &&
             pathinfo($this->file['name'], PATHINFO_EXTENSION) != $extension &&
             strtoupper(pathinfo($this->file['name'], PATHINFO_EXTENSION)) !=
-                $extension
+            $extension
         ) {
             $this->errors[] =
                 'The file ' . $this->name . ' is not a ' . $extension . '.';
@@ -270,7 +270,7 @@ class Model
     {
         if (empty($this->errors)) {
             return true;
-        }else{
+        } else {
             return false;
         }
 
@@ -285,7 +285,7 @@ class Model
     {
         if (!$this->isSuccess()) {
             return $this->errors;
-        }else{
+        } else {
             return [];
         }
     }
@@ -333,7 +333,7 @@ class Model
     {
         if (filter_var($value, FILTER_VALIDATE_INT)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -348,7 +348,7 @@ class Model
     {
         if (filter_var($value, FILTER_VALIDATE_FLOAT)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -368,7 +368,7 @@ class Model
             ])
         ) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -388,7 +388,7 @@ class Model
             ])
         ) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -404,7 +404,7 @@ class Model
     {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -423,7 +423,7 @@ class Model
             ])
         ) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -445,7 +445,7 @@ class Model
             )
         ) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -459,7 +459,7 @@ class Model
     {
         if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

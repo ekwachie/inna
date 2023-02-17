@@ -13,7 +13,9 @@
  *
  */
 namespace app\Core\Middlewares;
+
 use app\Core\Application;
+use app\Core\Utils\Session;
 
 class AdminMiddleware extends BaseMiddleware
 {
@@ -29,10 +31,10 @@ class AdminMiddleware extends BaseMiddleware
      */
     public function execute()
     {
-        if (empty(\app\Core\Utils\Session::issert('user'))) {
+        if (empty(Session::issert('user'))) {
             if (empty($this->action) || in_array(Application::$app->controller->action, $this->actions)) {
                 throw new \Exception('ADMIN001 - You do not have access');
-            // Application::$app->response->redirect('/');
+                // Application::$app->response->redirect('/');
             }
         }
     }
