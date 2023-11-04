@@ -12,6 +12,7 @@
  *
  */
 
+use app\Controllers\AjaxController;
 use app\Controllers\HomeController;
 use app\Controllers\AuthController;
 use app\Core\Application;
@@ -36,19 +37,22 @@ define('MEDIA_URL', BASE_URL . 'public/img');
 
 $app = new Application(__DIR__, $config);
 
-$app->router->get('/', [HomeController::class , 'home']);
-$app->router->get('/contact', [HomeController::class , 'contact']);
-$app->router->post('/contact', [HomeController::class , 'contact']);
+$app->router->get('/', [HomeController::class, 'home']);
+$app->router->get('/contact', [HomeController::class, 'contact']);
+$app->router->post('/contact', [HomeController::class, 'contact']);
 
-$app->router->get('/login', [AuthController::class , 'login']);
-$app->router->post('/login', [AuthController::class , 'login']);
+$app->router->get('/login', [AuthController::class, 'login']);
+$app->router->post('/login', [AuthController::class, 'login']);
 
-$app->router->get('/register', [AuthController::class , 'register']);
-$app->router->post('/register', [AuthController::class , 'register']);
+$app->router->get('/register', [AuthController::class, 'register']);
+$app->router->post('/register', [AuthController::class, 'register']);
 
-$app->router->get('/login/{id}', [AuthController::class , 'login']);
-$app->router->get('/contact/{id:\d+}/{username}', [AuthController::class , 'login']);
+$app->router->get('/login/{id}', [AuthController::class, 'login']);
+$app->router->get('/contact/{id:\d+}/{username}', [AuthController::class, 'login']);
 
-$app->router->get('/logout', [AuthController::class , 'logout']);
+// Ajax calls
+$app->router->post('/ajax/{follow}', [AjaxController::class, 'follow']);
+
+$app->router->get('/logout', [AuthController::class, 'logout']);
 
 $app->run();

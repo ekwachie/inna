@@ -1,6 +1,7 @@
 <?php
 
 namespace app\Models;
+
 use app\Core\DbModel;
 use app\Core\Utils\Session;
 use app\Core\Application;
@@ -12,9 +13,8 @@ class User extends DbModel
     {
         try {
             $stmt = $this->insert('users', $data);
-            return (int)$stmt > 0 ? true : false;
-        }
-        catch (\Exception $th) {
+            return (int) $stmt > 0 ? true : false;
+        } catch (\Exception $th) {
             throw new \Exception('USRx001');
         }
 
@@ -33,18 +33,15 @@ class User extends DbModel
                         // DUtil::debug($stmt);
                         Application::$app->response->redirect('/');
                     }
-                }
-                else {
+                } else {
                     return $this->error = array('danger', 'Username / password invalid');
                 }
 
-            }
-            else {
+            } else {
                 return $this->error = array('danger', 'Invalid username or password');
             }
 
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             throw new \Exception('USRx002');
         }
 
@@ -55,8 +52,7 @@ class User extends DbModel
         try {
             $exist = $this->select("SELECT email FROM users WHERE email = :email", array('email' => $data['email']));
             return $exist = (count($exist) > 0) ? true : false;
-        }
-        catch (\Exception $th) {
+        } catch (\Exception $th) {
             throw new \Exception('USRx003');
         }
     }
@@ -66,8 +62,7 @@ class User extends DbModel
         try {
             $find = $this->select("SELECT username FROM users WHERE username = :username", array('username' => $data));
             return $find = (count($find) > 0) ? true : false;
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             throw new \Exception('USRx004');
         }
     }

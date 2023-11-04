@@ -13,7 +13,9 @@
  *
  */
 namespace app\Core;
+
 use app\Core\Middlewares\BaseMiddleware;
+
 class Controller
 {
     /**
@@ -39,7 +41,13 @@ class Controller
 
     public function setFlash($type, $msg)
     {
-        return "<div class='alert alert-{$type}'> $msg </div>";
+        return '
+        <script>
+            swal("' . $msg . '", {
+                icon: "' . $type . '",
+            });
+        </script>
+        ';
 
     }
 
