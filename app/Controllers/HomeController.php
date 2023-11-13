@@ -13,6 +13,7 @@
  *
  */
 namespace app\Controllers;
+
 use app\Core\Controller;
 use app\ext\AppForm;
 use app\Core\Utils\Session;
@@ -21,7 +22,6 @@ class HomeController extends Controller
 {
     public function home()
     {
-        print_r(Session::get('user'));
         $user = new AppForm();
         $users = $user->getUsers();
         $data = [
