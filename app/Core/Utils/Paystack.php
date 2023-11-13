@@ -97,11 +97,8 @@ class Paystack extends DbModel
             $response = curl_exec($curl);
             $response = json_decode($response, true);
 
-            if ($response['data']['status'] == 'success') {
-                return true;
-            } else {
-                return false;
-            }
+            return ($response['data']['status'] == 'success') ? true : false;
+
         } catch (\Throwable $th) {
             throw new \Exception('PAYx003');
         }

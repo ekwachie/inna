@@ -344,6 +344,10 @@ role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width=
 
 </html>';
 
-        $mail->send();
+        if (!$mail->send()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
