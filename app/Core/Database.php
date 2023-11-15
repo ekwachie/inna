@@ -20,7 +20,7 @@
  use \PDO as PDO;
 class Database
 {
-    public $pdo;
+    private $pdo;
     public function __construct(array $config)
     {
         $dsn = $config['dsn'] ?? '';
