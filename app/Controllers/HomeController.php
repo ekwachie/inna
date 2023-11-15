@@ -23,10 +23,9 @@ class HomeController extends Controller
     public function home()
     {
         $user = new AppForm();
-        $users = $user->getUsers();
         $data = [
             'static' => STATIC_URL,
-            'users' => $users,
+            // 'users' => $users,
             'date' => date('Y-m-d'),
         ];
 
