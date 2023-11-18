@@ -1,9 +1,14 @@
 {
     "name": "ekwachie/inna-framework",
     "description": "A PHP minimal framework which allows you to control every bit of it.",
+    "keywords": ["do it yourself", "framework"],
+    "license": "MIT",
+    "version": "1.0.0",
+    "minimum-stability": "dev",
     "authors": [{
         "name": "Evans Kwachie",
-        "email": "evans.kwachie@ucc.edu.gh"
+        "email": "evans.kwachie@ucc.edu.gh",
+        "role": "owner"
     }],
     "autoload": {
         "psr-4": {
