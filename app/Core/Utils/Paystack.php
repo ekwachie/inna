@@ -7,7 +7,7 @@ use app\Core\DbModel;
 /*
  * Kowri payment platform integration
  *
- * @author Desmond Evans - iamdesmondjr@gmail.com http://www.iamdesmondjr.com
+ * @author Desmond Evans - evans.kwachie@ucc.edu.gh http://www.iamdesmondjr.com
  * @version 1.0
  * @date August 14, 2023
  */

@@ -1,7 +1,7 @@
 <?php
 /**
- * @author      Desmond Evans Kwachie Jr <iamdesmondjr@gmail.com>
- * @copyright   Copyright (C), 2019 Desmond Evans Kwachie Jr.
+ * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
+ * @copyright   Copyright (C), 2019 Evans Kwachie.
  * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
  *              Refer to the LICENSE file distributed within the package.
  *
