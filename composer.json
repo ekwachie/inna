@@ -1,8 +1,9 @@
 {
-    "name": "mastermind/inna",
+    "name": "ekwachie/inna-framework",
+    "description": "A PHP minimal framework which allows you to control every bit of it.",
     "authors": [{
-        "name": "Team Payperlez",
-        "email": "dev@payperlez.com"
+        "name": "Evans Kwachie",
+        "email": "evans.kwachie@ucc.edu.gh"
     }],
     "autoload": {
         "psr-4": {
@@ -12,6 +13,7 @@
     "require": {
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.4",
-        "twig/string-extra": "^3.3"
+        "twig/string-extra": "^3.3",
+        "phpmailer/phpmailer": "^6.8"
     }
 }

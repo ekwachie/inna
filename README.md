@@ -1,6 +1,6 @@
-## INNA PHP MVC FRAMEWORK
+## INNA
 
-INNA: is a php mvc minified framework.
+INNA: A PHP minimal framework which allows you to control every bit of it.
 
 ## HOW TO USE
 
