@@ -6,36 +6,17 @@
  *              Refer to the LICENSE file distributed within the package.
  *
  * @todo PDO exception and error handling
- * @category    Database
+ * @category    index
  * @example
  *
  *
  */
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config/config.php';
 
 use app\Controllers\AjaxController;
 use app\Controllers\HomeController;
 use app\Controllers\AuthController;
-use app\Core\Application;
-
-require_once __DIR__ . '/vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-$config = [
-    'db' => [
-        'dsn' => $_ENV['DB_DSN'],
-        'user' => $_ENV['DB_USER'],
-        'password' => $_ENV['DB_PASSWORD'],
-
-    ],
-    'url' => $_ENV['DOMAIN']
-];
-
-define('BASE_URL', 'http://' . $config['url'] . '/');
-define('STATIC_URL', BASE_URL . 'public/static');
-define('MEDIA_URL', BASE_URL . 'public/img');
-
-$app = new Application(__DIR__, $config);
 
 $app->router->get('/', [HomeController::class, 'home']);
 $app->router->get('/contact', [HomeController::class, 'contact']);
