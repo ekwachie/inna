@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
@@ -12,23 +13,23 @@
  * All configurations can be found in here.
  */
 
- use app\Core\Application;
- 
-    $dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
-    $dotenv->load();
+use app\Core\Application;
 
-    $config = [
-        'db' => [
-            'dsn' => $_ENV['DB_DSN'],
-            'user' => $_ENV['DB_USER'],
-            'password' => $_ENV['DB_PASSWORD'],
+$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv->load();
 
-        ],
-        'url' => $_ENV['DOMAIN']
-    ];
+$config = [
+    'db' => [
+        'dsn' => $_ENV['DB_DSN'],
+        'user' => $_ENV['DB_USER'],
+        'password' => $_ENV['DB_PASSWORD'],
 
-    define('BASE_URL', 'http://' . $config['url'] . '/');
-    define('STATIC_URL', BASE_URL . 'public/static');
-    define('MEDIA_URL', BASE_URL . 'public/img');
+    ],
+    'url' => $_ENV['DOMAIN']
+];
 
-    $app = new Application($_SERVER['DOCUMENT_ROOT'], $config);
+define('BASE_URL', 'http://' . $config['url'] . '/');
+define('STATIC_URL', BASE_URL . 'public/static');
+define('MEDIA_URL', BASE_URL . 'public/img');
+
+$app = new Application($_SERVER['DOCUMENT_ROOT'], $config);
