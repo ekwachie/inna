@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
@@ -12,6 +13,7 @@
  *
  *
  */
+
 namespace app\Controllers;
 
 use app\Core\Controller;
@@ -28,6 +30,18 @@ class HomeController extends Controller
         ];
 
         return $this->render('home', $data);
+    }
+
+    public function about()
+    {
+
+        return $this->render('about');
+    }
+
+    public function documentation()
+    {
+
+        return $this->render('docs');
     }
 
     public function contact()

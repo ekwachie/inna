@@ -64,7 +64,6 @@ body {
 
 .hero-title {
   color: var(--inna-white);
-  font-family: "Noto Sans", sans-serif;
   font-size: 4.5rem;
   font-style: normal;
   font-weight: 400;
@@ -101,13 +100,16 @@ section .f,
 
 .hero-subtitle {
   color: var(--inna-white);
-  font-family: "Noto Sans", sans-serif;
   font-size: 1em;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   text-align: center;
-  margin-top: 34px;
+  margin-top: 15px;
+}
+
+.version-text {
+  color: var(--inna-danger);
 }
 
 .hero-btn {
@@ -116,12 +118,12 @@ section .f,
   border-radius: 40px;
   border: none;
   display: inline-flex;
-  padding: 18px 40px 18px 40px;
+  padding: 10px 20px 10px 20px;
   align-items: center;
   background-color: var(--inna-yellow);
   transition: box-shadow 0.8s;
   color: var(--inna-primary);
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 .hero-btn:hover {
@@ -145,13 +147,30 @@ section .f,
 }
 
 .heart {
-	/* font-size: 150px; */
-	/* color: #e00; */
-	animation: beat 2s infinite alternate;
-	transform-origin: center;
+  /* font-size: 150px; */
+  /* color: #e00; */
+  animation: beat 3s infinite alternate;
+  transform-origin: center;
 }
 
 /* Heart beat animation */
-@keyframes beat{
-	to { transform: scale(0.7); }
+@keyframes beat {
+  to {
+    transform: scale(0.7);
+  }
+}
+
+.icon-arrow {
+  color: var(--inna-white);
+  flex-shrink: 0;
+  margin-left: 250px;
+  margin-top: -200px;
+}
+
+.how-txt {
+  color: var(--inna-white);
+  position: absolute;
+  top: 505px;
+  left: 855px;
+  transform: rotate(32.534deg);
 }
