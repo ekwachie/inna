@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
@@ -12,16 +13,11 @@
  *
  *
  */
+
 namespace app\Core;
 
 use app\Core\Utils\DUtil;
 use app\Core\Utils\Session;
-
-// error logging to file
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', './log/log_' . date("j.n.Y") . '.log');
 
 class Application
 {
@@ -52,8 +48,6 @@ class Application
     }
     public function run()
     {
-        DUtil::logActivity();
         echo $this->router->resolve();
-
     }
 }
