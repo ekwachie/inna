@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
@@ -7,7 +8,9 @@
  *
  *
  */
+
 namespace app\Core;
+
 use Twig\Extra\String\StringExtension;
 
 class Router
@@ -32,9 +35,10 @@ class Router
         $this->routeMap['post'][$url] = $callback;
     }
 
-     /**
+    /**
      * @return array
      */
+
     public function getRouteMap($method): array
     {
         return $this->routeMap[$method] ?? [];
@@ -48,17 +52,15 @@ class Router
     {
         $method = $this->request->getMethod();
         $url = $this->request->getUrl();
-        // Trim slashes
+
         $url = trim($url, '/');
 
-        // Get all routes for current request method
         $routes = $this->getRouteMap($method);
 
         $routeParams = false;
 
-        // Start iterating registed routes
         foreach ($routes as $route => $callback) {
-            // Trim slashes
+
             $route = trim($route, '/');
             $routeNames = [];
 
@@ -66,15 +68,12 @@ class Router
                 continue;
             }
 
-            // Find all route names from route and save in $routeNames
             if (preg_match_all('/\{(\w+)(:[^}]+)?}/', $route, $matches)) {
                 $routeNames = $matches[1];
             }
 
-            // Convert route name into regex pattern
-            $routeRegex = "@^" . preg_replace_callback('/\{\w+(:([^}]+))?}/', fn($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
+            $routeRegex = "@^" . preg_replace_callback('/\{\w+(:([^}]+))?}/', fn ($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
 
-            // Test and match current route against $routeRegex
             if (preg_match_all($routeRegex, $url, $valueMatches)) {
                 $values = [];
                 for ($i = 1; $i < count($valueMatches); $i++) {
@@ -103,7 +102,6 @@ class Router
             $callback = $this->getCallback();
 
             if ($callback === false) {
-                // throw new NotFoundException();
                 return $this->render('404');
             }
         }
@@ -111,9 +109,6 @@ class Router
             return $this->render($callback);
         }
         if (is_array($callback)) {
-            /**
-             * @var $controller \thecodeholic\phpmvc\Controller
-             */
             $controller = new $callback[0];
             $controller->action = $callback[1];
             Application::$app->controller = $controller;
