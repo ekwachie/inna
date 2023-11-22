@@ -18,3 +18,8 @@ November 22, 2023. 05:11:20 am 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS 
 November 22, 2023. 05:11:35 am 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 /
 [22-Nov-2023 05:11:35 UTC] PHP Parse error:  syntax error, unexpected identifier "ion", expecting variable in /Users/evans/webroot/inna/app/Controllers/HomeController.php on line 27
 November 22, 2023. 05:12:09 am 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 /
+November 22, 2023. 12:56:26 pm 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 /ajax/ff
+November 22, 2023. 12:56:30 pm 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 /about
+November 22, 2023. 12:57:56 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 - /
+November 22, 2023. 12:58:43 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 - /ajax/ff
+November 22, 2023. 12:58:48 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15 - /ajax/ff
