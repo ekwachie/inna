@@ -5,98 +5,89 @@
  * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
  *              Refer to the LICENSE file distributed within the package.
  *
- * @todo PDO exception and error handling
- * @category    Database
- * @example
- * $this->query('INSERT INTO tb (col1, col2, col3) VALUES(?,?,?)', $var1, $var2, $var3);
- *
  *
  */
 namespace app\Core;
-use app\Core\Middlewares\BaseMiddleware;
 use Twig\Extra\String\StringExtension;
 
 class Router
 {
     public Request $request;
     public Response $response;
-    protected array $routes = [];
+    private array $routeMap = [];
 
     public function __construct(Request $request, Response $response)
     {
         $this->request = $request;
-        $this->response = new Response();
+        $this->response = $response;
     }
 
-    /**
-     * get request
-     */
-    public function get(string $path, $callback)
+    public function get(string $url, $callback)
     {
-        $this->routes['get'][$path] = $callback;
+        $this->routeMap['get'][$url] = $callback;
     }
 
-    /**
-     * post request
-     */
-    public function post($path, $callback)
+    public function post(string $url, $callback)
     {
-        $this->routes['post'][$path] = $callback;
+        $this->routeMap['post'][$url] = $callback;
     }
+
+     /**
+     * @return array
+     */
+    public function getRouteMap($method): array
+    {
+        return $this->routeMap[$method] ?? [];
+    }
+
 
     /**
      * get callback 
      */
     public function getCallback()
     {
-        $path = $this->request->getPath();
-        $method = $this->request->method();
+        $method = $this->request->getMethod();
+        $url = $this->request->getUrl();
+        // Trim slashes
+        $url = trim($url, '/');
 
-        // trim slashes
-        $url = trim($path, characters: '/');
-
-        // get ll routes from the current request method
-        $routes = $this->routes[$method] ?? [];
+        // Get all routes for current request method
+        $routes = $this->getRouteMap($method);
 
         $routeParams = false;
 
-        // start iterating registered routes
+        // Start iterating registed routes
         foreach ($routes as $route => $callback) {
-                $route = trim($route, characters: '/');
-                $routeNames = [];
+            // Trim slashes
+            $route = trim($route, '/');
+            $routeNames = [];
 
-                if(!$route){
-                    continue;
-                }
-                // /login/{id}
-                // /
-                // Find all route names from route and save in $routeNames
-            if (preg_match_all('/\{(\w+[A-Za-z0-9-\/-:.\/_?&=#]+)?}/', $route, $matches)) {
+            if (!$route) {
+                continue;
+            }
+
+            // Find all route names from route and save in $routeNames
+            if (preg_match_all('/\{(\w+)(:[^}]+)?}/', $route, $matches)) {
                 $routeNames = $matches[1];
             }
 
-            // // Convert route name into regex pattern
-            $routeRegex = "@^" . preg_replace_callback('/\{\w+[A-Za-z0-9-\/-:.\/_?&=#]+?}/', fn($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
-            
+            // Convert route name into regex pattern
+            $routeRegex = "@^" . preg_replace_callback('/\{\w+(:([^}]+))?}/', fn($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
 
-            // // Test and match current route against $routeRegex
+            // Test and match current route against $routeRegex
             if (preg_match_all($routeRegex, $url, $valueMatches)) {
                 $values = [];
                 for ($i = 1; $i < count($valueMatches); $i++) {
                     $values[] = $valueMatches[$i][0];
                 }
-            
                 $routeParams = array_combine($routeNames, $values);
 
                 $this->request->setRouteParams($routeParams);
-                
                 return $callback;
             }
-
         }
+
         return false;
-
-
     }
 
     /**
@@ -104,34 +95,34 @@ class Router
      */
     public function resolve()
     {
-        $path = $this->request->getPath();
-        $method = $this->request->method();
-        $callback = $this->routes[$method][$path] ?? false;
+        $method = $this->request->getMethod();
+        $url = $this->request->getUrl();
+        $callback = $this->routeMap[$method][$url] ?? false;
+        if (!$callback) {
 
-        if(!$callback){
             $callback = $this->getCallback();
-            if ($callback == false) {
+
+            if ($callback === false) {
+                // throw new NotFoundException();
                 return $this->render('404');
             }
         }
-        
-
         if (is_string($callback)) {
             return $this->render($callback);
         }
-
         if (is_array($callback)) {
-            $controller = new $callback[0]();
-            Application::$app->controller =  $controller;
+            /**
+             * @var $controller \thecodeholic\phpmvc\Controller
+             */
+            $controller = new $callback[0];
             $controller->action = $callback[1];
-            $callback[0] = $controller;
-
-            foreach ($controller->getMiddlewares() as $middleware) {
+            Application::$app->controller = $controller;
+            $middlewares = $controller->getMiddlewares();
+            foreach ($middlewares as $middleware) {
                 $middleware->execute();
             }
-           
+            $callback[0] = $controller;
         }
-       
         return call_user_func($callback, $this->request, $this->response);
     }
 

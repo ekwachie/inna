@@ -20,6 +20,9 @@ use app\Controllers\AuthController;
 
 $app->router->get('/', [HomeController::class, 'home']);
 
+// example of routes with hyphen
+$app->router->get('/{ff}/{any:[\w\d-]+}', [HomeController::class, 'home']);
+
 $app->router->get('/about', [HomeController::class, 'about']);
 
 $app->router->get('/docs', [HomeController::class, 'documentation']);
