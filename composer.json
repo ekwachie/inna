@@ -3,7 +3,7 @@
     "description": "A PHP minimal framework which allows you to control every bit of it.",
     "keywords": ["do it yourself", "framework"],
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "minimum-stability": "dev",
     "authors": [{
         "name": "Evans Kwachie",

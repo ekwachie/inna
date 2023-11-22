@@ -649,12 +649,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "0cf71450701655b92cdf8c3bcfe181251f54323a"
+                "reference": "104f10a54d0a0c7073a379476fe70083e20bbac5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/0cf71450701655b92cdf8c3bcfe181251f54323a",
-                "reference": "0cf71450701655b92cdf8c3bcfe181251f54323a",
+                "url": "https://api.github.com/repos/symfony/string/zipball/104f10a54d0a0c7073a379476fe70083e20bbac5",
+                "reference": "104f10a54d0a0c7073a379476fe70083e20bbac5",
                 "shasum": ""
             },
             "require": {
@@ -727,7 +727,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-18T18:32:38+00:00"
+            "time": "2023-11-20T16:43:49+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -814,22 +814,22 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/string-extra.git",
-                "reference": "748b07d59cb9add2332b945ef5741d5725e271ae"
+                "reference": "b0c9037d96baff79abe368dc092a59b726517548"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/string-extra/zipball/748b07d59cb9add2332b945ef5741d5725e271ae",
-                "reference": "748b07d59cb9add2332b945ef5741d5725e271ae",
+                "url": "https://api.github.com/repos/twigphp/string-extra/zipball/b0c9037d96baff79abe368dc092a59b726517548",
+                "reference": "b0c9037d96baff79abe368dc092a59b726517548",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
                 "symfony/string": "^5.4|^6.0|^7.0",
                 "symfony/translation-contracts": "^1.1|^2|^3",
-                "twig/twig": "^2.7|^3.0"
+                "twig/twig": "^3.0"
             },
             "require-dev": {
-                "symfony/phpunit-bridge": "^5.4|^6.3|^7.0"
+                "symfony/phpunit-bridge": "^6.4|^7.0"
             },
             "type": "library",
             "autoload": {
@@ -873,7 +873,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-11T11:25:50+00:00"
+            "time": "2023-11-21T14:02:01+00:00"
         },
         {
             "name": "twig/twig",
@@ -881,12 +881,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "9f42a763069e46a0911d0ca2ad0d2f558124af54"
+                "reference": "aeeec9a5e907a79e50a6bb78979154599401726e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9f42a763069e46a0911d0ca2ad0d2f558124af54",
-                "reference": "9f42a763069e46a0911d0ca2ad0d2f558124af54",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/aeeec9a5e907a79e50a6bb78979154599401726e",
+                "reference": "aeeec9a5e907a79e50a6bb78979154599401726e",
                 "shasum": ""
             },
             "require": {
@@ -946,7 +946,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-27T00:56:31+00:00"
+            "time": "2023-11-21T18:55:42+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
