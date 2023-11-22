@@ -285,7 +285,7 @@ use \PDO as PDO;
     }
 
     public function numRows(){
-        return $this->num_rows;
+        //return $this->num_rows;
     }
 
     /**

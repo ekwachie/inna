@@ -18,6 +18,7 @@ class FileUpload
 	private $_fileExt;
 	private $_extensions;
 	private $_destination;
+	public $error, $success;
 
 	function __construct($_fileName, $_fileSize, $_fileTmp, $_fileType, $_fileExt, $_destination)
 	{

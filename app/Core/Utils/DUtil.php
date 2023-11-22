@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
@@ -12,6 +13,7 @@
  *
  *
  */
+
 namespace app\Core\Utils;
 
 class DUtil
@@ -61,20 +63,21 @@ class DUtil
     {
         if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
-        }
-        else {
+        } else {
             $headers = $_SERVER;
         }
 
-        if (array_key_exists('X-Forwarded-For', $headers) &&
-        filter_var($headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        if (
+            array_key_exists('X-Forwarded-For', $headers) &&
+            filter_var($headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
+        ) {
             $the_ip = $headers['X-Forwarded-For'];
-        }
-        elseif (array_key_exists('HTTP_X_FORWARDED_FOR', $headers) &&
-        filter_var($headers['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        } elseif (
+            array_key_exists('HTTP_X_FORWARDED_FOR', $headers) &&
+            filter_var($headers['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
+        ) {
             $the_ip = $headers['HTTP_X_FORWARDED_FOR'];
-        }
-        else {
+        } else {
             $the_ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
         }
 
@@ -137,8 +140,7 @@ class DUtil
     {
         if (count(array_intersect_key(array_flip($keys), $array)) === count($keys)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -247,8 +249,7 @@ class DUtil
                 $className,
                 strstr(serialize($instance), ':')
             ));
-        }
-        else if (is_object($instance)) {
+        } else if (is_object($instance)) {
             return unserialize(sprintf(
                 'O:%d:"%s"%s',
                 strlen($className),
@@ -281,7 +282,7 @@ class DUtil
         $key = substr($salted, 0, 32);
         $iv = substr($salted, 32, 16);
 
-        $encrypted_data = openssl_encrypt($data, 'AES-256-CBC', $key, true, $iv);
+        $encrypted_data = openssl_encrypt((string)$data, 'AES-256-CBC', $key, true, $iv);
         return base64_encode($salt . $encrypted_data);
     }
 
@@ -294,7 +295,7 @@ class DUtil
      */
     public static function decrypt($edata, $passphrase)
     {
-        $data = base64_decode($edata);
+        $data = base64_decode((string)$edata);
         $salt = substr($data, 0, 16);
         $ct = substr($data, 16);
 
@@ -362,5 +363,14 @@ class DUtil
     public static function passVerify($password, $hash)
     {
         return password_verify($password, $hash) ? true : false;
+    }
+
+    // logging  user activity in a log file
+    public static function logActivity()
+    {
+        //Write action to txt log
+        $log  = date("F j, Y. h:i:s a").' '.self::get_ip() . ' - '. $_SERVER['HTTP_USER_AGENT'].' '. $_SERVER['REQUEST_URI'] . PHP_EOL;
+        //-
+        file_put_contents('./log/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
     }
 }

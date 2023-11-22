@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
@@ -12,7 +13,6 @@
  *
  *
  */
-namespace app\Core;
 
 /**
  * Validation
@@ -24,6 +24,8 @@ namespace app\Core;
  * @license https://github.com/davidecesarano/Validation/blob/master/LICENSE MIT License
  * @link https://github.com/davidecesarano/Validation
  */
+
+namespace app\Core;
 
 class Model
 {
@@ -51,7 +53,7 @@ class Model
     /**
      * @var array $errors
      */
-    public $errors = [];
+    public $errors = [], $name, $value, $file;
 
     /**
      * Return field name
@@ -273,7 +275,6 @@ class Model
         } else {
             return false;
         }
-
     }
 
     /**

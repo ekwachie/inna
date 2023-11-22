@@ -17,12 +17,14 @@
 namespace app\Controllers;
 
 use app\Core\Controller;
+use app\Core\Request;
+use app\Core\Utils\DUtil;
 use app\ext\AppForm;
 use app\Core\Utils\Session;
 
 class HomeController extends Controller
 {
-    public function home()
+    public function home(Request $request)
     {
         $data = [
             'static' => STATIC_URL,
@@ -40,7 +42,6 @@ class HomeController extends Controller
 
     public function documentation()
     {
-
         return $this->render('docs');
     }
 
