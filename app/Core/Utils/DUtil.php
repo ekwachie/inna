@@ -365,6 +365,24 @@ class DUtil
         return password_verify($password, $hash) ? true : false;
     }
 
+    public static function cleanMonth($string)
+    {
+        // return $string = str_replace(' " ', '', $string); // Replaces all spaces with hyphens.
+
+        return preg_replace('/[^A-Za-z0-9-,".\-]/', '', $string); // Removes special chars.
+    }
+
+    /**
+     * generate a GUID
+     */
+    public static function GUID()
+    {
+        if (function_exists('com_create_guid') === true) {
+            return trim(com_create_guid(), '{}');
+        }
+        return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+    }
+
     // logging  user activity in a log file
     public static function logActivity()
     {
