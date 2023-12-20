@@ -1,0 +1,22 @@
+December 8, 2023. 06:01:57 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /
+December 8, 2023. 06:02:31 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /ajax/ff
+December 8, 2023. 06:02:35 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /ajax/ff
+December 8, 2023. 06:02:45 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /
+December 8, 2023. 06:02:52 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /docs
+December 8, 2023. 06:03:08 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /
+December 8, 2023. 06:04:47 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /
+[08-Dec-2023 18:20:40 UTC] PHP Fatal error:  Uncaught Dotenv\Exception\InvalidPathException: Unable to read any of the environment file(s) at [/.env]. in /Users/evans/webroot/inna/vendor/vlucas/phpdotenv/src/Store/FileStore.php:68
+Stack trace:
+#0 /Users/evans/webroot/inna/vendor/vlucas/phpdotenv/src/Dotenv.php(222): Dotenv\Store\FileStore->read()
+#1 /Users/evans/webroot/inna/config/config.php(26): Dotenv\Dotenv->load()
+#2 /Users/evans/webroot/inna/migrations.php(17): require_once('/Users/evans/we...')
+#3 {main}
+  thrown in /Users/evans/webroot/inna/vendor/vlucas/phpdotenv/src/Store/FileStore.php on line 68
+[08-Dec-2023 18:21:28 UTC] PHP Fatal error:  Uncaught Dotenv\Exception\InvalidPathException: Unable to read any of the environment file(s) at [/.env]. in /Users/evans/webroot/inna/vendor/vlucas/phpdotenv/src/Store/FileStore.php:68
+Stack trace:
+#0 /Users/evans/webroot/inna/vendor/vlucas/phpdotenv/src/Dotenv.php(222): Dotenv\Store\FileStore->read()
+#1 /Users/evans/webroot/inna/config/config.php(26): Dotenv\Dotenv->load()
+#2 /Users/evans/webroot/inna/migrations.php(17): require_once('/Users/evans/we...')
+#3 {main}
+  thrown in /Users/evans/webroot/inna/vendor/vlucas/phpdotenv/src/Store/FileStore.php on line 68
+December 8, 2023. 06:35:35 pm - 127.0.0.1 - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Safari/605.1.15 - /ajax/ff

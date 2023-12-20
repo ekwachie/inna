@@ -174,3 +174,13 @@ section .f,
   left: 855px;
   transform: rotate(32.534deg);
 }
+
+.footer {
+  text-align: center;
+  color: var(--inna-white);
+}
+
+.socials{
+  align-items: center;
+  gap: 20px;
+}

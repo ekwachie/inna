@@ -1,11 +1,12 @@
 <?php
+
 /**
  * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
  * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
  *              Refer to the LICENSE file distributed within the package.
  *
-* try {
+ * try {
  *    $db = new Database($db);
  *    $db->select("SELECT * FROM user WHERE id = :id", array('id', 25));
  *    $db->insert("user", array('name' => 'jesse'));
@@ -16,8 +17,10 @@
  * }
  */
 
- namespace app\Core;
- use \PDO as PDO;
+namespace app\Core;
+
+use \PDO as PDO;
+
 class Database
 {
     public $pdo;
@@ -42,16 +45,16 @@ class Database
 
         /**
          * List files and directories inside the specified path Returns an array of files and directories from the directory.
-        *Returns:
-        *Returns an array of filenames on success, or false on failure. If directory is not a directory, then boolean false is returned, and an error of level E_WARNING is generated.
+         *Returns:
+         *Returns an array of filenames on success, or false on failure. If directory is not a directory, then boolean false is returned, and an error of level E_WARNING is generated.
          */
-        $files = scandir(Application::$ROOT_DIR.'/migrations');
+        $files = scandir(Application::$ROOT_DIR . '/migrations');
         $toApplyMigrations = array_diff($files, $appliedMigrations);
         foreach ($toApplyMigrations as $migration) {
             if ($migration == '.' || $migration == '..') {
-               continue;
+                continue;
             }
-            require_once Application::$ROOT_DIR.'/migrations/'.$migration;
+            require_once Application::$ROOT_DIR . '/migrations/' . $migration;
             $className = pathinfo($migration, PATHINFO_FILENAME);
             $instance = new $className();
             $this->log("Applying migration $migration");
@@ -60,11 +63,11 @@ class Database
 
             $newMigrations[] = $migration;
         }
-       if (!empty($newMigrations)) {
-          $this->saveMigrations($newMigrations);
-       }else{
-           $this->log('All migrations are apllied');
-       }
+        if (!empty($newMigrations)) {
+            $this->saveMigrations($newMigrations);
+        } else {
+            $this->log('All migrations are apllied');
+        }
     }
 
     public function createMigrationsTable()
@@ -74,7 +77,6 @@ class Database
             migration VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=INNODB;");
-        
     }
 
     public function getAppliedMigrations()
@@ -86,13 +88,13 @@ class Database
 
     public function saveMigrations(array $migrations)
     {
-        $str = implode(",", array_map(fn($m)=>"('$m')", $migrations));
+        $str = implode(",", array_map(fn ($m) => "('$m')", $migrations));
         $stmt = $this->pdo->prepare("INSERT INTO migrations (migration) VALUES $str");
         $stmt->execute();
     }
-    
+
     protected function log($msg)
     {
-        echo '['.date('Y-m-d H:i:s').'] - '.$msg.PHP_EOL;
+        echo '[' . date('Y-m-d H:i:s') . '] - ' . $msg . PHP_EOL;
     }
 }
