@@ -1,0 +1,307 @@
+/* Our base theme colors */
+$theme-colors: (
+    "primary": #0f1237,
+    "dark": #010409,
+    "success": #15be56,
+    "warning": #ffd200,
+    "danger": #f9322c,
+    "gray": #666666,
+    "light": #ffffff,
+    "info": #1d3362,
+    "muted": #66788a,
+    "default": #425a70
+);
+
+:root {
+    --inna-primary: #0f1237;
+    --inna-dark: #010409;
+    --inna-success: #15be56;
+    --inna-warning: #ffd200;
+    --inna-danger: #f9322c;
+    --inna-gray: #161b22;
+    --inna-light: #ffffff;
+    --inna-info: #1d3362;
+    --inna-muted: #66788a;
+    --inna-default: #425a70;
+    --inna-dark-gray: #161b22;
+    --inna-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+        "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --inna-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --inna-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+    --inna-box-shadow: 0px 5px 25px rgba(65, 84, 241, 0.3);
+}
+/* basic button style */
+.btn {
+    display: inline-block;
+    padding: 10px 17px;
+    font-size: 1em;
+    line-height: 1.5;
+    border: none;
+    border-radius: 5px;
+    color: #212529;
+    background-color: transparent;
+    box-shadow: var(--inna-box-shadow);
+    overflow: hidden;
+    cursor: pointer;
+    justify-content: center;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+/* alert style */
+.alert {
+    padding: 12px;
+    display: inline-block;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    border-radius: 5px;
+    box-shadow: var(--inna-box-shadow);
+    color: #fff;
+}
+
+/* text style */
+.text {
+    font-size: 1em;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.text-lowercase {
+    text-transform: lowercase;
+}
+
+.text-capitalize {
+    text-transform: capitalize;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: none;
+    border-radius: 0.25rem;
+    box-shadow: var(--inna-box-shadow);
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1rem 1rem;
+}
+
+/* animations goes here */
+
+.animate-pulse:hover {
+    animation: scaleUp 0.6s ease-in-out;
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.85);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* margin tops and paddings */
+
+// Adjust this to include the rem amounts you need.
+$spaceamounts: (0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5);
+$num: 1;
+
+// for margin
+@each $space in $spaceamounts {
+    .m-#{$num} {
+        margin: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for margin top
+@each $space in $spaceamounts {
+    .mt-#{$num} {
+        margin-top: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for margin bottom
+@each $space in $spaceamounts {
+    .mb-#{$num} {
+        margin-bottom: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for margin right
+@each $space in $spaceamounts {
+    .mr-#{$num} {
+        margin-right: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for margin left
+@each $space in $spaceamounts {
+    .ml-#{$num} {
+        margin-left: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for padding
+@each $space in $spaceamounts {
+    .p-#{$num} {
+        padding: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for padding top
+@each $space in $spaceamounts {
+    .pt-#{$num} {
+        padding-top: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for padding bottom
+@each $space in $spaceamounts {
+    .pb-#{$num} {
+        padding-bottom: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for padding right
+@each $space in $spaceamounts {
+    .pr-#{$num} {
+        padding-right: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+$num: 1;
+// for padding left
+@each $space in $spaceamounts {
+    .pl-#{$num} {
+        padding-left: #{$space}rem !important;
+    }
+    $num: $num + 1;
+}
+
+/* a generic theme color elements for button Eg. btn-primary btn-success */
+@each $name, $color in $theme-colors {
+    .btn-#{$name} {
+        background-color: $color;
+        color: var(--inna-light);
+    }
+}
+
+/* a generic theme color elements for outlibe buttons Eg. btn-primary btn-success */
+@each $name, $color in $theme-colors {
+    .btn-outline-#{$name} {
+        background-color: var(--inna-light);
+        border: 1px solid $color;
+        color: $color;
+    }
+}
+
+/* generic theme color for alerts */
+@each $name, $color in $theme-colors {
+    .alert-#{$name} {
+        background-color: $color;
+        color: white;
+    }
+}
+
+/* generic theme color for texts */
+@each $name, $color in $theme-colors {
+    .text-#{$name} {
+        color: $color;
+    }
+}
+
+/* generic theme color for background colors */
+@each $name, $color in $theme-colors {
+    .bg-#{$name} {
+        background-color: $color;
+        color: white;
+    }
+}
+
+/* columns and rows */
+$no-of-columns: 12;
+
+$breakpoints: (
+    // Small devices (landscape phones, 576px and up)
+    "sm": 576px,
+    // Medium devices (tablets, 768px and up)
+    "md": 768px,
+    // Large devices (desktops, 992px and up)
+    "lg": 992px,
+    // Extra large devices (large desktops, 1200px and up)
+    "xl": 1200px
+);
+
+.container {
+    display: block;
+    width: 100%;
+    max-width: 1170px;
+
+    padding: 0px 1rem;
+    margin: 0px auto;
+
+    &-fluid {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+
+        padding: 1rem 0px;
+    }
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+/* generic grid colums for screens */
+@each $breakpoint, $value in $breakpoints {
+    // MEDIA QUERY
+    @media only screen and (min-width: $value) {
+        // RESPONSIVE COLUMN CODE .....
+        @for $i from 1 through $no-of-columns {
+            .col-#{$breakpoint}-#{$i} {
+                width: (100% / ($no-of-columns / $i));
+                padding: 0px 1rem;
+            }
+        }
+    }
+}
+
+/* Extra small devices (portrait phones, less than 576px)*/
+@media only screen and (max-width: 575.98px) {
+    // RESPONSIVE COLUMN CODE .....
+    @for $i from 1 through $no-of-columns {
+        .col-xs-#{$i} {
+            width: (100% / ($no-of-columns / $i));
+            padding: 0px 1rem;
+        }
+    }
+}
