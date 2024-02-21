@@ -1,8 +1,8 @@
 {% extends 'layouts/layout.twig' %} {% block content %} {% include
 'partials/header.twig' %}
 
-<div align="center">
-    <h2 class="text-light mb-3">Inna Buttons</h2>
+<div class="container">
+    <h2 class="mb-3">Inna Buttons</h2>
     <button class="btn btn-default">default</button>
     <button class="btn btn-primary">primary</button>
     <button class="btn btn-danger">danger</button>
@@ -10,7 +10,7 @@
     <button class="btn btn-warning">warning</button>
     <button class="btn btn-info">info</button>
     <button class="btn btn-dark">dark</button>
-    <h2>Inna Outline Buttons</h2>
+    <h2 class="mt-3 mb-3">Inna Outline Buttons</h2>
     <button class="btn btn-outline-default">default</button>
     <button class="btn btn-outline-primary">primary</button>
     <button class="btn btn-outline-danger">danger</button>
@@ -18,7 +18,7 @@
     <button class="btn btn-outline-warning">warning</button>
     <button class="btn btn-outline-info">info</button>
     <button class="btn btn-outline-dark">dark</button>
-    <h2>Inna Animate Buttons</h2>
+    <h2 class="mt-3 mb-3">Inna Animate Buttons</h2>
     <button class="btn btn-default animate-pulse">default</button>
     <button class="btn btn-primary animate-pulse">primary</button>
     <button class="btn btn-danger animate-pulse">danger</button>
@@ -26,20 +26,67 @@
     <button class="btn btn-warning animate-pulse">warning</button>
     <button class="btn btn-info animate-pulse">info</button>
     <button class="btn btn-dark animate-pulse">dark</button>
-
-
-    <br><br><div class="alert alert-danger">
+</div>
+<div class="container">
+    <h2 class="mt-3">Alerts</h2>
+    <div class="alert alert-danger mt-3">
         hello! i am an alert kdsncvkdsjnvdkjsnvkjsdfnvjsdfkvndsfjvskvj
     </div>
-    <h2>Card</h2>
-    <div class="card col-md-4">
+    <h2 class="mt-3 mb-3">Card</h2>
+    <div class="card animate-shake p-2">
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae explicabo, voluptate odio at ullam minima repellendus, voluptatibus hic obcaecati soluta molestias debitis neque dolore laboriosam amet delectus necessitatibus ducimus assumenda.
     </div>
-    <h2>Form</h2>
-    <form action="#">
-        <div class="col-md-4">
-            <input type="text" class="form-control">
+    <h2 class="mt-3 mb-3">Form</h2>
+    <div class="card col-md-4">
+        <div class="card-body">
+            <form action="">
+                <input type="text" class="form-control">
+            </form>
         </div>
-    </form>
+    </div>
+</div>
+<div class="container">
+    <h2 class="mt-3">Table</h2>
+    <table class="table table-bordered">
+        <thead>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Evans</td>
+                <td>Evans@me.com</td>
+                <td>Evanssdvdvdsvds</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Evans</td>
+                <td>Evans@me.com</td>
+                <td>Evanssdvdvdsvds</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Evans</td>
+                <td>Evans@me.com</td>
+                <td>Evanssdvdvdsvds</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est ducimus accusamus iusto iure non ipsa adipisci assumenda soluta, quod modi, porro laboriosam labore deleniti repellat at nemo nisi quae. Nulla.
+            </div>
+            <div class="col-md-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est ducimus accusamus iusto iure non ipsa adipisci assumenda soluta, quod modi, porro laboriosam labore deleniti repellat at nemo nisi quae. Nulla.
+            </div>
+            <div class="col-md-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est ducimus accusamus iusto iure non ipsa adipisci assumenda soluta, quod modi, porro laboriosam labore deleniti repellat at nemo nisi quae. Nulla.
+            </div>
+        </div>
 </div>
 {% endblock %}
