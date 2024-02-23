@@ -18,7 +18,7 @@ $theme-colors: (
     --inna-success: #15be56;
     --inna-warning: #ffd200;
     --inna-danger: #f9322c;
-    --inna-gray: #161b22;
+    --inna-gray: #666666;
     --inna-light: #ffffff;
     --inna-info: #1d3362;
     --inna-muted: #66788a;
@@ -107,43 +107,117 @@ $theme-colors: (
     padding: 1rem 1rem;
 }
 
-/* animations goes here */
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
 
-.animate-pulse:hover {
-    animation: scaleUp 0.6s ease-in-out;
-}
-
-@keyframes scaleUp {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(0.85);
-    }
-
-    100% {
-        transform: scale(1);
+    &-fluid {
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
     }
 }
 
-@keyframes justshake {
-    25% {
-        transform: translateX(5px);
-    }
-
-    50% {
-        transform: translateX(-5px);
-    }
-
-    75% {
-        transform: translateX(5px);
-    }
-
-    100% {
-        transform: translateX-(5px);
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
     }
 }
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+.row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+//=============================TABLE========================//
+table,
+thead,
+tbody,
+tfoot,
+tr,
+th,
+td {
+  padding: 0;
+  border-spacing: 0;
+}
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+}
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 1px solid #dee2e6;
+}
+.table tbody + tbody {
+  border-top: 1px solid #dee2e6;
+}
+
+.table-sm th,
+.table-sm td {
+  padding: 0.3rem;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+
+.table-borderless th,
+.table-borderless td,
+.table-borderless thead th,
+.table-borderless tbody + tbody {
+  border: 0;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+  border: none;
+}
+
+.table-hover tbody tr:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
 
 /* margin tops and paddings */
 
@@ -271,68 +345,15 @@ $num: 1;
     }
 }
 
-/* columns and rows */
-$no-of-columns: 12;
-
-$breakpoints: (
-    // Extra large devices (large desktops, 1200px and up)
-    "xl": 1200px,
-    // Large devices (desktops, 992px and up)
-    "lg": 992px,
-    // Medium devices (tablets, 768px and up)
-    "md": 768px,
-    // Small devices (landscape phones, 576px and up)
-    "sm": 576px
-);
-
-.container {
-    width: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-
-    &-fluid {
-        width: 100%;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
+/* generic theme color for table background colors */
+@each $name, $color in $theme-colors {
+    .table-#{$name} {
+        background-color: $color;
+        color: white;
     }
 }
 
-@media (min-width: 576px) {
-    .container {
-        max-width: 540px;
-    }
-}
-@media (min-width: 768px) {
-    .container {
-        max-width: 720px;
-    }
-}
-@media (min-width: 992px) {
-    .container {
-        max-width: 960px;
-    }
-}
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px;
-    }
-}
-
-.row {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
-}
-
-/* forms */
+/*===========================forms ============================= */
 .form-control {
     display: block;
     width: 100%;
@@ -359,6 +380,61 @@ $breakpoints: (
     color: var(--inna-danger);
     border: 1px solid var(--inna-danger);
 }
+/*===========================forms ============================= */
+
+/* animations goes here */
+
+.animate-pulse:hover {
+    animation: scaleUp 0.6s ease-in-out;
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.85);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes justshake {
+    25% {
+        transform: translateX(5px);
+    }
+
+    50% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+
+    100% {
+        transform: translateX-(5px);
+    }
+}
+
+
+
+/* columns and rows */
+$no-of-columns: 12;
+
+$breakpoints: (
+    // Extra large devices (large desktops, 1200px and up)
+    "xl": 1200px,
+    // Large devices (desktops, 992px and up)
+    "lg": 992px,
+    // Medium devices (tablets, 768px and up)
+    "md": 768px,
+    // Small devices (landscape phones, 576px and up)
+    "sm": 576px
+);
 
 /* generic grid colums for screens */
 @each $breakpoint, $value in $breakpoints {

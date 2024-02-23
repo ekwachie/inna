@@ -50,6 +50,7 @@ class Database
          */
         $files = scandir(Application::$ROOT_DIR . '/migrations');
         $toApplyMigrations = array_diff($files, $appliedMigrations);
+        
         foreach ($toApplyMigrations as $migration) {
             if ($migration == '.' || $migration == '..') {
                 continue;

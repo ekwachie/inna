@@ -5,7 +5,7 @@
   --inna-success: #15be56;
   --inna-warning: #ffd200;
   --inna-danger: #f9322c;
-  --inna-gray: #161b22;
+  --inna-gray: #666666;
   --inna-light: #ffffff;
   --inna-info: #1d3362;
   --inna-muted: #66788a;
@@ -1086,14 +1086,14 @@ td {
 .table td {
   padding: 0.75rem;
   vertical-align: top;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid var(--inna-gray);
 }
 .table thead th {
   vertical-align: bottom;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--inna-gray);
 }
 .table tbody + tbody {
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid var(--inna-gray);
 }
 
 .table-sm th,
@@ -1102,11 +1102,11 @@ td {
 }
 
 .table-bordered {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--inna-gray);
 }
 .table-bordered th,
 .table-bordered td {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--inna-gray);
 }
 .table-bordered thead th,
 .table-bordered thead td {
@@ -1128,4 +1128,45 @@ td {
 .table-hover tbody tr:hover {
   color: #212529;
   background-color: rgba(0, 0, 0, 0.075);
+}
+
+.table-primary {
+  background-color: #0f1237;
+  color: white;
+}
+.table-dark {
+  background-color: #010409;
+  color: white;
+}
+.table-success {
+  background-color: #15be56;
+  color: white;
+}
+.table-warning {
+  background-color: #ffd200;
+  color: white;
+}
+.table-danger {
+  background-color: #f9322c;
+  color: white;
+}
+.table-gray {
+  background-color: #666666;
+  color: white;
+}
+.table-light {
+  background-color: #ffffff;
+  color: white;
+}
+.table-info {
+  background-color: #1d3362;
+  color: white;
+}
+.table-muted {
+  background-color: #66788a;
+  color: white;
+}
+.table-default {
+  background-color: #425a70;
+  color: white;
 }
