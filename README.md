@@ -24,6 +24,18 @@ $ mv composer.phar /usr/local/bin/composer
 $ composer create-project ekwachie/inna-framework [project_name] -s dev
 ```
 
+- Create migrations
+
+```bash
+$ php migrations.php add [migration_name]
+```
+
+- Apply migrations
+
+```bash
+$ php migrations.php update
+```
+
 # Todo
 - Work on database migrations
 - Work on a css framework like bootstrap with predefined components
