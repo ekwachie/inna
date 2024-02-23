@@ -25,5 +25,5 @@ $ composer create-project ekwachie/inna-framework [project_name] -s dev
 ```
 
 # Todo
-- Create an easy to use dashboaord for admin manipulations like in Django Framework.
 - Work on database migrations
+- Work on a css framework like bootstrap with predefined components
