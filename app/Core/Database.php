@@ -120,6 +120,7 @@ class Database
     {
         //check if migration dir exist
         $this->isDir();
+
         $script = '
         <?php
         /**
@@ -169,8 +170,43 @@ class Database
             }
         ';
 
-        $this->log("Creating migration $migration_name");
-        file_put_contents("./migrations/m" . date("jnY") . "_" . $migration_name . '.php', $script, FILE_APPEND);
-        $this->log("\033[38;2;0;102;0m Created migration $migration_name successfully");
+        $this->creatMigration($script, $migration_name);
+
+    }
+
+    public function creatMigration($script, $migration_name)
+    {
+        if (file_exists("./migrations/"."m". date("jnY") . "_".$migration_name. '.php')) {
+            $this->log("\033[38;2;255;0;0m $migration_name migration exist");
+        } else {
+            $this->log("Creating migration $migration_name");
+            file_put_contents("./migrations/m" . date("jnY") . "_" . $migration_name . '.php', $script, FILE_APPEND);
+            $this->log("\033[38;2;0;102;0m Created migration $migration_name successfully");
+        }
+    }
+    
+    // run migrations
+    public function startMigration($action, $migration_name)
+    {
+        if (!empty($action) || !empty($migration_name)) {
+            switch ($action) {
+                case 'add':
+                    if (!empty($migration_name)) {
+                        $this->Add($migration_name);
+                    } else {
+                        echo "Migration name key not set";
+                    }
+                    break;
+                case 'update':
+                    $this->applyMigrations();
+                    break;
+
+                default:
+                    echo "\033[38;2;255;0;0m check command format " . $action;
+                    break;
+            }
+        } else {
+            echo "\033[38;2;255;0;0m Migration action or name key not set";
+        }
     }
 }

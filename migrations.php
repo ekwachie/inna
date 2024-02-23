@@ -5,12 +5,6 @@
  * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
  *              Refer to the LICENSE file distributed within the package.
  *
- * @todo PDO exception and error handling
- * @category    Database
- * @example
- * $this->query('INSERT INTO tb (col1, col2, col3) VALUES(?,?,?)', $var1, $var2, $var3);
- *
- *
  */
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -43,31 +37,9 @@ define('MEDIA_URL', BASE_URL . 'public/img');
 
 $app = new Application(__DIR__, $config);
 
-//for the action
 $action = $argv[1];
-
-// for migration name 
-$migration_name = $argv[2];
-
-if (!empty($action) || !empty($migration_name)) {
-    switch ($action) {
-        case 'add':
-            if (!empty($migration_name)) {
-                $app->db->Add($migration_name);
-            } else {
-                echo "Migration name key not set";
-            }
-            break;
-        case 'update':
-            $app->db->applyMigrations();
-            break;
-
-        default:
-            echo "\033[38;2;255;0;0m check command format ".$action;
-            break;
-    }
-} else {
-    echo "\033[38;2;255;0;0m Migration action or name key not set";
+if (!empty($argv[2])) {
+    $migration_name = $argv[2];
 }
 
-// $app->db->applyMigrations();
+$app->db->startMigration($action, $migration_name);
