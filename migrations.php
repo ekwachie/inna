@@ -15,6 +15,13 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+// error logging to file
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', './log/log_' . date("j.n.Y") . '.log');
+
+
 use app\Core\Application;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -36,4 +43,31 @@ define('MEDIA_URL', BASE_URL . 'public/img');
 
 $app = new Application(__DIR__, $config);
 
-$app->db->applyMigrations();
+//for the action
+$action = $argv[1];
+
+// for migration name 
+$migration_name = $argv[2];
+
+if (!empty($action) || !empty($migration_name)) {
+    switch ($action) {
+        case 'add':
+            if (!empty($migration_name)) {
+                $app->db->Add($migration_name);
+            } else {
+                echo "Migration name key not set";
+            }
+            break;
+        case 'update':
+            $app->db->applyMigrations();
+            break;
+
+        default:
+            echo "\033[38;2;255;0;0m check command format ".$action;
+            break;
+    }
+} else {
+    echo "\033[38;2;255;0;0m Migration action or name key not set";
+}
+
+// $app->db->applyMigrations();

@@ -38,6 +38,7 @@ class Database
      */
     public function applyMigrations()
     {
+        $this->isDir();
         $this->createMigrationsTable();
         $appliedMigrations = $this->getAppliedMigrations();
 
@@ -50,7 +51,7 @@ class Database
          */
         $files = scandir(Application::$ROOT_DIR . '/migrations');
         $toApplyMigrations = array_diff($files, $appliedMigrations);
-        
+
         foreach ($toApplyMigrations as $migration) {
             if ($migration == '.' || $migration == '..') {
                 continue;
@@ -59,15 +60,19 @@ class Database
             $className = pathinfo($migration, PATHINFO_FILENAME);
             $instance = new $className();
             $this->log("Applying migration $migration");
-            $instance->up();
-            $this->log("Applied migration $migration");
-
-            $newMigrations[] = $migration;
+            try {
+                $instance->up();
+                $this->log("\033[38;2;0;102;0m Applied migration $migration");
+                $newMigrations[] = $migration;
+            } catch (\Throwable $th) {
+                $this->log("\033[38;2;255;0;0m Something went wrong. check your query $migration");
+                exit(0);
+            }
         }
         if (!empty($newMigrations)) {
             $this->saveMigrations($newMigrations);
         } else {
-            $this->log('All migrations are apllied');
+            $this->log("\033[38;2;0;102;0m All migrations are apllied");
         }
     }
 
@@ -89,7 +94,7 @@ class Database
 
     public function saveMigrations(array $migrations)
     {
-        $str = implode(",", array_map(fn ($m) => "('$m')", $migrations));
+        $str = implode(",", array_map(fn($m) => "('$m')", $migrations));
         $stmt = $this->pdo->prepare("INSERT INTO migrations (migration) VALUES $str");
         $stmt->execute();
     }
@@ -97,5 +102,75 @@ class Database
     protected function log($msg)
     {
         echo '[' . date('Y-m-d H:i:s') . '] - ' . $msg . PHP_EOL;
+    }
+
+    //  if migration directory exist - else create migrations dir
+    protected function isDir()
+    {
+        if (is_dir("./migrations")) {
+        } else {
+            $this->log("Creating migration directory ...");
+            mkdir("./migrations");
+            $this->log("\033[38;2;0;102;0m Migration directory created successfully");
+        }
+    }
+
+    // create migration
+    public function Add($migration_name)
+    {
+        //check if migration dir exist
+        $this->isDir();
+        $script = '
+        <?php
+        /**
+         * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
+         * @copyright   Copyright (C), 2019 Evans Kwachie.
+         * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
+         *              Refer to the LICENSE file distributed within the package.
+         *
+         * @todo PDO exception and error handling
+         * @category    Migrations
+         * table_name: This is the name of the table that you want to create.
+         * column1, column2, etc.: The names of the columns in the table.
+         * datatype: the data of each column such as INT, VARCHAR, DATE, etc.
+         * constraints: These are optional constraints such as NOT NULL, UNIQUE, PRIMARY KEY, and FOREIGN KEY.
+         * If you create a table with a name that already exists in the database, you\'ll get an error. To avoid the error, you can use the IF NOT EXISTS option.
+         * 
+         * You can use the keyword FIRST if you want the new column to be positioned as the first column in the table. Alternatively, you can use the AFTER existing_column clause to specify that you want to add a new column after an existing column.
+         * // Query to ALTER TABLE  "ALTER TABLE table_name ADD COLUMN new_column_name data_type [FIRST | AFTER existing_column];"
+         * 
+         */
+
+            use  app\core\Application;
+            class m' . date("jnY") . '_' . $migration_name . '
+            {
+                // for applying migrations
+                public function up()
+                {
+                    $db = Application::$app->db;
+
+                    // Query to CREATE TABLE 
+                    $createTb = "CREATE TABLE IF NOT EXISTS table_name(
+                                column1 datatype constraints,
+                                column1 datatype constraints,
+                            ) ENGINE=storage_engine;";
+                    
+                    $db->pdo->exec($createTb);
+                }
+
+                // for dropping table
+                public function down()
+                {
+                    // Query to drop migration table created
+                    $db = Application::$app->db;
+                    $SQL = "DROP TABLE IF EXISTS [table]";
+                    $db->pdo->exec($SQL);
+                }
+            }
+        ';
+
+        $this->log("Creating migration $migration_name");
+        file_put_contents("./migrations/m" . date("jnY") . "_" . $migration_name . '.php', $script, FILE_APPEND);
+        $this->log("\033[38;2;0;102;0m Created migration $migration_name successfully");
     }
 }
