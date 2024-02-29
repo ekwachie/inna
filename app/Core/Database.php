@@ -106,17 +106,6 @@ class Database
         echo '[' . date('Y-m-d H:i:s') . '] - ' . $msg . PHP_EOL;
     }
 
-    //  if migration directory exist - else create migrations dir
-    // protected function isDir()
-    // {
-    //     if (is_dir("./migrations")) {
-    //     } else {
-    //         $this->log("Creating migration directory ...");
-    //         mkdir("./migrations");
-    //         $this->log("\033[38;2;0;102;0m Migration directory created successfully");
-    //     }
-    // }
-
     // create migration
     public function Add($migration_name)
     {

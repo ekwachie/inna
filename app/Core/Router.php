@@ -11,6 +11,7 @@
 
 namespace app\Core;
 
+use app\ext\AppExtension;
 use Twig\Extra\String\StringExtension;
 
 class Router
@@ -137,6 +138,7 @@ class Router
             'auto_reload' => true,
         ]);
         $twig->addExtension(new StringExtension());
+        $twig->addExtension(new AppExtension());
 
         return $twig->render("$view.twig", $data);
     }
