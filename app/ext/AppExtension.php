@@ -8,10 +8,15 @@
  * 
  * AppExtension extends Twig default filters and functions to build custom filters and functions 
  * for seemless data manipultion at the client side
+ * 
+ * Filters:: How to use: {{ total_amount | price }} 
+ * 
+ * Functions:: How to use: {{ area(width, length) }}
  *
  */
 
 namespace app\ext;
+
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -19,24 +24,25 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
+    // Filters goes here.
     public function getFilters()
     {
-        return array(
+        return [
             new TwigFilter('price', [$this, 'formatPrice']),
-        );
+        ];
     }
-
+    // Functions goes here.
     public function getFunctions()
     {
-        return array(
+        return [
             new TwigFunction('area', [$this, 'calculateArea']),
-        );
+        ];
     }
 
-    public function formatPrice($number, $decimals = 0, $decPoint = '.', $thousandsSep = ',')
+    public function formatPrice($number, $decimals = 2, $decPoint = '.', $thousandsSep = ',')
     {
         $price = number_format($number, $decimals, $decPoint, $thousandsSep);
-        $price = '$'.$price;
+        $price = 'GHS' . $price;
 
         return $price;
     }
