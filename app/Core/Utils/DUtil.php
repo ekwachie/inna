@@ -377,9 +377,6 @@ class DUtil
      */
     public static function GUID()
     {
-        if (function_exists('com_create_guid') === true) {
-            return trim(com_create_guid(), '{}');
-        }
         return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
     }
 
@@ -388,7 +385,16 @@ class DUtil
     {
         //Write action to txt log
         $log  = date("F j, Y. h:i:s a").' - '.self::get_ip() . ' - '. $_SERVER['HTTP_USER_AGENT'].' - '. $_SERVER['REQUEST_URI'] . PHP_EOL;
-        //-
+        self::isDir("log");
         file_put_contents('./log/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
+    }
+
+    // create log directory
+    public static function isDir($dir_name)
+    {
+        if (is_dir("./$dir_name")) {
+        } else {
+            mkdir("./$dir_name");
+        }
     }
 }

@@ -17,7 +17,7 @@
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', './log/log_' . date("j.n.Y") . '.log');
+ini_set('error_log', './log/app_error_log_' . date("j.n.Y") . '.log');
 
 use app\Core\Application;
 use app\Core\Utils\DUtil;

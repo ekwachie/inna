@@ -19,6 +19,7 @@
 
 namespace app\Core;
 
+use app\Core\Utils\DUtil;
 use \PDO as PDO;
 
 class Database
@@ -38,7 +39,8 @@ class Database
      */
     public function applyMigrations()
     {
-        $this->isDir();
+        //  if migration directory exist - else create migrations dir
+        DUtil::isDir("migrations");
         $this->createMigrationsTable();
         $appliedMigrations = $this->getAppliedMigrations();
 
@@ -105,21 +107,21 @@ class Database
     }
 
     //  if migration directory exist - else create migrations dir
-    protected function isDir()
-    {
-        if (is_dir("./migrations")) {
-        } else {
-            $this->log("Creating migration directory ...");
-            mkdir("./migrations");
-            $this->log("\033[38;2;0;102;0m Migration directory created successfully");
-        }
-    }
+    // protected function isDir()
+    // {
+    //     if (is_dir("./migrations")) {
+    //     } else {
+    //         $this->log("Creating migration directory ...");
+    //         mkdir("./migrations");
+    //         $this->log("\033[38;2;0;102;0m Migration directory created successfully");
+    //     }
+    // }
 
     // create migration
     public function Add($migration_name)
     {
         //check if migration dir exist
-        $this->isDir();
+        DUtil::isDir("migrations");
 
         $script = '
         <?php
@@ -194,7 +196,7 @@ class Database
                     if (!empty($migration_name)) {
                         $this->Add($migration_name);
                     } else {
-                        echo "Migration name key not set";
+                        echo "\033[38;2;255;0;0m Migration name key not set";
                     }
                     break;
                 case 'update':
