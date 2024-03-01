@@ -384,7 +384,7 @@ class DUtil
     public static function logActivity()
     {
         //Write action to txt log
-        $log  = date("F j, Y. h:i:s a").' - '.self::get_ip() . ' - '. $_SERVER['HTTP_USER_AGENT'].' - '. $_SERVER['REQUEST_URI'] . PHP_EOL;
+        $log  = date("F j, Y. h:i:s a").' - '.self::get_ip() . ' - '. $_SERVER['HTTP_USER_AGENT'].' - '. $_SERVER['REQUEST_URI'].' - '. $_SERVER['HTTP_REFERER'] . PHP_EOL;
         self::isDir("log");
         file_put_contents('./log/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
     }
