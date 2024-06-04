@@ -7,7 +7,7 @@
     "minimum-stability": "dev",
     "authors": [{
         "name": "Evans Kwachie",
-        "email": "evans.kwachie@ucc.edu.gh",
+        "email": "ekwachie@payperlez.org",
         "role": "owner"
     }],
     "autoload": {
