@@ -88,7 +88,7 @@ class AuthController extends Controller
                 $user->name('confirm password')->value($_POST['passc'])->pattern('alphanum')->required();
                 $user->name('password')->value($_POST['pass'])->equal($_POST['passc']);
 
-                if ($this->user->isSuccess()) {
+                if ($user->isSuccess()) {
                     $body = $request->getBody();
                     $data = [
                         'fname' => $body['fname'],
