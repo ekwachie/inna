@@ -86,7 +86,7 @@ class DUtil
 
     /**
      * @param $data
-     * @param null $filename
+     * param null $filename
      */
     public static function createCSV($data, $filename = null)
     {
@@ -236,26 +236,30 @@ class DUtil
     /**
      * Cast an array or an stdClass to another class
      *
-     * @param array|stdClass; $instance
+     * param array|stdClass; $instance
      * @param string $className
      * @return /new $className()
      */
     public static function castToObject($instance, $className)
     {
         if (is_array($instance)) {
-            return unserialize(sprintf(
-                'O:%d:"%s"%s',
-                strlen($className),
-                $className,
-                strstr(serialize($instance), ':')
-            ));
+            return unserialize(
+                sprintf(
+                    'O:%d:"%s"%s',
+                    strlen($className),
+                    $className,
+                    strstr(serialize($instance), ':')
+                )
+            );
         } else if (is_object($instance)) {
-            return unserialize(sprintf(
-                'O:%d:"%s"%s',
-                strlen($className),
-                $className,
-                strstr(strstr(serialize($instance), '"'), ':')
-            ));
+            return unserialize(
+                sprintf(
+                    'O:%d:"%s"%s',
+                    strlen($className),
+                    $className,
+                    strstr(strstr(serialize($instance), '"'), ':')
+                )
+            );
         }
     }
 
@@ -282,7 +286,7 @@ class DUtil
         $key = substr($salted, 0, 32);
         $iv = substr($salted, 32, 16);
 
-        $encrypted_data = openssl_encrypt((string)$data, 'AES-256-CBC', $key, true, $iv);
+        $encrypted_data = openssl_encrypt((string) $data, 'AES-256-CBC', $key, true, $iv);
         return base64_encode($salt . $encrypted_data);
     }
 
@@ -295,7 +299,7 @@ class DUtil
      */
     public static function decrypt($edata, $passphrase)
     {
-        $data = base64_decode((string)$edata);
+        $data = base64_decode((string) $edata);
         $salt = substr($data, 0, 16);
         $ct = substr($data, 16);
 
@@ -323,7 +327,7 @@ class DUtil
      * @param string $rating Maximum rating (inclusive) [ g | pg | r | x ]
      * @param boolean $tag True to return a complete IMG tag False for just the URL
      * @param array $attr Optional, additional key/value attributes to include in the IMG tag
-     * @return String containing either just a URL or a complete image tag
+     * return String containing either just a URL or a complete image tag
      */
     public static function gravatar($email, $size = 80, $imageset = 'mp', $rating = 'g', $tag = false, $attr = array())
     {
@@ -377,7 +381,15 @@ class DUtil
      */
     public static function GUID()
     {
-        return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+        // Generate 16 bytes (128 bits) of random data
+        $data = random_bytes(16);
+
+        // Set version to 4 (random) and adjust variant (RFC 4122 compliant)
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4 (random)
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant is RFC 4122
+
+        // Convert binary data into a readable UUID format
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
     // logging  user activity in a log file
@@ -395,6 +407,62 @@ class DUtil
         if (is_dir("./$dir_name")) {
         } else {
             mkdir("./$dir_name");
+        }
+    }
+    /**
+     * Generate a CSRF token and store it in the session with an expiration time
+     */
+    public static function csrf_token()
+    {
+        // Set token expiration time to 15 minutes
+        $token_expiry_time = time() + (15 * 60);
+
+        // Generate a new random token
+        $csrf_token = bin2hex(random_bytes(32));
+
+        // Store the token and its expiry time in the session
+        $_SESSION['csrf_token'] = $csrf_token;
+        $_SESSION['csrf_token_expiry'] = $token_expiry_time;
+
+        return htmlspecialchars($csrf_token, ENT_QUOTES, 'UTF-8');
+    }
+
+    public static function csrf_verifier($token)
+    {
+        // Check if the token is set and if it has expired
+        if (isset($_SESSION['csrf_token'], $_SESSION['csrf_token_expiry']) && $_SESSION['csrf_token_expiry'] > time()) {
+            // Check if the token provided by the user matches the one in the session
+            return hash_equals($_SESSION['csrf_token'], $token);
+        }
+        return false;
+    }
+
+    /**
+     * Log the details of failed CSRF attempts for monitoring and debugging
+     */
+    public static function logCsrfFailure()
+    {
+        $ip_address = $_SERVER['REMOTE_ADDR'];
+        $time = date('Y-m-d H:i:s');
+        $log_message = "[$time] CSRF validation failed from IP: $ip_address" . PHP_EOL;
+
+        // Log this attempt to a file (adjust the path to your needs)
+        file_put_contents('./log/csrf_failures_' . date("j.n.Y") . '.log', $log_message, FILE_APPEND);
+    }
+
+    /**
+     * Track failed CSRF attempts to apply rate-limiting
+     */
+    public static function trackFailedCsrfAttempts()
+    {
+        if (!isset($_SESSION['csrf_failures'])) {
+            $_SESSION['csrf_failures'] = 0;
+        }
+        $_SESSION['csrf_failures']++;
+
+        // Block further attempts if too many failures occur
+        if ($_SESSION['csrf_failures'] > 5) {
+            die("Too many failed attempts. Please try again later.");
         }
     }
 }

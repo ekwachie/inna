@@ -1,0 +1,6 @@
+[22-Sep-2024 16:17:54 UTC] PHP Warning:  Undefined array key "HTTP_REFERER" in /Users/evans/webroot/inna/app/Core/Utils/DUtil.php on line 399
+[22-Sep-2024 16:17:59 UTC] PHP Warning:  Undefined array key "HTTP_REFERER" in /Users/evans/webroot/inna/app/Core/Utils/DUtil.php on line 399
+[22-Sep-2024 16:18:00 UTC] PHP Warning:  Undefined array key "HTTP_REFERER" in /Users/evans/webroot/inna/app/Core/Utils/DUtil.php on line 399
+[22-Sep-2024 16:18:04 UTC] PHP Warning:  Undefined array key "HTTP_REFERER" in /Users/evans/webroot/inna/app/Core/Utils/DUtil.php on line 399
+[22-Sep-2024 16:18:06 UTC] PHP Warning:  Undefined array key "HTTP_REFERER" in /Users/evans/webroot/inna/app/Core/Utils/DUtil.php on line 399
+[22-Sep-2024 16:18:10 UTC] PHP Warning:  Undefined array key "HTTP_REFERER" in /Users/evans/webroot/inna/app/Core/Utils/DUtil.php on line 399

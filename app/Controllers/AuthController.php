@@ -32,17 +32,31 @@ class AuthController extends Controller
     {
         $user = new User;
         if ($request->isPost()) {
-            # code...
-            $body = $request->getBody();
-            $user->name('username')->value($_POST['username'])->required();
-            $user->name('password')->value($_POST['pass'])->required();
-            if ($user->isSuccess()) {
-                $user->authenticate($body['username'], $body['pass']);
+            #implementin CSRF TOKEN
+            $csrf_token = $_POST['csrf_token'] ?? '';
 
-                if (!empty($user->error)) {
-                    $flash = $this->setFlash($user->error[0], $user->error[1]);
+            if (!DUtil::csrf_verifier($csrf_token)) {
+                DUtil::logCsrfFailure();
+                DUtil::trackFailedCsrfAttempts();
+
+                $flash = $this->setFlash('error', 'CSRF token validation failed. Too many attempts may result in blocking.');
+            } else {
+
+                Session::unsert('csrf_token');
+                Session::unsert('csrf_token_expiry');
+                Session::unsert('csrf_failures');
+
+                $body = $request->getBody();
+                $user->name('username')->value($_POST['username'])->required();
+                $user->name('password')->value($_POST['pass'])->required();
+                if ($user->isSuccess()) {
+                    $user->authenticate($body['username'], $body['pass']);
+
+                    if (!empty($user->error)) {
+                        $flash = $this->setFlash($user->error[0], $user->error[1]);
+                    }
+
                 }
-
             }
         }
         // DUtil::debug($user->errors);
@@ -58,53 +72,58 @@ class AuthController extends Controller
     {
         $user = new User;
         if ($request->isPost()) {
-            $user->name('firstname')->value($_POST['fname'])->pattern('words')->required();
-            $user->name('lastname')->value($_POST['lname'])->pattern('words')->required();
-            $user->name('e-mail')->value($_POST['email'])->required()->is_email($_POST['email']);
-            $user->name('password')->value($_POST['pass'])->pattern('alphanum')->required();
-            $user->name('confirm password')->value($_POST['passc'])->pattern('alphanum')->required();
-            $user->name('password')->value($_POST['pass'])->equal($_POST['passc']);
+            #implementin CSRF TOKEN
+            $csrf_token = $_POST['csrf_token'] ?? '';
 
-            if ($this->user->isSuccess()) {
-                $body = $request->getBody();
-                $data = [
-                    'fname' => $body['fname'],
-                    'lname' => $body['lname'],
-                    'email' => $body['email'],
-                    'password' => DUtil::passHash($body['pass'])
-                ];
+            if (!DUtil::csrf_verifier($csrf_token)) {
+                DUtil::logCsrfFailure();
+                DUtil::trackFailedCsrfAttempts();
 
-                $stmt = $user->is_exist($data);
+                $flash = $this->setFlash('error', 'CSRF token validation failed. Too many attempts may result in blocking.');
+            } else {
+                $user->name('firstname')->value($_POST['fname'])->pattern('words')->required();
+                $user->name('lastname')->value($_POST['lname'])->pattern('words')->required();
+                $user->name('e-mail')->value($_POST['email'])->required()->is_email($_POST['email']);
+                $user->name('password')->value($_POST['pass'])->pattern('alphanum')->required();
+                $user->name('confirm password')->value($_POST['passc'])->pattern('alphanum')->required();
+                $user->name('password')->value($_POST['pass'])->equal($_POST['passc']);
 
-                if ($stmt) {
-                    $flash = $this->setFlash(
-                        'danger',
-                        'Sorry, you already have an acoount with us. Please login using your credentials'
-                    );
+                if ($this->user->isSuccess()) {
+                    $body = $request->getBody();
+                    $data = [
+                        'fname' => $body['fname'],
+                        'lname' => $body['lname'],
+                        'email' => $body['email'],
+                        'password' => DUtil::passHash($body['pass'])
+                    ];
 
-                }
-                else {
-                    $stmt = $user->createUser($data);
+                    $stmt = $user->is_exist($data);
+
                     if ($stmt) {
                         $flash = $this->setFlash(
-                            'success',
-                            'Account registered successfully'
+                            'danger',
+                            'Sorry, you already have an acoount with us. Please login using your credentials'
                         );
 
-                    }
-                }
+                    } else {
+                        $stmt = $user->createUser($data);
+                        if ($stmt) {
+                            $flash = $this->setFlash(
+                                'success',
+                                'Account registered successfully'
+                            );
 
+                        }
+                    }
+
+                }
             }
 
-            return $this->render('register', [
-                'static' => STATIC_URL,
-                'flash' => ($flash = isset($flash) ? $flash : ''),
-                'errors' => ($errors = isset($user->errors) ? $user->errors : ''),
-                'model' => $request->getBody(),
-            ]);
         }
         return $this->render('register', [
             'static' => STATIC_URL,
+            'flash' => ($flash = isset($flash) ? $flash : ''),
+            'errors' => ($errors = isset($user->errors) ? $user->errors : ''),
             'model' => $request->getBody(),
         ]);
     }
@@ -114,7 +133,6 @@ class AuthController extends Controller
         if (Session::issert('user')) {
             Session::destroy();
         }
-
         Application::$app->response->redirect('/');
     }
 }

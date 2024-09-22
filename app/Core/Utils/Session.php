@@ -20,13 +20,14 @@ class Session
      */
     public static function init()
     {
-        @session_start();
-        
         // Set session timeout to 1 hour (3600 seconds)
         ini_set('session.gc_maxlifetime', 3600);
 
         // Set session cookie lifetime to 1 hour (3600 seconds)
         ini_set('session.cookie_lifetime', 3600);
+        
+        @session_start();
+
     }
 
     // --------------------------------------------------------------------------
