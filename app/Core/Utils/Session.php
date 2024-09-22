@@ -10,25 +10,23 @@ namespace app\Core\Utils;
  *
  *
  */
-class Session {
+class Session
+{
 
     /**
      *
      * init - start a session
      *
      */
-    public static function init() {
-        // if(SESSION_STORE === 'redis') {
-        //     $sessionHandler = new DRedisHandler(new PredisClient(REDIS_URI), SECRET_KEY);
-        //     @session_set_save_handler($sessionHandler, true);
-        // }
-
-        // if(SESSION_STORE === 'files') {
-        //     $sessionHandler = new DFileHandler(SECRET_KEY);
-        //     ini_set('session.save_handler', 'files');
-        // }
-
+    public static function init()
+    {
         @session_start();
+        
+        // Set session timeout to 1 hour (3600 seconds)
+        ini_set('session.gc_maxlifetime', 3600);
+
+        // Set session cookie lifetime to 1 hour (3600 seconds)
+        ini_set('session.cookie_lifetime', 3600);
     }
 
     // --------------------------------------------------------------------------
@@ -40,7 +38,8 @@ class Session {
      * @param string $value The new value
      *
      */
-    public static function set($key, $value) {
+    public static function set($key, $value)
+    {
         $_SESSION[$key] = $value;
     }
 
@@ -53,7 +52,8 @@ class Session {
      * @return mixed The variable's value
      *
      */
-    public static function get($key) {
+    public static function get($key)
+    {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
         }
@@ -61,17 +61,19 @@ class Session {
 
     // -----------------------------------------------------------------------------
 
-    public static function unsert($key){
-        if(isset($_SESSION[$key])){
+    public static function unsert($key)
+    {
+        if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
-        } else{
+        } else {
             return;
         }
     }
 
     //------------------------------------------------------------------------------
 
-    public static function issert($key){
+    public static function issert($key)
+    {
         return (isset($_SESSION[$key])) ? true : false;
     }
 
@@ -83,15 +85,22 @@ class Session {
      * - Use the default cookie behaviour to delete the data
      * - Call session_destroy
      */
-    public static function destroy() {
+    public static function destroy()
+    {
         $_SESSION = array();
-        if(ini_get("session.use_cookies")) {
+        if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
             setcookie(
-                session_name(), ' ', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]
+                session_name(),
+                ' ',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
             );
         }
-        
+
         session_destroy();
     }
 
