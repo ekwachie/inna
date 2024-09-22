@@ -35,6 +35,27 @@ $config = [
     'url' => $_ENV['DOMAIN']
 ];
 
+// Prevent framing from any domain except your own
+header("Content-Security-Policy: frame-ancestors 'self'");
+// Add X-Content-Type-Options header to prevent MIME sniffing
+header('X-Content-Type-Options: nosniff');
+// Remove the X-Powered-By header
+header_remove('X-Powered-By');
+// Set the HSTS header
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+
+
+// Setting a cookie with HttpOnly flag
+setcookie('cookie_name', 'cookie_value', [
+    'expires' => time() + 3600, // 1 hour expiration
+    'path' => '/',
+    'domain' => 'https://' . $config['url'],
+    'secure' => true, // Ensures the cookie is sent over HTTPS
+    'httponly' => true, // HttpOnly flag to prevent client-side access
+    'samesite' => 'Strict' // Optional: SameSite attribute for CSRF protection
+]);
+
+
 define('BASE_URL', 'http://' . $config['url'] . '/');
 define('STATIC_URL', BASE_URL . 'public/static');
 define('MEDIA_URL', BASE_URL . 'public/img');

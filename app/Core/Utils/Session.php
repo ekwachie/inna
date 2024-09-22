@@ -22,10 +22,13 @@ class Session
     {
         // Set session timeout to 1 hour (3600 seconds)
         ini_set('session.gc_maxlifetime', 3600);
-
         // Set session cookie lifetime to 1 hour (3600 seconds)
         ini_set('session.cookie_lifetime', 3600);
-        
+        // Set a cookie with the Secure flag
+        ini_set('session.cookie_secure', '1');
+        // Set a cookie with the HttpOnly flag
+        ini_set('session.cookie_httponly', '1');
+
         @session_start();
 
     }
