@@ -27,13 +27,13 @@ $ composer create-project ekwachie/inna-framework [project_name] -s dev
 - Create migrations
 
 ```bash
-$ php migrations.php add [migration_name]
+$ ./migrations add table_name column:type column:type ...
 ```
 
 - Apply migrations
 
 ```bash
-$ php migrations.php update
+$ ./migrations update
 ```
 
 # Todo
