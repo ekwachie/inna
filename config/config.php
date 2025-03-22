@@ -37,10 +37,6 @@ $config = [
     'mail_from' => $_ENV['MAIL_FROM'],
 ];
 
-echo $config['mail_host'];
-echo $config['mail_from'];
-die();
-
 // Prevent framing from any domain except your own
 header("Content-Security-Policy: frame-ancestors 'self'");
 // Add X-Content-Type-Options header to prevent MIME sniffing
