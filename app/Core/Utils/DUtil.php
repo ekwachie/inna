@@ -397,16 +397,16 @@ class DUtil
     {
         //Write action to txt log
         $log  = date("F j, Y. h:i:s a").' - '.self::get_ip() . ' - '. $_SERVER['HTTP_USER_AGENT'].' - '. $_SERVER['REQUEST_URI'].' - '. $_SERVER['HTTP_REFERER'] . PHP_EOL;
-        self::isDir("log");
-        file_put_contents('./log/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
+        self::isDir("access");
+        file_put_contents('./log/access/log_' . date("j.n.Y") . '.log', $log, FILE_APPEND);
     }
 
     // create log directory
     public static function isDir($dir_name)
     {
-        if (is_dir("./$dir_name")) {
+        if (is_dir("./log/$dir_name")) {
         } else {
-            mkdir("./$dir_name");
+            mkdir("./log/$dir_name");
         }
     }
     /**

@@ -17,7 +17,7 @@
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', './log/app_error_log_' . date("j.n.Y") . '.log');
+ini_set('error_log', './log/errors/error_log_' . date("j.n.Y") . '.log');
 
 use app\Core\Application;
 use app\Core\Utils\DUtil;
@@ -32,8 +32,14 @@ $config = [
         'password' => $_ENV['DB_PASSWORD'],
 
     ],
-    'url' => $_ENV['DOMAIN']
+    'url' => $_ENV['DOMAIN'],
+    'mail_host' => $_ENV['MAIL_HOST'],
+    'mail_from' => $_ENV['MAIL_FROM'],
 ];
+
+echo $config['mail_host'];
+echo $config['mail_from'];
+die();
 
 // Prevent framing from any domain except your own
 header("Content-Security-Policy: frame-ancestors 'self'");
@@ -44,7 +50,6 @@ header_remove('X-Powered-By');
 // Set the HSTS header
 header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
 
-
 // Setting a cookie with HttpOnly flag
 setcookie('cookie_name', 'cookie_value', [
     'expires' => time() + 3600, // 1 hour expiration
@@ -54,7 +59,6 @@ setcookie('cookie_name', 'cookie_value', [
     'httponly' => true, // HttpOnly flag to prevent client-side access
     'samesite' => 'Strict' // Optional: SameSite attribute for CSRF protection
 ]);
-
 
 define('BASE_URL', 'http://' . $config['url'] . '/');
 define('STATIC_URL', BASE_URL . 'public/static');

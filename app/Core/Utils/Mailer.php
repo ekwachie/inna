@@ -5,14 +5,6 @@ use app\Core\Application;
 use app\Core\DbModel;
 use PHPMailer\PHPMailer\PHPMailer;
 
-/*
- * Kowri payment platform integration
- *
- * @author Desmond Evans - evans.kwachie@ucc.edu.gh http://www.iamdesmondjr.com
- * @version 1.0
- * @date July 22, 2019
- */
-
 class Mailer extends DbModel
 {
     public function sendMail($mailTo, $fname, $subject, $msg)
@@ -35,11 +27,7 @@ class Mailer extends DbModel
         $mail->From = "no-reply@myblogpay.com";
         $mail->FromName = "";
 
-        $mail->addAddress($mailTo, ""); //Recipient name is optional
-        // $mail->addAddress("recepient1@example.com"); //Address to which recipient will reply 
-        // $mail->addReplyTo("reply@yourdomain.com", "Reply"); //CC and BCC 
-        // $mail->addCC("cc@example.com");
-        // $mail->addBCC("bcc@example.com"); //Send HTML or Plain Text email 
+        $mail->addAddress($mailTo, ""); //Recipient name is optional 
         $mail->isHTML(true);
 
         $mail->Subject = $subject;
