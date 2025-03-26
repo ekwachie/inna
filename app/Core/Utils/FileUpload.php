@@ -2,7 +2,7 @@
 /*
  * PHP File uploading Class
  *
- * @author Desmond Evans - evans.kwachie@ucc.edu.gh http://www.iamdesmondjr.com
+ * @author Desmond Evans - ekwachie@payperlez.org http://www.iamdesmondjr.com
  * @version 1.0
  * @date July 26, 2019
  */

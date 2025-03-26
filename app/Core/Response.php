@@ -1,6 +1,6 @@
 <?php
 /**
- * @author      Evans Kwachie <evans.kwachie@ucc.edu.gh>
+ * @author      Payperlez Team <inna@payperlez.org>
  * @copyright   Copyright (C), 2019 Evans Kwachie.
  * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
  *              Refer to the LICENSE file distributed within the package.

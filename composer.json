@@ -6,8 +6,8 @@
     "version": "1.3.0",
     "minimum-stability": "stable",
     "authors": [{
-        "name": "Evans Kwachie",
-        "email": "ekwachie@payperlez.org",
+        "name": "Payperlez Team",
+        "email": "inna@payperlez.org",
         "role": "owner"
     }],
     "autoload": {
