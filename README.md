@@ -1,6 +1,6 @@
 # INNA
 
-INNA: A PHP minimal framework which allows you to control every bit of it.
+INNA: A PHP minimal framework which allows you to control every bit of it. Special thanks to our Payperlez Team working on this.
 
 ![Screenshot][def]
 
@@ -21,7 +21,7 @@ $ mv composer.phar /usr/local/bin/composer
 - Create a new project using composer.
 
 ```bash
-$ composer create-project ekwachie/inna-framework [project_name] -s dev
+$ composer create-project ekwachie/inna-framework [project_name] -s beta
 ```
 
 - Create migrations
@@ -36,6 +36,11 @@ $ ./migrations add table_name column:type column:type ...
 $ ./migrations update
 ```
 
+- Built With [ List of applications using INNA PHP FRAMEWORK ]
+```bash
+1. myblogpay.com
+```
+
 # Todo
-- Work on database migrations
+- Work on database migrations [ Alter tables etc ]
 - Work on a css framework like bootstrap with predefined components
