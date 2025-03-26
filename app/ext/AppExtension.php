@@ -2,7 +2,7 @@
 
 /**
  * @author      Payperlez Team <inna@payperlez.org>
- * @copyright   Copyright (C), 2019 Evans Kwachie.
+ * @copyright   Copyright (C), 2019. Payperlez Inc.
  * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
  *              Refer to the LICENSE file distributed within the package.
  * 
