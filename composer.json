@@ -4,7 +4,7 @@
     "keywords": ["Inna php framework", "payperlez php framework","do it yourself", "framework", "Inna", "Inna framework"],
     "license": "MIT",
     "version": "1.3.0",
-    "minimum-stability": "beta",
+    "minimum-stability": "stable",
     "authors": [{
         "name": "Evans Kwachie",
         "email": "ekwachie@payperlez.org",
