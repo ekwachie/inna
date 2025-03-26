@@ -18,25 +18,6 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', './log/errors/error_log_' . date("j.n.Y") . '.log');
-
-use app\Core\Application;
-use app\Core\Utils\DUtil;
-
-$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
-$dotenv->load();
-
-$config = [
-    'db' => [
-        'dsn' => $_ENV['DB_DSN'],
-        'user' => $_ENV['DB_USER'],
-        'password' => $_ENV['DB_PASSWORD'],
-
-    ],
-    'url' => $_ENV['DOMAIN'],
-    'mail_host' => $_ENV['MAIL_HOST'],
-    'mail_from' => $_ENV['MAIL_FROM'],
-];
-
 // Prevent framing from any domain except your own
 header("Content-Security-Policy: frame-ancestors 'self'");
 // Add X-Content-Type-Options header to prevent MIME sniffing
@@ -59,6 +40,27 @@ setcookie('cookie_name', 'cookie_value', [
 define('BASE_URL', 'http://' . $config['url'] . '/');
 define('STATIC_URL', BASE_URL . 'public/static');
 define('MEDIA_URL', BASE_URL . 'public/img');
+define('CSS_URL', BASE_URL . 'public/css');
+define('JS_URL', BASE_URL . 'public/js');
+define('FONTS_URL', BASE_URL . 'public/fonts');
+
+use app\Core\Application;
+use app\Core\Utils\DUtil;
+
+$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv->load();
+
+$config = [
+    'db' => [
+        'dsn' => $_ENV['DB_DSN'],
+        'user' => $_ENV['DB_USER'],
+        'password' => $_ENV['DB_PASSWORD'],
+
+    ],
+    'url' => $_ENV['DOMAIN'],
+    'mail_host' => $_ENV['MAIL_HOST'],
+    'mail_from' => $_ENV['MAIL_FROM'],
+];
 
 $app = new Application($_SERVER['DOCUMENT_ROOT'], $config);
 
