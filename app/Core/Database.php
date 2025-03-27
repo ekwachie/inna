@@ -5,7 +5,7 @@ namespace app\Core;
 use app\Core\Utils\DUtil;
 use \PDO as PDO;
 
-class Database
+class Database extends DbModel
 {
     public $pdo;
 

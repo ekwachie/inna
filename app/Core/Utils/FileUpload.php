@@ -2,117 +2,110 @@
 /*
  * PHP File uploading Class
  *
- * @author Desmond Evans - ekwachie@payperlez.org http://www.iamdesmondjr.com
+ * @author Desmond Evans - evans.kwachie@ucc.edu.gh
  * @version 1.0
  * @date July 26, 2019
  */
 
 namespace app\Core\Utils;
+
 class FileUpload
 {
+    private $_fileName;
+    private $_fileSize;
+    private $_fileTmp;
+    private $_fileType;
+    private $_fileExt;
+    private $_extensions;
+    private $_destination;
+    public $error;
+    public $success;
+    public $_move;
 
-	private $_fileName;
-	private $_fileSize;
-	private $_fileTmp;
-	private $_fileType;
-	private $_fileExt;
-	private $_extensions;
-	private $_destination;
-	public $error, $success;
+    function __construct($_fileName, $_fileSize, $_fileTmp, $_fileType, $_fileExt, $_destination)
+    {
+        $this->_fileName = $_fileName;
+        $this->_fileSize = $_fileSize;
+        $this->_fileTmp = $_fileTmp;
+        $this->_fileType = $_fileType;
+        $this->_fileExt = $_fileExt;
+        $this->_destination = $_destination;
+    }
 
-	function __construct($_fileName, $_fileSize, $_fileTmp, $_fileType, $_fileExt, $_destination)
-	{
-		# code...
-		// parent::__construct();
-		$this->_fileName = $_fileName;
-		$this->_fileSize = $_fileSize;
-		$this->_fileTmp = $_fileTmp;
-		$this->_fileType = $_fileType;
-		$this->_fileExt = $_fileExt;
-		$this->_destination = $_destination;
-	}
+    public function uploader()
+    {
+        $this->extensions();
+        if (!in_array($this->_fileExt, $this->_extensions)) {
+            return $this->error = ['error', 'Please check file extension to be: jpeg, jpg, png, gif'];
+        }
 
-	public function uploader()
-	{
-		$this->extensions();
-		if (in_array($this->_fileExt, $this->_extensions) == false) {
-			return $this->error = ['danger', 'please check file extention to be: jpeg, jpg, png, gif'];
-		}
-		else {
-			if (empty($this->error) == true) {
-				# code...
-				if ($this->_fileSize <= 2097152) {
-					# code...
-					// $this->move();
-					$this->compressImage($this->_fileTmp, $this->_destination, 70);
-				//return $this->alert = true;
-				}
-				else {
-					return $this->error = ['danger', 'please check file size'];
-				}
+        if ($this->_fileSize > 2097152) { // 2MB limit
+            return $this->error = ['error', 'Please check file size'];
+        }
 
-			}
-			else {
-				return $this->error = ['danger', 'please check file extention to be: jpeg, jpg, png, gif'];
-			}
-		}
-	}
+        if (in_array($this->_fileExt, ['jpeg', 'jpg', 'png', 'gif'])) {
+            return $this->compressImage($this->_fileTmp, $this->_destination, 70);
+        }
 
-	public function extensions()
-	{
-		return $this->_extensions = (['jpeg', 'jpg', 'png', 'gif']);
-	}
+        return $this->move();
+    }
 
-	// public function move()
-	// {
-	// 	$this->_move = move_uploaded_file($this->_fileTmp, $this->_destination . $this->_fileName);
+    public function extensions()
+    {
+        return $this->_extensions = ['jpeg', 'jpg', 'png', 'gif'];
+    }
 
-	// 	if ($this->_move) {
-	// 		return $this->alert = true;
-	// 	}
-	// 	else {
-	// 		return $this->alert = false;
-	// 	}
-	// }
+    public function move()
+    {
+        $this->_move = move_uploaded_file($this->_fileTmp, $this->_destination . $this->_fileName);
 
-	/* 
-	 * Custom method to compress image size and 
-	 * upload to the server
-	 */
-	public function compressImage($source, $destination, $quality)
-	{
-		// Get image info 
-		$imgInfo = getimagesize($source);
-		$mime = $imgInfo['mime'];
+        if ($this->_move) {
+            return $this->success = true;
+        }
 
-		// Create a new image from file 
-		switch ($mime) {
-			case 'image/jpeg':
-				$image = imagecreatefromjpeg($source);
-				break;
-			case 'image/png':
-				$image = imagecreatefrompng($source);
-				break;
-			case 'image/gif':
-				$image = imagecreatefromgif($source);
-				break;
-			default:
-				$image = imagecreatefromjpeg($source);
-		}
+        return $this->error = ['error', 'Failed to move the uploaded file'];
+    }
 
-		// Save image 
-		$compressed = imagejpeg($image, $destination . $this->_fileName, $quality);
+    /* 
+     * Custom method to compress image size and 
+     * upload to the server
+     */
+    public function compressImage($source, $destination, $quality)
+    {
+        // Get image info 
+        $imgInfo = getimagesize($source);
+        $mime = $imgInfo['mime'];
 
-		if ($compressed) {
-			return $this->success = true;
-		}
-		else {
-			return $this->error = ['danger', 'Something went wrong uploading image'];
-		}
+        // Create a new image from file and set the appropriate save function
+        switch ($mime) {
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($source);
+                $saveFunction = 'imagejpeg';
+                $extension = '.jpg';
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($source);
+                $saveFunction = 'imagepng';
+                $extension = '.png';
+                $quality = (int)($quality / 10); // PNG quality is 0-9
+                break;
+            case 'image/gif':
+                $image = imagecreatefromgif($source);
+                $saveFunction = 'imagegif';
+                $extension = '.gif';
+                break;
+            default:
+                return $this->error = ['error', 'Unsupported image format'];
+        }
 
-	// Return compressed image 
-	// return $destination; 
-	}
+        // Save the image in its original format
+        $filePath = $destination . $this->_fileName;
+        $saved = $saveFunction($image, $filePath, $quality);
+
+        if ($saved) {
+            return $this->success = true;
+        }
+
+        return $this->error = ['error', 'Failed to compress and upload the image'];
+    }
 }
-
-?>
