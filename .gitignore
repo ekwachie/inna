@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+vendor/
+log/
+
+# environment files
+.env
+.env.local
+
+# system files
+.DS_Store
+.idea/
+.vscode/
+
+# compiled files
+*.log
+*.zip
+*.pyc

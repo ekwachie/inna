@@ -1,0 +1,53 @@
+{% extends 'layouts/layout.twig' %} {% block content %} 
+
+<main class="home-main">
+  {% include 'partials/header.twig' %}
+  <section class="hero-box">
+    <p class="hero-title">
+      <iconify-icon
+        icon="circum:coffee-cup"
+        class="icon-coffee-left heart"
+      ></iconify-icon>
+      <span class="i">I</span>n<span class="n">n</span>a
+      <span class="f">F</span>r<span class="a">a</span>m<span class="e">e</span
+      >w<span class="o">o</span>r<span class="k">k</span>
+      <iconify-icon
+        icon="circum:coffee-cup"
+        class="icon-coffee-right heart"
+      ></iconify-icon>
+    </p>
+    <p class="hero-subtitle">
+      This is a PHP minimal framework which allows you to control every bit of it.
+    </p>
+    <p class="version-text mt-3">v1.0.2</p>
+    {# <p class="how-txt ml-10 mt-1">How to use</p> #}
+    <button class="btn btn-warning hero-btn">Get started</button><br />
+    <span class="icon-arrow">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="heart"
+        width="115"
+        height="100"
+        viewBox="0 0 24 24"
+      >
+        <g transform="translate(-1 15) scale(1 -1)">
+          <g
+            fill="none"
+            stroke="white"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+          >
+            <path d="m8 5l-5 5l5 5" />
+            <path d="M3 10h8c5.523 0 10 4.477 10 10v1" />
+          </g>
+        </g>
+      </svg>
+    </span>
+  </section>
+  <footer class="footer">
+    <section class="socials">Footer goes here</section>
+  </footer>
+</main>
+
+{% endblock %}
