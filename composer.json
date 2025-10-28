@@ -20,6 +20,7 @@
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.4",
         "twig/string-extra": "^3.3",
-        "phpmailer/phpmailer": "^6.8"
+        "phpmailer/phpmailer": "^6.8",
+        "geoip2/geoip2": "~2.0"
     }
 }

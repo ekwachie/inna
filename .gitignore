@@ -1,4 +1,17 @@
-vendor
-.idea
+# dependencies
+node_modules/
+vendor/
+
+# environment files
 .env
-migration
+.env.local
+
+# system files
+.DS_Store
+.idea/
+.vscode/
+
+# compiled files
+*.log
+*.zip
+*.pyc
