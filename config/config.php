@@ -15,9 +15,9 @@
 
 // error logging to file
 ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
-ini_set('error_log', './log/errors/error_log_' . date("j.n.Y") . '.log');
+ini_set('error_log', $_SERVER['DOCUMENT_ROOT'] . '/log/errors/error_log_' . date("j.n.Y") . '.log');
 // Set the default timezone to Africa/Accra
 date_default_timezone_set('Africa/Accra');
 
@@ -54,7 +54,6 @@ header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload"
 setcookie('cookie_name', 'cookie_value', [
     'expires' => time() + 3600, // 1 hour expiration
     'path' => '/',
-    'domain' => 'https://' . $config['url'],
     'secure' => true, // Ensures the cookie is sent over HTTPS
     'httponly' => true, // HttpOnly flag to prevent client-side access
     'samesite' => 'Strict' // Optional: SameSite attribute for CSRF protection
@@ -72,4 +71,4 @@ define('GEO_RDR', $reader);
 
 $app = new Application($_SERVER['DOCUMENT_ROOT'], $config);
 
-//DUtil::logActivity();
+DUtil::logActivity();

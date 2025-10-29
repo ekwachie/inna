@@ -1,52 +1,311 @@
-{% extends 'layouts/layout.twig' %} {% block content %} 
+{% extends 'layouts/layout.twig' %}
+{% block content %}
 
-<main class="home-main">
+<main>
   {% include 'partials/header.twig' %}
-  <section class="hero-box">
-    <p class="hero-title">
-      <iconify-icon
-        icon="circum:coffee-cup"
-        class="icon-coffee-left heart"
-      ></iconify-icon>
-      <span class="i">I</span>n<span class="n">n</span>a
-      <span class="f">F</span>r<span class="a">a</span>m<span class="e">e</span
-      >w<span class="o">o</span>r<span class="k">k</span>
-      <iconify-icon
-        icon="circum:coffee-cup"
-        class="icon-coffee-right heart"
-      ></iconify-icon>
-    </p>
-    <p class="hero-subtitle">
-      This is a PHP minimal framework which allows you to control every bit of it.
-    </p>
-    <p class="version-text mt-3">v1.0.2</p>
-    {# <p class="how-txt ml-10 mt-1">How to use</p> #}
-    <button class="btn btn-warning hero-btn">Get started</button><br />
-    <span class="icon-arrow">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="heart"
-        width="115"
-        height="100"
-        viewBox="0 0 24 24"
-      >
-        <g transform="translate(-1 15) scale(1 -1)">
-          <g
-            fill="none"
-            stroke="white"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-          >
-            <path d="m8 5l-5 5l5 5" />
-            <path d="M3 10h8c5.523 0 10 4.477 10 10v1" />
-          </g>
-        </g>
-      </svg>
-    </span>
+
+  <section class="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div class="mx-auto max-w-6xl px-4 py-20 text-center">
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+        <span class="text-indigo-400">Inna</span> Framework
+      </h1>
+      <p class="mt-4 text-lg md:text-xl text-slate-300">
+        A minimal PHP MVC framework by Payperlez for in-house apps, giving you full control.
+      </p>
+      <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-slate-700/60 px-4 py-1 text-sm text-slate-200 ring-1 ring-white/10">
+        <span class="h-2 w-2 rounded-full bg-emerald-400"></span> v1.3.x
+      </p>
+      <div class="mt-8 flex items-center justify-center gap-3">
+        <a href="#getting-started" class="inline-flex items-center rounded-md bg-indigo-500 px-5 py-3 text-white hover:bg-indigo-400 transition">
+          Get started
+        </a>
+        <a href="#routing" class="inline-flex items-center rounded-md bg-white/10 px-5 py-3 text-white hover:bg-white/20 transition">
+          Routing
+        </a>
+        <a href="#models-db" class="inline-flex items-center rounded-md bg-white/10 px-5 py-3 text-white hover:bg-white/20 transition">
+          Database
+        </a>
+      </div>
+    </div>
   </section>
-  <footer class="footer">
-    <section class="socials">Footer goes here</section>
+
+  <section class="w-full bg-white" id="getting-started">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Getting Started</h2>
+      <p class="mt-2 text-slate-600">Requirements: PHP 8.0+, Composer, MySQL.</p>
+      <ol class="mt-4 list-decimal space-y-2 pl-5 text-slate-700">
+        <li>Install dependencies and configure environment:</li>
+      </ol>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-bash">
+      # HOW TO USE
+
+    - Install composer globally. Do the following on a Linux. Visit [here](https://getcomposer.org/doc/00-intro.md) for windows.
+
+    $php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    $php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+    $php composer-setup.php
+    $php -r "unlink('composer-setup.php');"
+    <br/>
+    $ sudo mv composer.phar /usr/local/bin/composer
+    <br/>
+    - Create a new project using composer.
+
+    $ sudo composer create-project ekwachie/inna-framework [project_name] -s stable
+    <br/>
+    - Navigate to the project directory and install dependencies.
+    $ cd [project_name]
+    <br/>
+    $ composer install
+    <br/>
+    $ composer update
+    <br/>
+    - Copy the .env.example file to .env and update the values for DB_DSN, DB_USER, DB_PASSWORD, DOMAIN.
+    $ cp env.example .env
+    <br/>
+    # Update .env values for DB_DSN, DB_USER, DB_PASSWORD, DOMAIN
+  </code></pre>
+
+      <ol start="2" class="mt-4 list-decimal space-y-2 pl-5 text-slate-700">
+        <li>Run the app (configure your web server root to project directory):</li>
+      </ol>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-bash">$php -S 127.0.0.1:8080
+</code></pre>
+      <p class="mt-2 text-slate-700">Entry point: <code class="rounded bg-slate-100 px-1 py-0.5">index.php</code>. Routes are registered and the app is executed.</p>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="routing">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Routing</h2>
+      <p class="mt-2 text-slate-700">Define routes in <code class="rounded bg-slate-100 px-1 py-0.5">index.php</code> using <code class="rounded bg-slate-100 px-1 py-0.5">$app-&gt;router</code>:</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">$app-&gt;router-&gt;get('/', [HomeController::class, 'home']);
+$app-&gt;router-&gt;get('/about', [HomeController::class, 'about']);
+$app-&gt;router-&gt;get('/{ff}/{any:[\w\d-]+}', [HomeController::class, 'home']); // dynamic
+$app-&gt;router-&gt;post('/ajax/{follow}', [AjaxController::class, 'follow']);
+$</code></pre>
+      <p class="mt-2 text-slate-700">The router supports dynamic parameters via curly braces and regex constraints.</p>
+    </div>
+  </section>
+
+  <section class="w-full bg-white" id="controllers">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Controllers</h2>
+      <p class="mt-2 text-slate-700">Controllers extend <code class="rounded bg-slate-100 px-1 py-0.5">app\Core\Controller</code> and render Twig views.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">use app\Core\Controller;
+use app\Core\Request;
+
+class HomeController extends Controller
+{
+  public function home(Request $request)
+  {
+    return $this-&gt;render('home', [
+      'static' =&gt; STATIC_URL,
+      'date' =&gt; date('Y-m-d'),
+    ]);
+  }
+}
+$</code></pre>
+      <p class="mt-4 text-slate-700">Utilities:</p>
+      <ul class="mt-2 list-disc pl-6 text-slate-700">
+        <li><code class="rounded bg-slate-100 px-1 py-0.5">$this-&gt;render(view, data)</code></li>
+        <li><code class="rounded bg-slate-100 px-1 py-0.5">$this-&gt;redirect()</code></li>
+        <li><code class="rounded bg-slate-100 px-1 py-0.5">$this-&gt;apiMessage(status, data, errorCode)</code></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="views">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Views (Twig)</h2>
+      <p class="mt-2 text-slate-700">Views are in <code class="rounded bg-slate-100 px-1 py-0.5">public/views/</code> with layout and partial support. Custom Twig extensions live in <code class="rounded bg-slate-100 px-1 py-0.5">app/ext/AppExtension.php</code>.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-twig">
+
+  &lt;h1&gt;Hello INNA&lt;/h1&gt;
+  &lt;p&gt;Static path: {{ static }}&lt;/p&gt;
+  &lt;p&gt;Today: {{ date }}&lt;/p&gt;
+  &lt;p&gt;Price filter: {{ 1250.5 | price }}&lt;/p&gt;
+  &lt;p&gt;Area fn: {{ area(5, 10) }}&lt;/p&gt;
+
+$</code></pre>
+    </div>
+  </section>
+
+  <section class="w-full bg-white" id="models-db">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Models & Database</h2>
+      <p class="mt-2 text-slate-700">Use <code class="rounded bg-slate-100 px-1 py-0.5">app\Core\DbModel</code> for DB access. Connection configured via <code class="rounded bg-slate-100 px-1 py-0.5">.env</code> in <code class="rounded bg-slate-100 px-1 py-0.5">config/config.php</code>.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">use app\Core\DbModel;
+
+class User extends DbModel
+{
+  public function findByUsername(string $username): array
+  {
+    return $this-&gt;select(
+      "SELECT * FROM users WHERE username = :username",
+      ['username' =&gt; $username]
+    );
+  }
+
+  public function create(array $data): int
+  {
+    return (int)$this-&gt;insert('users', $data);
+  }
+}
+$</code></pre>
+      <p class="mt-2 text-slate-700">Helpers: <code class="rounded bg-slate-100 px-1 py-0.5">select</code>, <code class="rounded bg-slate-100 px-1 py-0.5">insert</code>, <code class="rounded bg-slate-100 px-1 py-0.5">insertUpdate</code>, <code class="rounded bg-slate-100 px-1 py-0.5">update</code>, <code class="rounded bg-slate-100 px-1 py-0.5">delete</code>, transactions, and parameter binding.</p>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="validation">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Validation</h2>
+      <p class="mt-2 text-slate-700">Use <code class="rounded bg-slate-100 px-1 py-0.5">app\Core\Model</code> chainable validators.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">$m = new \app\Core\Model();
+$m-&gt;name('email')-&gt;value($email)-&gt;required()-&gt;pattern('email');
+if (!$m-&gt;isSuccess()) {
+  return $m-&gt;getErrors();
+}
+$</code></pre>
+    </div>
+  </section>
+
+  <section class="w-full bg-white" id="middleware">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Middleware</h2>
+      <p class="mt-2 text-slate-700">Extend <code class="rounded bg-slate-100 px-1 py-0.5">BaseMiddleware</code> and register in your controller.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">use app\Core\Middlewares\AuthMiddleware;
+
+class AccountController extends Controller
+{
+  public function __construct()
+  {
+    $this-&gt;middleware(new AuthMiddleware(['dashboard', 'profile']));
+  }
+
+  public function dashboard() { /* ... */ }
+}
+$</code></pre>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="sessions">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Sessions</h2>
+      <p class="mt-2 text-slate-700">Session is initialized in <code class="rounded bg-slate-100 px-1 py-0.5">Application</code> and configurable in <code class="rounded bg-slate-100 px-1 py-0.5">Session.php</code>.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">use app\Core\Utils\Session;
+
+Session::set('user', ['id' =&gt; 1]);
+$user = Session::get('user');
+Session::unsert('user');
+$</code></pre>
+    </div>
+  </section>
+
+  <section class="w-full bg-white" id="security">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Security</h2>
+      <ul class="mt-2 list-disc pl-6 text-slate-700">
+        <li><strong>Headers</strong>: CSP, HSTS, X-Content-Type-Options (in <code class="rounded bg-slate-100 px-1 py-0.5">config/config.php</code>)</li>
+        <li><strong>Cookies</strong>: Secure, HttpOnly, SameSite</li>
+        <li><strong>Password</strong>: Bcrypt with cost 12 (<code class="rounded bg-slate-100 px-1 py-0.5">DUtil::passHash</code>, <code class="rounded bg-slate-100 px-1 py-0.5">passVerify</code>)</li>
+        <li><strong>CSRF</strong>: <code class="rounded bg-slate-100 px-1 py-0.5">DUtil::csrf_token()</code> and <code class="rounded bg-slate-100 px-1 py-0.5">DUtil::csrf_verifier()</code></li>
+        <li><strong>Encrypt/Decrypt</strong>: AES-256-CBC helpers</li>
+      </ul>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">$token = \app\Core\Utils\DUtil::csrf_token();
+// Verify on POST
+if (!\app\Core\Utils\DUtil::csrf_verifier($_POST['csrf'] ?? '')) {
+  \app\Core\Utils\DUtil::logCsrfFailure();
+  \app\Core\Utils\DUtil::trackFailedCsrfAttempts();
+  die('Invalid CSRF');
+}
+$</code></pre>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="migrations">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Migrations</h2>
+      <p class="mt-2 text-slate-700">Generate and apply migrations:</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-bash">./migrations add users "id INT AUTO_INCREMENT PRIMARY KEY" "email VARCHAR(255) UNIQUE" "password VARCHAR(255)"
+./migrations update
+$</code></pre>
+      <p class="mt-2 text-slate-700">Tables tracked in <code class="rounded bg-slate-100 px-1 py-0.5">migrations</code> table; scripts live under <code class="rounded bg-slate-100 px-1 py-0.5">./migration/</code>.</p>
+    </div>
+  </section>
+
+  <section class="w-full bg-white" id="twig-extensions">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Twig Extensions</h2>
+      <p class="mt-2 text-slate-700">Custom filter and function:</p>
+      <ul class="mt-2 list-disc pl-6 text-slate-700">
+        <li><code>{{ '{{' }} amount | price {{ '}}' }}</code> → GHS currency</li>
+        <li><code>{{ '{{' }} area(5, 10) {{ '}}' }}</code> → 50</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="config">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Configuration</h2>
+      <p class="mt-2 text-slate-700">Edit <code class="rounded bg-slate-100 px-1 py-0.5">.env</code> and check <code class="rounded bg-slate-100 px-1 py-0.5">config/config.php</code> for security headers and constants.</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-env">DB_DSN=mysql:host=127.0.0.1;port=3306;dbname=inna;charset=utf8mb4
+DB_USER=root
+DB_PASSWORD=
+DOMAIN=127.0.0.1:8080
+$</code></pre>
+      <p class="mt-2 text-slate-700">Constants available: <code class="rounded bg-slate-100 px-1 py-0.5">BASE_URL</code>, <code class="rounded bg-slate-100 px-1 py-0.5">STATIC_URL</code>, <code class="rounded bg-slate-100 px-1 py-0.5">MEDIA_URL</code>, <code class="rounded bg-slate-100 px-1 py-0.5">GEO_RDR</code>.</p>
+    </div>
+  </section>
+
+  <section class="w-full bg-white" id="logging">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">Logging</h2>
+      <p class="mt-2 text-slate-700">Access logs: <code class="rounded bg-slate-100 px-1 py-0.5">log/access/log_&lt;date&gt;.log</code>. CSRF failures logged daily. Activity logging via <code class="rounded bg-slate-100 px-1 py-0.5">DUtil::logActivity()</code> is wired in <code class="rounded bg-slate-100 px-1 py-0.5">config/config.php</code>.</p>
+    </div>
+  </section>
+
+  <section class="w-full bg-slate-50" id="examples">
+    <div class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-slate-900">End-to-end Example</h2>
+      <p class="mt-2 text-slate-700">Route → Controller → Model → View</p>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">// index.php
+$app-&gt;router-&gt;get('/users/{username:[\w-]+}', [UserController::class, 'show']);
+$</code></pre>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-php">// app/Controllers/UserController.php
+<br>
+use app\Core\Controller;
+use app\Core\Request;
+use app\Models\User;
+class UserController extends Controller
+{
+  public function show(Request $request)
+  {
+    $username = $request-&gt;getRouteParam('username');
+    $user = (new User())-&gt;select(
+      "SELECT username, email FROM users WHERE username = :u",
+      ['u' =&gt; $username]
+    );
+    return $this-&gt;render('user/show', ['user' =&gt; $user[0] ?? null]);
+  }
+}
+$</code></pre>
+      <pre class="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100"><code class="language-twig">{# public/views/user/show.twig #}
+
+  {{ '{% if user %}' }}
+    &lt;h2&gt;{{ '{{' }} user.username {{ '}}' }}&lt;/h2&gt;
+    &lt;p&gt;{{ '{{' }} user.email {{ '}}' }}&lt;/p&gt;
+  {{ '{% else %}' }}
+    &lt;p&gt;User not found&lt;/p&gt;
+  {{ '{% endif %}' }}
+
+$</code></pre>
+    </div>
+  </section>
+
+  <footer class="w-full border-t border-slate-200 bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-6 text-center text-sm text-slate-500">
+      Documentation last updated: {{ date|default('') }}
+    </div>
   </footer>
 </main>
 

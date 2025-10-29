@@ -18,6 +18,7 @@ namespace app\Controllers;
 
 use app\Core\Controller;
 use app\Core\Request;
+use app\Core\Middlewares\AuthMiddleware;
 
 class HomeController extends Controller
 {
