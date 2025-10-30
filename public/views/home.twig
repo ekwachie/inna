@@ -45,24 +45,28 @@
     $php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
     $php composer-setup.php
     $php -r "unlink('composer-setup.php');"
-    <br/>
+  
     $ sudo mv composer.phar /usr/local/bin/composer
-    <br/>
+ 
     - Create a new project using composer.
 
     $ sudo composer create-project ekwachie/inna-framework [project_name] -s stable
-    <br/>
+
     - Navigate to the project directory and install dependencies.
     $ cd [project_name]
-    <br/>
+
     $ composer install
-    <br/>
+
     $ composer update
-    <br/>
+
     - Copy the .env.example file to .env and update the values for DB_DSN, DB_USER, DB_PASSWORD, DOMAIN.
+
     $ cp env.example .env
-    <br/>
+ 
     # Update .env values for DB_DSN, DB_USER, DB_PASSWORD, DOMAIN
+
+    - Generate Keys
+    $ openssl rand -hex 32
   </code></pre>
 
       <ol start="2" class="mt-4 list-decimal space-y-2 pl-5 text-slate-700">

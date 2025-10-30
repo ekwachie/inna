@@ -15,7 +15,7 @@
 
 // error logging to file
 ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', $_SERVER['DOCUMENT_ROOT'] . '/log/errors/error_log_' . date("j.n.Y") . '.log');
 // Set the default timezone to Africa/Accra
