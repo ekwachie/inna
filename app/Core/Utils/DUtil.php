@@ -405,8 +405,10 @@ class DUtil
     public static function isDir($dir_name)
     {
         if (is_dir("./log/$dir_name")) {
+            return true;
         } else {
-            mkdir("./log/$dir_name");
+            mkdir("./log/$dir_name",0777, true);
+            return true;
         }
     }
     /**

@@ -18,7 +18,8 @@ namespace app\Controllers;
 
 use app\Core\Controller;
 use app\Core\Request;
-use app\Core\Middlewares\AuthMiddleware;
+use app\Core\Utils\ActivityLogService;
+use app\Core\Utils\AuditLogService;
 
 class HomeController extends Controller
 {
@@ -28,7 +29,6 @@ class HomeController extends Controller
             'static' => STATIC_URL,
             'date' => date('Y-m-d'),
         ];
-
         return $this->render('home', $data);
     }
 

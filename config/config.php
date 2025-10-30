@@ -15,15 +15,15 @@
 
 // error logging to file
 ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', $_SERVER['DOCUMENT_ROOT'] . '/log/errors/error_log_' . date("j.n.Y") . '.log');
 // Set the default timezone to Africa/Accra
 date_default_timezone_set('Africa/Accra');
 
 use app\Core\Application;
-use app\Core\Utils\DUtil;
 use GeoIp2\Database\Reader;
+use app\Core\Utils\ActivityLogService;
 
 
 
@@ -71,4 +71,4 @@ define('GEO_RDR', $reader);
 
 $app = new Application($_SERVER['DOCUMENT_ROOT'], $config);
 
-DUtil::logActivity();
+ActivityLogService::logRequest($app->request);
