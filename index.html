@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">Payperlez Project Timer</h1>
+                <p class="text-gray-600 text-lg">Counting down to something different...</p>
+            </div>
+
+            <!-- Countdown Display -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6" id="countdown">
+                    <!-- Weeks -->
+                    <div class="countdown-item bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                        <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="weeks">00</div>
+                        <div class="text-sm md:text-base text-blue-100 uppercase tracking-wide">Weeks</div>
+                    </div>
+                    
+                    <!-- Days -->
+                    <div class="countdown-item bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                        <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="days">00</div>
+                        <div class="text-sm md:text-base text-purple-100 uppercase tracking-wide">Days</div>
+                    </div>
+                    
+                    <!-- Hours -->
+                    <div class="countdown-item bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                        <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="hours">00</div>
+                        <div class="text-sm md:text-base text-green-100 uppercase tracking-wide">Hours</div>
+                    </div>
+                    
+                    <!-- Minutes -->
+                    <div class="countdown-item bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                        <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="minutes">00</div>
+                        <div class="text-sm md:text-base text-orange-100 uppercase tracking-wide">Minutes</div>
+                    </div>
+                </div>
+
+                <!-- Seconds (separate display) -->
+                <div class="mt-8 text-center">
+                    <div class="inline-block bg-gray-800 rounded-lg px-6 py-3">
+                        <div class="text-3xl md:text-4xl font-bold text-white" id="seconds">00</div>
+                        <div class="text-sm text-gray-300 uppercase tracking-wide mt-1">Seconds</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mt-8">
+                    <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 h-3 rounded-full transition-all duration-1000" id="progress-bar" style="width: 100%"></div>
+                    </div>
+                    <p class="text-center text-gray-600 text-sm mt-2" id="progress-text">100% remaining</p>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="mt-8 text-center text-gray-600">
+                <p class="text-sm">Target Date: <span id="target-date" class="font-semibold"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration: Set countdown duration (8-10 weeks)
+        const WEEKS_TO_COUNTDOWN = 10; // Change this to 8-10 weeks as needed
+        const TOTAL_SECONDS = WEEKS_TO_COUNTDOWN * 7 * 24 * 60 * 60;
+
+        // Get target date (10 weeks from now)
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + (WEEKS_TO_COUNTDOWN * 7));
+        
+        // Display target date
+        document.getElementById('target-date').textContent = targetDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Get or create countdown end time in localStorage
+        let countdownEndTime;
+        const storedEndTime = localStorage.getItem('countdownEndTime');
+        
+        if (storedEndTime && new Date(storedEndTime) > new Date()) {
+            // Use stored end time if it exists and is in the future
+            countdownEndTime = new Date(storedEndTime);
+        } else {
+            // Create new countdown
+            countdownEndTime = targetDate;
+            localStorage.setItem('countdownEndTime', countdownEndTime.toISOString());
+        }
+
+        // Update countdown display
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = countdownEndTime.getTime() - now;
+
+            if (distance < 0) {
+                // Countdown finished
+                document.getElementById('weeks').textContent = '00';
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('progress-text').textContent = 'Countdown finished!';
+                return;
+            }
+
+            // Calculate time units
+            const weeks = Math.floor(distance / (1000 * 60 * 60 * 24 * 7));
+            const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Update display
+            document.getElementById('weeks').textContent = String(weeks).padStart(2, '0');
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+
+            // Update progress bar
+            const progress = (distance / (TOTAL_SECONDS * 1000)) * 100;
+            document.getElementById('progress-bar').style.width = Math.max(0, Math.min(100, progress)) + '%';
+            document.getElementById('progress-text').textContent = Math.round(progress) + '% remaining';
+        }
+
+        // Update countdown every second
+        updateCountdown(); // Initial call
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
