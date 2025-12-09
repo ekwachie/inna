@@ -61,7 +61,8 @@
             </div>
 
             <!-- Info Section -->
-            <div class="mt-8 text-center text-gray-600">
+            <div class="mt-8 text-center text-gray-600 space-y-2">
+                <p class="text-sm">Start Date: <span id="start-date" class="font-semibold"></span></p>
                 <p class="text-sm">Target Date: <span id="target-date" class="font-semibold"></span></p>
             </div>
         </div>
@@ -70,32 +71,37 @@
     <script>
         // Configuration: Set countdown duration (8-10 weeks)
         const WEEKS_TO_COUNTDOWN = 10; // Change this to 8-10 weeks as needed
-        const TOTAL_SECONDS = WEEKS_TO_COUNTDOWN * 7 * 24 * 60 * 60;
-
-        // Get target date (10 weeks from now)
-        const targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() + (WEEKS_TO_COUNTDOWN * 7));
         
-        // Display target date
-        document.getElementById('target-date').textContent = targetDate.toLocaleDateString('en-US', {
+        // Configuration: Set the start date (YYYY-MM-DD format) and time (HH:mm format)
+        const START_DATE = '2025-11-03'; // Change this to your desired start date
+        const START_TIME = '00:00:00'; // Change this to your desired start time (24-hour format)
+        
+        // Set the hardcoded start date
+        const countdownStartTime = new Date(START_DATE + 'T' + START_TIME);
+        
+        // Calculate target date as exactly 10 weeks from the start date
+        const countdownEndTime = new Date(countdownStartTime);
+        countdownEndTime.setTime(countdownEndTime.getTime() + (WEEKS_TO_COUNTDOWN * 7 * 24 * 60 * 60 * 1000));
+        
+        // Display start date
+        document.getElementById('start-date').textContent = countdownStartTime.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
-
-        // Get or create countdown end time in localStorage
-        let countdownEndTime;
-        const storedEndTime = localStorage.getItem('countdownEndTime');
         
-        if (storedEndTime && new Date(storedEndTime) > new Date()) {
-            // Use stored end time if it exists and is in the future
-            countdownEndTime = new Date(storedEndTime);
-        } else {
-            // Create new countdown
-            countdownEndTime = targetDate;
-            localStorage.setItem('countdownEndTime', countdownEndTime.toISOString());
-        }
+        // Display target date (calculated from start date)
+        document.getElementById('target-date').textContent = countdownEndTime.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
         // Update countdown display
         function updateCountdown() {
@@ -128,8 +134,9 @@
             document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 
-            // Update progress bar
-            const progress = (distance / (TOTAL_SECONDS * 1000)) * 100;
+            // Update progress bar based on actual duration from start to end
+            const totalDuration = countdownEndTime.getTime() - countdownStartTime.getTime();
+            const progress = (distance / totalDuration) * 100;
             document.getElementById('progress-bar').style.width = Math.max(0, Math.min(100, progress)) + '%';
             document.getElementById('progress-text').textContent = Math.round(progress) + '% remaining';
         }
