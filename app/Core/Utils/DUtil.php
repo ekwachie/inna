@@ -431,12 +431,22 @@ class DUtil
 
     public static function csrf_verifier($token)
     {
-        // Check if the token is set and if it has expired
-        if (isset($_SESSION['csrf_token'], $_SESSION['csrf_token_expiry']) && $_SESSION['csrf_token_expiry'] > time()) {
-            // Check if the token provided by the user matches the one in the session
-            return hash_equals($_SESSION['csrf_token'], $token);
+        // Check if token exists in session
+        if (!isset($_SESSION['csrf_token']) || !isset($_SESSION['csrf_token_expiry'])) {
+            return ['valid' => false, 'reason' => 'missing'];
         }
-        return false;
+        
+        // Check if token has expired
+        if ($_SESSION['csrf_token_expiry'] <= time()) {
+            return ['valid' => false, 'reason' => 'expired'];
+        }
+        
+        // Check if the token provided by the user matches the one in the session
+        if (hash_equals($_SESSION['csrf_token'], $token)) {
+            return ['valid' => true];
+        }
+        
+        return ['valid' => false, 'reason' => 'invalid'];
     }
 
     /**
@@ -457,14 +467,32 @@ class DUtil
      */
     public static function trackFailedCsrfAttempts()
     {
+        // Reset failure count if last failure was more than 30 minutes ago
+        if (isset($_SESSION['csrf_last_failure_time'])) {
+            $timeSinceLastFailure = time() - $_SESSION['csrf_last_failure_time'];
+            if ($timeSinceLastFailure > (30 * 60)) {
+                $_SESSION['csrf_failures'] = 0;
+            }
+        }
+        
         if (!isset($_SESSION['csrf_failures'])) {
             $_SESSION['csrf_failures'] = 0;
         }
         $_SESSION['csrf_failures']++;
-
+        $_SESSION['csrf_last_failure_time'] = time();
+        
         // Block further attempts if too many failures occur
         if ($_SESSION['csrf_failures'] > 5) {
             die("Too many failed attempts. Please try again later.");
         }
+    }
+    
+    /**
+     * Reset CSRF failure tracking (call on successful validation)
+     */
+    public static function resetCsrfFailures()
+    {
+        unset($_SESSION['csrf_failures']);
+        unset($_SESSION['csrf_last_failure_time']);
     }
 }

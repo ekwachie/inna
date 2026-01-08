@@ -34,6 +34,9 @@ class Database extends DbModel
         $files = array_filter(scandir(Application::$ROOT_DIR . '/migration'), function ($file) {
             return pathinfo($file, PATHINFO_EXTENSION) === 'php';
         });
+        
+        // Sort migrations to ensure proper order
+        sort($files);
     
         $toApplyMigrations = array_diff($files, $appliedMigrations);
     

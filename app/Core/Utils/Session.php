@@ -24,10 +24,10 @@ class Session
         ini_set('session.gc_maxlifetime', 3600);
         // Set session cookie lifetime to 1 hour (3600 seconds)
         ini_set('session.cookie_lifetime', 3600);
-        // Set a cookie with the Secure flag
-        ini_set('session.cookie_secure', '1');
+        // Set a cookie with the Secure flag (only on HTTPS)
+        ini_set('session.cookie_secure', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 1 : 0);
         // Set a cookie with the HttpOnly flag
-        ini_set('session.cookie_httponly', '1');
+        ini_set('session.cookie_httponly', 1);
 
         @session_start();
 

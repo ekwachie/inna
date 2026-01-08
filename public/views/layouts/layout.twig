@@ -1,47 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <!-- Tailwind CSS -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{% block meta_description %}Inna Framework - A PHP minimal framework which allows you to control every bit of it{% endblock %}">
+    
+    <title>{% block title %}Inna Framework - Minimal PHP MVC Framework{% endblock %}</title>
+    
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome icons -->
-    <script
-      src="https://kit.fontawesome.com/205332f948.js"
-      crossorigin="anonymous"
-    ></script>
-    <!-- Bootstrap CSS -->
-    {# <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    /> #}
-    <link rel="stylesheet" href="{{ static }}/css/styles.css" />
-    <link rel="stylesheet" href="{{ static }}/css/inna-ui/inna-ui.css" />
-    <title>
-      Inna framework - This is a PHP minimal framework which allows you to
-      control every bit of it.
-    </title>
-  </head>
-  <body>
-    <!-- Optional JavaScript; choose one of the two! -->
-    {% block content %}{% endblock %}
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#031441',
+                            50: '#E6E8EF',
+                            100: '#CCD1DF',
+                            200: '#99A3BF',
+                            300: '#66759F',
+                            400: '#33477F',
+                            500: '#031441',
+                            600: '#021034',
+                            700: '#020C27',
+                            800: '#01081A',
+                            900: '#01040D',
+                        },
+                        secondary: {
+                            DEFAULT: '#C9A227',
+                            50: '#FDF8E8',
+                            100: '#FAF0D1',
+                            200: '#F5E1A3',
+                            300: '#F0D275',
+                            400: '#EBC347',
+                            500: '#C9A227',
+                            600: '#A1821F',
+                            700: '#796117',
+                            800: '#51410F',
+                            900: '#282008',
+                        },
+                        accent: {
+                            DEFAULT: '#C9A227',
+                            light: '#F5E1A3',
+                        },
+                        neutral: {
+                            white: '#FFFFFF',
+                            light: '#F8FAFC',
+                            dark: '#1E293B',
+                        },
+                        border: {
+                            primary: '#E2E8F0',
+                        },
+                        background: {
+                            primary: '#FFFFFF',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'system-ui', 'sans-serif'],
+                        display: ['Clash Display', 'Outfit', 'sans-serif'],
+                    },
+                    container: {
+                        center: true,
+                        padding: '1rem',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts - Outfit & Clash Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Clash Display', 'Outfit', sans-serif;
+        }
+        
+        /* Gradient text utility */
+        .gradient-text {
+            background: linear-gradient(135deg, #031441 0%, #C9A227 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Subtle gradient background */
+        .gradient-bg {
+            background: linear-gradient(135deg, #F8FAFC 0%, #FDF8E8 50%, #E6E8EF 100%);
+        }
+        
+        /* Button hover effects */
+        .btn-primary {
+            @apply bg-primary text-white px-6 py-3 font-medium rounded-lg transition-all duration-200;
+        }
+        .btn-primary:hover {
+            @apply bg-primary-600 shadow-lg;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            @apply border border-primary text-primary px-6 py-3 font-medium rounded-lg transition-all duration-200;
+        }
+        .btn-secondary:hover {
+            @apply bg-primary text-white;
+            transform: translateY(-1px);
+        }
+        
+        .btn-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: #031441;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-wrap: nowrap;
+        }
+        .btn-link:hover {
+            color: #C9A227;
+        }
+        .btn-link svg {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+        .btn-link:hover svg {
+            transform: translateX(3px);
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            @apply transition-all duration-300;
+        }
+        .card-hover:hover {
+            @apply shadow-xl;
+            transform: translateY(-4px);
+        }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="antialiased text-neutral-dark bg-neutral-white">
+    {% block body %}
+        {% include 'partials/header.twig' %}
+        
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        
+        {% include 'partials/footer.twig' %}
+    {% endblock %}
+    
+    <!-- Main JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{{ static }}/js/inna-ajax.js"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    -->
-  </body>
+    
+    {% block scripts %}{% endblock %}
+</body>
 </html>

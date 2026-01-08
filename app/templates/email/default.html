@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{APP_NAME}}</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #F8FAFC; font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <!-- Wrapper Table -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #F8FAFC;">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+                <!-- Main Container -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; width: 100%; background-color: #FFFFFF; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #031441 0%, #C9A227 100%); padding: 40px 40px 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                            <h1 style="margin: 0; color: #FFFFFF; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">{{APP_NAME}}</h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <!-- Greeting -->
+                            <p style="margin: 0 0 20px; color: #1E293B; font-size: 16px; line-height: 24px;">
+                                Hello <strong style="color: #031441;">{{FNAME}}</strong>,
+                            </p>
+                            
+                            <!-- Message -->
+                            <div style="color: #1E293B; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
+                                {{MESSAGE}}
+                            </div>
+                            
+                            <!-- Divider -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td style="padding: 20px 0;">
+                                        <div style="height: 1px; background-color: #E2E8F0;"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Signature -->
+                            <p style="margin: 0 0 10px; color: #1E293B; font-size: 16px; line-height: 24px;">
+                                Best regards,<br>
+                                <strong style="color: #031441;">The {{APP_NAME}} Team</strong>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #F8FAFC; padding: 30px 40px; border-radius: 0 0 12px 12px; border-top: 1px solid #E2E8F0;">
+                            <!-- Footer Text -->
+                            <p style="margin: 0 0 15px; color: #64748B; font-size: 12px; line-height: 18px; text-align: center;">
+                                This email was sent to <a href="mailto:{{MAIL_TO}}" style="color: #031441; text-decoration: none; font-weight: 500;">{{MAIL_TO}}</a>
+                            </p>
+                            
+                            <!-- Copyright -->
+                            <p style="margin: 0 0 20px; color: #94A3B8; font-size: 12px; line-height: 18px; text-align: center;">
+                                © {{CURRENT_YEAR}} {{APP_NAME}}. All rights reserved.
+                            </p>
+                            
+                            <!-- Social Links (Optional) -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin: 0 auto;">
+                                <tr>
+                                    <td align="center" style="padding: 0 8px;">
+                                        <a href="{{APP_URL}}" style="color: #64748B; text-decoration: none; font-size: 12px;">Website</a>
+                                    </td>
+                                    <td style="color: #E2E8F0;">|</td>
+                                    <td align="center" style="padding: 0 8px;">
+                                        <a href="{{APP_URL}}/docs" style="color: #64748B; text-decoration: none; font-size: 12px;">Documentation</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                
+                <!-- Bottom Spacing -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="padding: 20px 0; text-align: center;">
+                            <p style="margin: 0; color: #94A3B8; font-size: 11px; line-height: 16px;">
+                                If you did not expect this email, you can safely ignore it.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+

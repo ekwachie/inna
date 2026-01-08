@@ -9,7 +9,18 @@ class ActivityLogService
     public static function logRequest(Request $request, array $extra = []): void
     {
         $ip = DUtil::get_ip();
-        $ip = '197.210.197.217';
+        
+        // Use hardcoded IP only in development
+        $appEnv = $_ENV['APP_ENV'] ?? null;
+        $isDevelopment = ($appEnv === 'development' || $appEnv === 'dev') || 
+                         ($appEnv !== 'production' && $appEnv !== 'prod' && 
+                          (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off'));
+        
+        if ($isDevelopment) {
+            // Use hardcoded IP only in development Ghana (Ghana IP)
+            $ip = '154.161.46.102';
+        }
+        
         // get country from ip address using GeoIP2
         $country = GEO_RDR->country($ip);
         $countryName = $country->country->name;

@@ -3,74 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timer</title>
+    <title>Countdown Timer - Inna Framework</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#031441',
+                            50: '#E6E8EF',
+                            100: '#CCD1DF',
+                            200: '#99A3BF',
+                            300: '#66759F',
+                            400: '#33477F',
+                            500: '#031441',
+                            600: '#021034',
+                            700: '#020C27',
+                            800: '#01081A',
+                            900: '#01040D',
+                        },
+                        secondary: {
+                            DEFAULT: '#C9A227',
+                            50: '#FDF8E8',
+                            100: '#FAF0D1',
+                            200: '#F5E1A3',
+                            300: '#F0D275',
+                            400: '#EBC347',
+                            500: '#C9A227',
+                            600: '#A1821F',
+                            700: '#796117',
+                            800: '#51410F',
+                            900: '#282008',
+                        },
+                    },
+                    fontFamily: {
+                        display: ['Outfit', 'system-ui', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #031441 0%, #C9A227 100%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #031441 0%, #C9A227 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center">
+<body class="bg-gradient-to-br from-primary-50 to-neutral-100 min-h-screen flex items-center justify-center font-display">
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
             <!-- Header -->
             <div class="text-center mb-8">
-                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">Payperlez Project Timer</h1>
-                <p class="text-gray-600 text-lg">Counting down to something different...</p>
+                <h1 class="text-4xl md:text-5xl font-bold text-primary mb-2">Payperlez Project Timer</h1>
+                <p class="text-neutral-600 text-lg">Counting down to something different...</p>
             </div>
 
             <!-- Countdown Display -->
-            <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-neutral-200">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6" id="countdown">
                     <!-- Weeks -->
-                    <div class="countdown-item bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="countdown-item bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl p-6 text-center transform transition-all hover:scale-105 shadow-lg">
                         <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="weeks">00</div>
-                        <div class="text-sm md:text-base text-blue-100 uppercase tracking-wide">Weeks</div>
+                        <div class="text-sm md:text-base text-primary-100 uppercase tracking-wide font-medium">Weeks</div>
                     </div>
                     
                     <!-- Days -->
-                    <div class="countdown-item bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="countdown-item bg-gradient-to-br from-secondary-500 to-secondary-700 rounded-xl p-6 text-center transform transition-all hover:scale-105 shadow-lg">
                         <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="days">00</div>
-                        <div class="text-sm md:text-base text-purple-100 uppercase tracking-wide">Days</div>
+                        <div class="text-sm md:text-base text-secondary-100 uppercase tracking-wide font-medium">Days</div>
                     </div>
                     
                     <!-- Hours -->
-                    <div class="countdown-item bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="countdown-item bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl p-6 text-center transform transition-all hover:scale-105 shadow-lg">
                         <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="hours">00</div>
-                        <div class="text-sm md:text-base text-green-100 uppercase tracking-wide">Hours</div>
+                        <div class="text-sm md:text-base text-primary-100 uppercase tracking-wide font-medium">Hours</div>
                     </div>
                     
                     <!-- Minutes -->
-                    <div class="countdown-item bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-center transform transition-all hover:scale-105">
+                    <div class="countdown-item bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-xl p-6 text-center transform transition-all hover:scale-105 shadow-lg">
                         <div class="text-4xl md:text-6xl font-bold text-white mb-2" id="minutes">00</div>
-                        <div class="text-sm md:text-base text-orange-100 uppercase tracking-wide">Minutes</div>
+                        <div class="text-sm md:text-base text-secondary-100 uppercase tracking-wide font-medium">Minutes</div>
                     </div>
                 </div>
 
                 <!-- Seconds (separate display) -->
                 <div class="mt-8 text-center">
-                    <div class="inline-block bg-gray-800 rounded-lg px-6 py-3">
+                    <div class="inline-block bg-primary rounded-lg px-6 py-3 shadow-lg">
                         <div class="text-3xl md:text-4xl font-bold text-white" id="seconds">00</div>
-                        <div class="text-sm text-gray-300 uppercase tracking-wide mt-1">Seconds</div>
+                        <div class="text-sm text-primary-100 uppercase tracking-wide mt-1 font-medium">Seconds</div>
                     </div>
                 </div>
 
                 <!-- Progress Bar -->
                 <div class="mt-8">
-                    <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                        <div class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 h-3 rounded-full transition-all duration-1000" id="progress-bar" style="width: 100%"></div>
+                    <div class="w-full bg-neutral-200 rounded-full h-3 overflow-hidden">
+                        <div class="bg-gradient-to-r from-primary-500 via-secondary-500 to-primary-600 h-3 rounded-full transition-all duration-1000 shadow-sm" id="progress-bar" style="width: 100%"></div>
                     </div>
-                    <p class="text-center text-gray-600 text-sm mt-2" id="progress-text">100% remaining</p>
+                    <p class="text-center text-neutral-600 text-sm mt-2 font-medium" id="progress-text">100% remaining</p>
                 </div>
             </div>
 
             <!-- Info Section -->
-            <div class="mt-8 text-center text-gray-600 space-y-2">
-                <p class="text-sm">Start Date: <span id="start-date" class="font-semibold"></span></p>
-                <p class="text-sm">Target Date: <span id="target-date" class="font-semibold"></span></p>
+            <div class="mt-8 text-center text-neutral-600 space-y-2 bg-white rounded-lg p-4 shadow-md border border-neutral-200">
+                <p class="text-sm">Start Date: <span id="start-date" class="font-semibold text-primary"></span></p>
+                <p class="text-sm">Target Date: <span id="target-date" class="font-semibold text-secondary-600"></span></p>
             </div>
         </div>
     </div>
 
     <script>
         // Configuration: Set countdown duration (8-10 weeks)
-        const WEEKS_TO_COUNTDOWN = 10; // Change this to 8-10 weeks as needed
+        const WEEKS_TO_COUNTDOWN = 100; // Change this to 8-10 weeks as needed
         
         // Configuration: Set the start date (YYYY-MM-DD format) and time (HH:mm format)
         const START_DATE = '2025-11-03'; // Change this to your desired start date

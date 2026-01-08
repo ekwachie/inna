@@ -34,17 +34,28 @@ class AuthController extends Controller
         if ($request->isPost()) {
             #implementin CSRF TOKEN
             $csrf_token = $_POST['csrf_token'] ?? '';
+            $csrf_result = DUtil::csrf_verifier($csrf_token);
 
-            if (!DUtil::csrf_verifier($csrf_token)) {
+            if (!$csrf_result['valid']) {
                 DUtil::logCsrfFailure();
                 DUtil::trackFailedCsrfAttempts();
-
-                $flash = $this->setFlash('error', 'CSRF token validation failed. Too many attempts may result in blocking.');
+                
+                // Provide specific error message based on failure reason
+                $errorMsg = 'Security token validation failed. ';
+                if ($csrf_result['reason'] === 'expired') {
+                    $errorMsg .= 'Your session has expired. Please refresh the page and try again.';
+                } elseif ($csrf_result['reason'] === 'missing') {
+                    $errorMsg .= 'Security token is missing. Please refresh the page and try again.';
+                } else {
+                    $errorMsg .= 'Invalid security token. Please refresh the page and try again.';
+                }
+                
+                $flash = $this->setFlash('error', $errorMsg);
             } else {
-
+                // Reset CSRF failure tracking on successful validation
+                DUtil::resetCsrfFailures();
                 Session::unsert('csrf_token');
                 Session::unsert('csrf_token_expiry');
-                Session::unsert('csrf_failures');
 
                 $body = $request->getBody();
                 $user->name('username')->value($_POST['username'])->required();
@@ -56,12 +67,16 @@ class AuthController extends Controller
                         $flash = $this->setFlash($user->error[0], $user->error[1]);
                     }
 
+                } else {
+                    $flash = $this->setFlash('danger', $user->errors[0]);
+                    $errors = $user->errors;
                 }
             }
         }
         // DUtil::debug($user->errors);
         return $this->render('login', [
             'static' => STATIC_URL,
+            'csrf_token' => DUtil::csrf_token(),
             'flash' => !empty($flash) ? $flash : '',
             'errors' => !empty($user->errors) ? $this->setFlash('danger', $user->errors[0]) : '',
             'model' => $request->getBody(),
@@ -74,13 +89,26 @@ class AuthController extends Controller
         if ($request->isPost()) {
             #implementin CSRF TOKEN
             $csrf_token = $_POST['csrf_token'] ?? '';
+            $csrf_result = DUtil::csrf_verifier($csrf_token);
 
-            if (!DUtil::csrf_verifier($csrf_token)) {
+            if (!$csrf_result['valid']) {
                 DUtil::logCsrfFailure();
                 DUtil::trackFailedCsrfAttempts();
-
-                $flash = $this->setFlash('error', 'CSRF token validation failed. Too many attempts may result in blocking.');
+                
+                // Provide specific error message based on failure reason
+                $errorMsg = 'Security token validation failed. ';
+                if ($csrf_result['reason'] === 'expired') {
+                    $errorMsg .= 'Your session has expired. Please refresh the page and try again.';
+                } elseif ($csrf_result['reason'] === 'missing') {
+                    $errorMsg .= 'Security token is missing. Please refresh the page and try again.';
+                } else {
+                    $errorMsg .= 'Invalid security token. Please refresh the page and try again.';
+                }
+                
+                $flash = $this->setFlash('error', $errorMsg);
             } else {
+                // Reset CSRF failure tracking on successful validation
+                DUtil::resetCsrfFailures();
                 $user->name('firstname')->value($_POST['fname'])->pattern('words')->required();
                 $user->name('lastname')->value($_POST['lname'])->pattern('words')->required();
                 $user->name('e-mail')->value($_POST['email'])->required()->is_email($_POST['email']);
@@ -116,12 +144,15 @@ class AuthController extends Controller
                         }
                     }
 
+                } else {
+                    $flash = $this->setFlash('danger', $user->errors[0]);
                 }
             }
 
         }
         return $this->render('register', [
             'static' => STATIC_URL,
+            'csrf_token' => DUtil::csrf_token(),
             'flash' => ($flash = isset($flash) ? $flash : ''),
             'errors' => ($errors = isset($user->errors) ? $user->errors : ''),
             'model' => $request->getBody(),
