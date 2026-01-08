@@ -21,7 +21,7 @@ $ mv composer.phar /usr/local/bin/composer
 - Create a new project using composer.
 
 ```bash
-$ composer create-project ekwachie/inna-framework [project_name] -s stable
+$ composer create-project payperlez/inna [project_name] -s stable
 ```
 
 - Generate Keys
