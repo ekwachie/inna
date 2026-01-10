@@ -1,0 +1,386 @@
+{% extends 'layouts/layout.twig' %}
+
+{% block title %}{{ title|default('Documentation') }} - Inna Framework{% endblock %}
+
+{% block head %}
+<style>
+    .docs-container {
+        display: flex;
+        min-height: calc(100vh - 200px);
+    }
+    
+    .docs-sidebar {
+        width: 280px;
+        background: #f8fafc;
+        border-right: 1px solid #e2e8f0;
+        padding: 2rem 0;
+        overflow-y: auto;
+        position: sticky;
+        top: 0;
+        height: calc(100vh - 80px);
+    }
+    
+    .docs-content {
+        flex: 1;
+        padding: 3rem;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .docs-nav-item {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+    
+    .docs-nav-item:hover {
+        background: #f1f5f9;
+        color: #031441;
+    }
+    
+    .docs-nav-item.active {
+        background: #e0e7ff;
+        color: #031441;
+        border-left-color: #C9A227;
+        font-weight: 600;
+    }
+    
+    .docs-nav-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .docs-nav-group-title {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .docs-nav-subitem {
+        padding-left: 2.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .docs-content h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #031441;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .docs-content h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #031441;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .docs-content h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-top: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .docs-content code {
+        background: #f1f5f9;
+        color: #e11d48;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    }
+    
+    .docs-content pre {
+        background: #1e293b;
+        color: #f1f5f9;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        white-space: pre;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+    }
+    
+    .docs-content pre code {
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        white-space: pre;
+        font-family: inherit;
+    }
+    
+    .docs-content ul, .docs-content ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    
+    .docs-content li {
+        margin: 0.5rem 0;
+        line-height: 1.7;
+    }
+    
+    .docs-content a {
+        color: #031441;
+        text-decoration: underline;
+        transition: color 0.2s;
+    }
+    
+    .docs-content a:hover {
+        color: #C9A227;
+    }
+    
+    .docs-content blockquote {
+        border-left: 4px solid #C9A227;
+        padding-left: 1.5rem;
+        margin: 1.5rem 0;
+        color: #64748b;
+        font-style: italic;
+    }
+    
+    .docs-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+    }
+    
+    .docs-content table th,
+    .docs-content table td {
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        text-align: left;
+    }
+    
+    .docs-content table th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: #031441;
+    }
+    
+    .docs-mobile-toggle {
+        display: none;
+    }
+    
+    @media (max-width: 768px) {
+        .docs-sidebar {
+            position: fixed;
+            left: -280px;
+            z-index: 1000;
+            transition: left 0.3s;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .docs-sidebar.open {
+            left: 0;
+        }
+        
+        .docs-mobile-toggle {
+            display: block;
+            position: fixed;
+            top: 80px;
+            left: 1rem;
+            z-index: 1001;
+            background: #031441;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .docs-content {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="container mx-auto py-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="docs-container">
+                <!-- Mobile Toggle -->
+                <button class="docs-mobile-toggle" onclick="toggleSidebar()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- Sidebar -->
+                <aside class="docs-sidebar" id="docsSidebar">
+                    <div class="px-4 mb-6">
+                        <h2 class="text-xl font-bold text-primary mb-2">Documentation</h2>
+                        <p class="text-sm text-gray-600">Inna Framework v1.4.2</p>
+                    </div>
+                    
+                    <nav>
+                        <a href="/" class="docs-nav-item {{ currentDoc == 'README' ? 'active' : '' }}">
+                            Overview
+                        </a>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">Getting Started</div>
+                            <a href="/documentation/getting-started/installation" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'getting-started/installation' ? 'active' : '' }}">
+                                Installation
+                            </a>
+                            <a href="/documentation/getting-started/configuration" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'getting-started/configuration' ? 'active' : '' }}">
+                                Configuration
+                            </a>
+                            <a href="/documentation/getting-started/directory-structure" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'getting-started/directory-structure' ? 'active' : '' }}">
+                                Directory Structure
+                            </a>
+                            <a href="/documentation/getting-started/lifecycle" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'getting-started/lifecycle' ? 'active' : '' }}">
+                                Lifecycle
+                            </a>
+                        </div>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">The Basics</div>
+                            <a href="/documentation/the-basics/routing" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'the-basics/routing' ? 'active' : '' }}">
+                                Routing
+                            </a>
+                            <a href="/documentation/the-basics/controllers" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'the-basics/controllers' ? 'active' : '' }}">
+                                Controllers
+                            </a>
+                            <a href="/documentation/the-basics/views" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'the-basics/views' ? 'active' : '' }}">
+                                Views & Templates
+                            </a>
+                            <a href="/documentation/the-basics/request-response" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'the-basics/request-response' ? 'active' : '' }}">
+                                Request & Response
+                            </a>
+                        </div>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">Database</div>
+                            <a href="/documentation/database/basics" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'database/basics' ? 'active' : '' }}">
+                                Database Basics
+                            </a>
+                            <a href="/documentation/database/migrations" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'database/migrations' ? 'active' : '' }}">
+                                Migrations
+                            </a>
+                            <a href="/documentation/database/models" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'database/models' ? 'active' : '' }}">
+                                Models
+                            </a>
+                        </div>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">Security</div>
+                            <a href="/documentation/security/authentication" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'security/authentication' ? 'active' : '' }}">
+                                Authentication
+                            </a>
+                            <a href="/documentation/security/middleware" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'security/middleware' ? 'active' : '' }}">
+                                Middleware
+                            </a>
+                            <a href="/documentation/security/jwt" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'security/jwt' ? 'active' : '' }}">
+                                JWT Authentication
+                            </a>
+                            <a href="/documentation/security/sessions" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'security/sessions' ? 'active' : '' }}">
+                                Sessions
+                            </a>
+                        </div>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">API Development</div>
+                            <a href="/documentation/api/basics" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'api/basics' ? 'active' : '' }}">
+                                API Basics
+                            </a>
+                            <a href="/documentation/api/controllers" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'api/controllers' ? 'active' : '' }}">
+                                API Controllers
+                            </a>
+                            <a href="/documentation/api/authentication" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'api/authentication' ? 'active' : '' }}">
+                                API Authentication
+                            </a>
+                            <a href="/documentation/api/responses" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'api/responses' ? 'active' : '' }}">
+                                API Responses
+                            </a>
+                        </div>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">Utilities</div>
+                            <a href="/documentation/utilities/validation" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'utilities/validation' ? 'active' : '' }}">
+                                Validation
+                            </a>
+                            <a href="/documentation/utilities/file-upload" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'utilities/file-upload' ? 'active' : '' }}">
+                                File Upload
+                            </a>
+                            <a href="/documentation/utilities/paginator" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'utilities/paginator' ? 'active' : '' }}">
+                                Pagination
+                            </a>
+                            <a href="/documentation/utilities/mailer" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'utilities/mailer' ? 'active' : '' }}">
+                                Mailer
+                            </a>
+                            <a href="/documentation/utilities/logger" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'utilities/logger' ? 'active' : '' }}">
+                                Logger
+                            </a>
+                        </div>
+                        
+                        <div class="docs-nav-group">
+                            <div class="docs-nav-group-title">Advanced</div>
+                            <a href="/documentation/advanced/forms" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'advanced/forms' ? 'active' : '' }}">
+                                Forms
+                            </a>
+                            <a href="/documentation/advanced/error-handling" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'advanced/error-handling' ? 'active' : '' }}">
+                                Error Handling
+                            </a>
+                            <a href="/documentation/advanced/logging" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'advanced/logging' ? 'active' : '' }}">
+                                Logging
+                            </a>
+                            <a href="/documentation/advanced/deployment" class="docs-nav-item docs-nav-subitem {{ currentDoc == 'advanced/deployment' ? 'active' : '' }}">
+                                Deployment
+                            </a>
+                        </div>
+                    </nav>
+                </aside>
+                
+                <!-- Content -->
+                <main class="docs-content">
+                    {% if error %}
+                        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-4">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="prose prose-lg max-w-none">
+                        {{ content|raw }}
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('docsSidebar');
+    sidebar.classList.toggle('open');
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('docsSidebar');
+    const toggle = document.querySelector('.docs-mobile-toggle');
+    
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
+</script>
+{% endblock %}
+

@@ -18,15 +18,14 @@ use app\Controllers\AjaxController;
 use app\Controllers\HomeController;
 use app\Controllers\AuthController;
 use app\Controllers\ApiController;
+use app\Controllers\DocsController;
 
-$app->router->get('/', [HomeController::class, 'home']);
-
-// example of routes with hyphen
-$app->router->get('/{ff}/{any:[\w\d-]+}', [HomeController::class, 'home']);
+$app->router->get('/', [DocsController::class, 'index']);
 
 $app->router->get('/about', [HomeController::class, 'about']);
 
-$app->router->get('/docs', [HomeController::class, 'documentation']);
+// Documentation routes - must be before catch-all route
+$app->router->get('/documentation/{path:[\w\/-]+}', [DocsController::class, 'show']);
 
 $app->router->get('/contact', [HomeController::class, 'contact']);
 

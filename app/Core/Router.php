@@ -97,7 +97,21 @@ class Router
     {
         $method = $this->request->getMethod();
         $url = $this->request->getUrl();
-        $callback = $this->routeMap[$method][$url] ?? false;
+        
+        // Normalize URL: remove trailing slash except for root
+        $normalizedUrl = rtrim($url, '/');
+        if ($normalizedUrl === '') {
+            $normalizedUrl = '/';
+        }
+        
+        // Try exact match with normalized URL first
+        $callback = $this->routeMap[$method][$normalizedUrl] ?? false;
+        
+        // Also try original URL in case it's needed
+        if (!$callback) {
+            $callback = $this->routeMap[$method][$url] ?? false;
+        }
+        
         if (!$callback) {
 
             $callback = $this->getCallback();

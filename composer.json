@@ -3,7 +3,7 @@
     "description": "A PHP minimal framework which allows you to control every bit of it.",
     "keywords": ["Inna php framework", "payperlez php framework","do it yourself", "framework", "Inna", "Inna framework"],
     "license": "MIT",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "minimum-stability": "stable",
     "authors": [{
         "name": "Payperlez Team",
