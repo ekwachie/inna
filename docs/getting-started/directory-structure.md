@@ -6,6 +6,22 @@ Understanding the directory structure of an Inna application will help you navig
 
 The root directory contains the following structure:
 
+```
+inna/
+├── app/                    # Application code
+├── config/                 # Configuration files
+├── docs/                   # Documentation
+├── log/                    # Log files
+├── migration/              # Database migrations
+├── public/                 # Public web root
+├── vendor/                 # Composer dependencies
+├── .env                    # Environment variables (not in git)
+├── env.example             # Environment template
+├── composer.json           # Composer dependencies
+├── index.php               # Application entry point
+└── README.md               # Project readme
+```
+
 **Key Directories:**
 - **app/** - Contains all application code (controllers, models, core classes)
 - **config/** - Configuration files and data

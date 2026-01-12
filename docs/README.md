@@ -82,7 +82,7 @@ Inna is designed to be:
 ## Support
 
 For issues, questions, or contributions, please visit:
-- GitHub: [payperlez/inna](https://github.com/payperlez/inna)
+- GitHub: [ekwachie/inna](https://github.com/ekwachie/inna)
 - Email: inna@payperlez.org
 
 ## License
