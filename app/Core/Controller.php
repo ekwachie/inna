@@ -15,6 +15,8 @@
 namespace app\Core;
 
 use app\Core\Middlewares\BaseMiddleware;
+use app\Core\Utils\AuditEvent;
+use app\Core\Utils\Session;
 
 class Controller
 {
@@ -122,5 +124,30 @@ class Controller
     public function apiMessage($status, $message, $errorCode = null)
     {
         return Application::$app->api->message($status, $message, $errorCode);
+    }
+
+    protected function auditEvent(Request $request, string $event, array $meta = [], string $status = 'success', ?string $resource = null): void
+    {
+        try {
+            $sessionUser = Session::get('user');
+            $actor = is_array($sessionUser) ? ($sessionUser[0] ?? $sessionUser) : [];
+            $actorId = isset($actor['id']) ? (int)$actor['id'] : null;
+            if ($actorId !== null && $actorId <= 0) {
+                $actorId = null;
+            }
+            $actorUsername = (string)($actor['username'] ?? ($actor['name'] ?? ''));
+
+            AuditEvent::log(
+                $request,
+                $event,
+                $meta,
+                $actorId,
+                $actorUsername !== '' ? $actorUsername : null,
+                $status,
+                $resource
+            );
+        } catch (\Throwable $e) {
+            // Keep request lifecycle resilient if audit writing fails.
+        }
     }
 }

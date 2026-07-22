@@ -96,7 +96,7 @@ class Response
         }
 
         $this->header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($value, $options, $dept);
+        echo json_encode($value, $options ?? 0, $dept);
         exit(0);
     }
 

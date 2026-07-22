@@ -13,7 +13,7 @@ namespace app\Core;
 use app\Core\Utils\Jwt;
 use Exception;
 
-class DApiController
+class DApiController extends Controller
 {
     public function message($status, $message, $errorCode = null)
     {
@@ -36,7 +36,7 @@ class DApiController
     public function json($value, ?int $options = null, int $dept = 512): void
     {
         $this->header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($value, $options, $dept);
+        echo json_encode($value, $options ?? 0, $dept);
         exit(0);
     }
 
@@ -57,16 +57,19 @@ class DApiController
      */
     protected function getAuthorizationHeader(): ?string
     {
-        if (isset($_SERVER['Authorization'])) {
-            return trim($_SERVER['Authorization']);
-        }
-        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            return trim($_SERVER['HTTP_AUTHORIZATION']);
+        foreach (['Authorization', 'HTTP_AUTHORIZATION', 'REDIRECT_HTTP_AUTHORIZATION'] as $serverKey) {
+            if (!empty($_SERVER[$serverKey])) {
+                return trim((string)$_SERVER[$serverKey]);
+            }
         }
         if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
-            if ($headers && isset($headers['Authorization'])) {
-                return trim($headers['Authorization']);
+            if (is_array($headers)) {
+                foreach ($headers as $name => $value) {
+                    if (strcasecmp((string)$name, 'Authorization') === 0 && trim((string)$value) !== '') {
+                        return trim((string)$value);
+                    }
+                }
             }
         }
         return null;

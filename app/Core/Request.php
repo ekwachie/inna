@@ -20,12 +20,12 @@ class Request
 
     public function getMethod()
     {
-        return strtolower($_SERVER['REQUEST_METHOD']);
+        return strtolower((string)($_SERVER['REQUEST_METHOD'] ?? 'get'));
     }
 
     public function getUrl()
     {
-        $path = $_SERVER['REQUEST_URI'];
+        $path = (string)($_SERVER['REQUEST_URI'] ?? '/');
         $position = strpos($path, '?');
         if ($position !== false) {
             $path = substr($path, 0, $position);
@@ -52,8 +52,15 @@ class Request
             }
         }
         if ($this->isPost()) {
-            foreach ($_POST as $key => $value) {
-                $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            $contentType = (string)($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '');
+            if (stripos($contentType, 'application/json') !== false) {
+                $json = file_get_contents('php://input');
+                $decoded = json_decode($json ?: '', true);
+                $data = is_array($decoded) ? $decoded : [];
+            } else {
+                foreach ($_POST as $key => $value) {
+                    $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                }
             }
         }
         return $data;

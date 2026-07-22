@@ -13,11 +13,24 @@
  * All configurations can be found in here.
  */
 
+$projectRoot = dirname(__DIR__);
+$documentRoot = rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), DIRECTORY_SEPARATOR);
+if ($documentRoot === '' || !is_file($documentRoot . DIRECTORY_SEPARATOR . '.env')) {
+    $documentRoot = $projectRoot;
+}
+$_SERVER['DOCUMENT_ROOT'] = $documentRoot;
+
+if (PHP_SAPI === 'cli') {
+    $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    $_SERVER['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'] ?? 'CLI';
+    $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '/cli';
+}
+
 // error logging to file
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
-ini_set('error_log', $_SERVER['DOCUMENT_ROOT'] . '/log/errors/error_log_' . date("j.n.Y") . '.log');
+ini_set('error_log', $documentRoot . '/log/errors/error_log_' . date("j.n.Y") . '.log');
 // Set the default timezone to Africa/Accra
 date_default_timezone_set('Africa/Accra');
 
@@ -27,7 +40,7 @@ use app\Core\Utils\ActivityLogService;
 
 
 
-$dotenv = Dotenv\Dotenv::createImmutable($_SERVER['DOCUMENT_ROOT']);
+$dotenv = Dotenv\Dotenv::createImmutable($documentRoot);
 $dotenv->load();
 
 $config = [
@@ -77,13 +90,13 @@ setcookie('cookie_name', 'cookie_value', [
 
 // This reader object should be reused across lookups as creation of it is
 // expensive.
-$reader = new Reader($_SERVER['DOCUMENT_ROOT'] .'/config/GeoLite2-Country.mmdb');
+$reader = new Reader($documentRoot . '/config/GeoLite2-Country.mmdb');
 define('BASE_URL', $protocol . '://' . $config['url'] . '/');
 define('STATIC_URL', BASE_URL . 'public/static');
 define('MEDIA_URL', BASE_URL . 'public/img');
 define('GEO_RDR', $reader);
 
 
-$app = new Application($_SERVER['DOCUMENT_ROOT'], $config);
+$app = new Application($documentRoot, $config);
 
 ActivityLogService::logRequest($app->request);

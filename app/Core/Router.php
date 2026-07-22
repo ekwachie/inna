@@ -97,27 +97,31 @@ class Router
     {
         $method = $this->request->getMethod();
         $url = $this->request->getUrl();
-        
+
         // Normalize URL: remove trailing slash except for root
         $normalizedUrl = rtrim($url, '/');
         if ($normalizedUrl === '') {
             $normalizedUrl = '/';
         }
-        
+
         // Try exact match with normalized URL first
         $callback = $this->routeMap[$method][$normalizedUrl] ?? false;
-        
+
         // Also try original URL in case it's needed
         if (!$callback) {
             $callback = $this->routeMap[$method][$url] ?? false;
         }
-        
+
         if (!$callback) {
 
             $callback = $this->getCallback();
 
             if ($callback === false) {
-                return $this->render('404');
+                $data = [
+                    'static' => STATIC_URL,
+                    'date' => date('Y-m-d'),
+                ];
+                return $this->render('404', $data);
             }
         }
         if (is_string($callback)) {
@@ -153,6 +157,12 @@ class Router
         ]);
         $twig->addExtension(new StringExtension());
         $twig->addExtension(new AppExtension());
+
+        $seo = [
+            'base_url' => defined('BASE_URL') ? rtrim(BASE_URL, '/') : '',
+            'current_path' => $this->request->getUrl(),
+        ];
+        $data = array_merge($seo, $data);
 
         return $twig->render("$view.twig", $data);
     }

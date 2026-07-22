@@ -27,14 +27,27 @@ class AuditLogService
             $ip = '197.210.197.217';
         }
 
-        $country = GEO_RDR->country($ip);
-        $countryName = $country->country->name;
-        $isp = $country->traits->isp;
+        $countryName = '';
+        $isp = '';
+        try {
+            if (defined('GEO_RDR') && GEO_RDR) {
+                $country = GEO_RDR->country($ip);
+                $countryName = (string)($country->country->name ?? '');
+                $isp = (string)($country->traits->isp ?? '');
+            }
+        } catch (\Throwable $e) {
+            $countryName = '';
+            $isp = '';
+        }
         $method = $request->getMethod();
         $url = $request->getUrl();
         $ua = $_SERVER['HTTP_USER_AGENT'] ?? null;
         $referrer = $_SERVER['HTTP_REFERER'] ?? null;
         $routeParams = $request->getRouteParams() ?? null;
+        $sessionUser = Session::get('user');
+        $sessionActor = is_array($sessionUser) ? ($sessionUser[0] ?? $sessionUser) : [];
+        $actorEmail = (string)($sessionActor['email'] ?? '');
+        $actorType = (string)($sessionActor['role'] ?? (Session::issert('user') ? 'user' : 'guest'));
 
         $payload = array_merge([
             'action' => $action,
@@ -43,6 +56,8 @@ class AuditLogService
             'user' => [
                 'id' => $userId,
                 'username' => $username,
+                'email' => $actorEmail,
+                'actor_type' => $actorType,
                 'present' => Session::issert('user'),
             ],
             'ip' => $ip,
