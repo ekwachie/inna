@@ -1,0 +1,96 @@
+name: Deploy INNA production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inna-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, mbstring, openssl, pdo, sodium
+          coverage: none
+      - name: Install locked dependencies
+        run: composer install --no-interaction --prefer-dist
+      - name: Check platform and test
+        run: |
+          composer check-platform-reqs
+          composer test
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://inna.payperlez.org
+    steps:
+      - name: Deploy over verified SSH
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          : "${VPS_HOST:?Missing VPS_HOST}"
+          : "${VPS_USER:?Missing VPS_USER}"
+          : "${VPS_SSH_KEY:?Missing VPS_SSH_KEY}"
+          : "${VPS_KNOWN_HOSTS:?Missing VPS_KNOWN_HOSTS}"
+          : "${DEPLOY_PATH:?Missing DEPLOY_PATH}"
+          [[ "$VPS_USER" == "payperle" ]] || { echo 'VPS_USER must be payperle'; exit 1; }
+          [[ "${VPS_PORT:-22}" =~ ^[0-9]+$ ]]
+          [[ "$DEPLOY_PATH" == /home/payperle/* ]] || { echo 'DEPLOY_PATH must be under /home/payperle'; exit 1; }
+
+          umask 077
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          trap 'rm -f "$HOME/.ssh/deploy_key"' EXIT
+
+          ssh -T -p "${VPS_PORT:-22}" \
+            -i "$HOME/.ssh/deploy_key" \
+            -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o HostKeyAlias=payperlez-production \
+            -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
+            -o ConnectTimeout=20 \
+            "$VPS_USER@$VPS_HOST" bash -se -- "$DEPLOY_PATH" <<'REMOTE'
+          set -euo pipefail
+          export PATH=/usr/local/bin:/usr/bin:/bin
+          deploy_path=$1
+          cd "$deploy_path"
+          exec 9>/home/payperle/.inna-deploy.lock
+          flock -n 9 || { echo 'Another INNA deployment is running'; exit 1; }
+          test -f .env
+          test -z "$(git status --porcelain --untracked-files=no)" || {
+            echo 'Tracked server files have local changes; resolve them before deploying.'
+            exit 1
+          }
+          test "$(git branch --show-current)" = main
+          git fetch origin main
+          git merge --ff-only origin/main
+          /usr/local/bin/composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+          /usr/local/bin/composer check-platform-reqs --no-dev
+          test "$(grep -E '^[[:space:]]*APP_ENV[[:space:]]*=' .env | tail -1 | cut -d= -f2- | tr -d '[:space:]')" = production
+          test "$(grep -E '^[[:space:]]*DOMAIN[[:space:]]*=' .env | tail -1 | cut -d= -f2- | tr -d '[:space:]')" = inna.payperlez.org
+          curl --fail --silent --show-error --max-time 30 https://inna.payperlez.org/ >/dev/null
+          echo "Deployed $(git rev-parse HEAD)"
+          REMOTE

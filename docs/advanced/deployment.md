@@ -1,5 +1,8 @@
 # Deployment
 
+For this repository's automated production release to `inna.payperlez.org`, see
+[GitHub deployment to CWP](github-deployment.md).
+
 ## Prepare a release
 
 Require PHP >=8.4 and run composer check-platform-reqs, composer test and php tests/http.php. Install locked dependencies with composer install --no-dev --prefer-dist --optimize-autoloader. Do not update dependencies on production.
