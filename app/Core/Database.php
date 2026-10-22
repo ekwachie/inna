@@ -23,9 +23,8 @@ class Database extends DbModel
      */
     public function applyMigrations()
     {
-        if (!is_dir("migrations")) {
-            mkdir("migrations", 0777, true);
-        }
+        $directory = Application::$ROOT_DIR . '/migration';
+        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) throw new \RuntimeException('Cannot create migration directory.');
     
         $this->createMigrationsTable();
         $appliedMigrations = $this->getAppliedMigrations();
@@ -47,8 +46,7 @@ class Database extends DbModel
             $className = "app\\migrations\\" . pathinfo($migration, PATHINFO_FILENAME);
     
             if (!class_exists($className)) {
-                $this->log("\033[38;2;255;0;0m Migration class $className not found in file $migration");
-                continue;
+                throw new \RuntimeException('Migration class not found: ' . $className);
             }
     
             $instance = new $className();
@@ -56,17 +54,15 @@ class Database extends DbModel
     
             try {
                 $instance->up();
+                $this->saveMigrations([$migration]);
                 $this->log("\033[38;2;0;102;0m Applied migration $migration");
                 $newMigrations[] = $migration;
             } catch (\Throwable $th) {
-                $this->log("\033[38;2;255;0;0m Error in migration $migration: " . $th->getMessage());
-                continue;
+                throw new \RuntimeException('Migration failed: ' . $migration, 0, $th);
             }
         }
     
-        if (!empty($newMigrations)) {
-            $this->saveMigrations($newMigrations);
-        } else {
+        if (empty($newMigrations)) {
             $this->log("\033[38;2;0;102;0m All migrations are applied");
         }
     }
@@ -74,6 +70,10 @@ class Database extends DbModel
 
     public function createMigrationsTable()
     {
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
+            $this->pdo->exec('CREATE TABLE IF NOT EXISTS migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, migration VARCHAR(255) UNIQUE, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)');
+            return;
+        }
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
             id INT AUTO_INCREMENT PRIMARY KEY, 
             migration VARCHAR(255),
@@ -103,13 +103,14 @@ class Database extends DbModel
 
     public function addMigration($migrationName, $columns)
 {
-    if (!is_dir("migrations")) {
-        mkdir("migrations", 0777, true);
-    }
+    if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/D', $migrationName) || !$columns) throw new \InvalidArgumentException('Use a safe table name and at least one column.');
+    foreach (array_keys($columns) as $column) if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/D', $column)) throw new \InvalidArgumentException('Invalid column name.');
+    $directory = Application::$ROOT_DIR . '/migration';
+    if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) throw new \RuntimeException('Cannot create migration directory.');
     
-    $fileName = "m" . date("jnY") . "_" . $migrationName . ".php";
-    $className = "m" . date("jnY") . "_" . $migrationName; // Ensure proper class name
-    $filePath = "./migration/" . $fileName;
+    $className = 'm' . date('YmdHis') . '_' . $migrationName;
+    $fileName = $className . '.php';
+    $filePath = $directory . '/' . $fileName;
 
     if (file_exists($filePath)) {
         $this->log("\033[38;2;255;0;0m $migrationName migration already exists");
@@ -124,9 +125,9 @@ class Database extends DbModel
     ));
 
     // Generate the migration script
-    $script = "<?php\n\nnamespace app\\migrations;\n\nuse app\\core\\Application;\n\nclass $className\n{\n    public function up()\n    {\n        \$db = Application::\$app->db;\n        \$db->pdo->exec(\"CREATE TABLE IF NOT EXISTS $migrationName (\n    $columnDefinitions\n) ENGINE=INNODB;\");\n    }\n    \n    public function down()\n    {\n        \$db = Application::\$app->db;\n        \$db->pdo->exec(\"DROP TABLE IF EXISTS $migrationName;\");\n    }\n}\n";
+    $script = "<?php\n\nnamespace app\\migrations;\n\nuse app\\Core\\Application;\n\nclass $className\n{\n    public function up()\n    {\n        \$db = Application::\$app->db;\n        \$db->pdo->exec(\"CREATE TABLE IF NOT EXISTS $migrationName (\n    $columnDefinitions\n) ENGINE=INNODB;\");\n    }\n    \n    public function down()\n    {\n        \$db = Application::\$app->db;\n        \$db->pdo->exec(\"DROP TABLE IF EXISTS $migrationName;\");\n    }\n}\n";
 
-    file_put_contents($filePath, $script);
+    if (file_put_contents($filePath, $script, LOCK_EX) === false) throw new \RuntimeException('Cannot write migration file.');
     $this->log("\033[38;2;0;102;0m Created migration $migrationName successfully");
 }
 

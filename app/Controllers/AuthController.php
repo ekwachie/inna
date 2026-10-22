@@ -61,7 +61,7 @@ class AuthController extends Controller
                 $user->name('username')->value($_POST['username'])->required();
                 $user->name('password')->value($_POST['pass'])->required();
                 if ($user->isSuccess()) {
-                    $user->authenticate($body['username'], $body['pass']);
+                    $user->authenticate($_POST['username'], $_POST['pass']);
 
                     if (!empty($user->error)) {
                         $flash = $this->setFlash($user->error[0], $user->error[1]);
@@ -111,18 +111,20 @@ class AuthController extends Controller
                 DUtil::resetCsrfFailures();
                 $user->name('firstname')->value($_POST['fname'])->pattern('words')->required();
                 $user->name('lastname')->value($_POST['lname'])->pattern('words')->required();
-                $user->name('e-mail')->value($_POST['email'])->required()->is_email($_POST['email']);
-                $user->name('password')->value($_POST['pass'])->pattern('alphanum')->required();
-                $user->name('confirm password')->value($_POST['passc'])->pattern('alphanum')->required();
+                $user->name('e-mail')->value($_POST['email'])->required();
+                if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) $user->errors[] = 'Invalid email address.';
+                $user->name('password')->value($_POST['pass'])->required()->min(8);
+                $user->name('confirm password')->value($_POST['passc'])->required();
                 $user->name('password')->value($_POST['pass'])->equal($_POST['passc']);
 
                 if ($user->isSuccess()) {
                     $body = $request->getBody();
                     $data = [
-                        'fname' => $body['fname'],
-                        'lname' => $body['lname'],
+                        'firstname' => $_POST['fname'],
+                        'lastname' => $_POST['lname'],
+                        'username' => $_POST['email'],
                         'email' => $body['email'],
-                        'password' => DUtil::passHash($body['pass'])
+                        'password' => DUtil::passHash($_POST['pass'])
                     ];
 
                     $stmt = $user->is_exist($data);

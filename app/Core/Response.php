@@ -17,6 +17,18 @@ use InvalidArgumentException;
 
 class Response
 {
+    public function download(string $bytes, string $filename, string $mime = 'application/octet-stream'): never
+    {
+        $filename = basename(str_replace('\\', '/', $filename));
+        if ($filename === '' || preg_match('/[\x00-\x1f\x7f]/', $filename) || !preg_match('~^[a-z0-9.+-]+/[a-z0-9.+-]+$~Di', $mime)) throw new \InvalidArgumentException('Invalid download metadata.');
+        header('Content-Type: ' . $mime);
+        header('Content-Disposition: attachment; filename="download"; filename*=UTF-8\'\'' . rawurlencode($filename));
+        header('Content-Length: ' . strlen($bytes));
+        header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: private, no-store');
+        if (strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'HEAD') echo $bytes;
+        exit;
+    }
     /**
      * browser response status
      */

@@ -20,6 +20,7 @@ class Session
      */
     public static function init()
     {
+        if (session_status() === PHP_SESSION_ACTIVE) return;
         // Set session timeout to 1 hour (3600 seconds)
         ini_set('session.gc_maxlifetime', 3600);
         // Set session cookie lifetime to 1 hour (3600 seconds)
@@ -28,6 +29,8 @@ class Session
         ini_set('session.cookie_secure', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 1 : 0);
         // Set a cookie with the HttpOnly flag
         ini_set('session.cookie_httponly', 1);
+        ini_set('session.cookie_samesite', 'Lax');
+        ini_set('session.use_strict_mode', 1);
 
         @session_start();
 
@@ -45,6 +48,11 @@ class Session
     public static function set($key, $value)
     {
         $_SESSION[$key] = $value;
+    }
+
+    public static function regenerate(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE || !session_regenerate_id(true)) throw new \RuntimeException('Cannot renew session.');
     }
 
     // ---------------------------------------------------------------------------

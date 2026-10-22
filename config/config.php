@@ -45,12 +45,12 @@ $dotenv->load();
 
 $config = [
     'db' => [
-        'dsn' => $_ENV['DB_DSN'],
-        'user' => $_ENV['DB_USER'],
-        'password' => $_ENV['DB_PASSWORD'],
+        'dsn' => $_ENV['DB_DSN'] ?? '',
+        'user' => $_ENV['DB_USER'] ?? '',
+        'password' => $_ENV['DB_PASSWORD'] ?? '',
 
     ],
-    'url' => $_ENV['DOMAIN']
+    'url' => $_ENV['DOMAIN'] ?? 'localhost:8080'
 ];
 
 // Prevent framing from any domain except your own
@@ -59,8 +59,6 @@ header("Content-Security-Policy: frame-ancestors 'self'");
 header('X-Content-Type-Options: nosniff');
 // Remove the X-Powered-By header
 header_remove('X-Powered-By');
-// Set the HSTS header
-header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
 
 // Determine protocol based on environment
 // Check if APP_ENV is set in .env, otherwise detect from HTTPS
@@ -78,19 +76,15 @@ if ($appEnv === 'production' || $appEnv === 'prod') {
 }
 
 $protocol = $isProduction ? 'https' : 'http';
-
-// Setting a cookie with HttpOnly flag
-setcookie('cookie_name', 'cookie_value', [
-    'expires' => time() + 3600, // 1 hour expiration
-    'path' => '/',
-    'secure' => $isProduction, // Ensures the cookie is sent over HTTPS in production only
-    'httponly' => true, // HttpOnly flag to prevent client-side access
-    'samesite' => 'Strict' // Optional: SameSite attribute for CSRF protection
-]);
+if ($isProduction) header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 
 // This reader object should be reused across lookups as creation of it is
 // expensive.
-$reader = new Reader($documentRoot . '/config/GeoLite2-Country.mmdb');
+$reader = null;
+$geoFile = $documentRoot . '/config/GeoLite2-Country.mmdb';
+if (is_readable($geoFile)) {
+    try { $reader = new Reader($geoFile); } catch (\Throwable) { error_log('GeoIP database unavailable.'); }
+}
 define('BASE_URL', $protocol . '://' . $config['url'] . '/');
 define('STATIC_URL', BASE_URL . 'public/static');
 define('MEDIA_URL', BASE_URL . 'public/img');

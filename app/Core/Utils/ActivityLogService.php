@@ -11,16 +11,6 @@ class ActivityLogService
         try {
             $ip = DUtil::get_ip();
 
-            // Use hardcoded IP only in development
-            $appEnv = $_ENV['APP_ENV'] ?? null;
-            $isDevelopment = ($appEnv === 'development' || $appEnv === 'dev') ||
-                ($appEnv !== 'production' && $appEnv !== 'prod' &&
-                    (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off'));
-
-            if ($isDevelopment) {
-                $ip = '154.161.46.102';
-            }
-
             $countryName = null;
             $isp = null;
             try {
@@ -60,11 +50,11 @@ class ActivityLogService
                 'email' => $user['email'] ?? null,
                 'role' => $role ?: null,
                 'is_admin' => $isAdmin,
-                'session_id' => session_id() ?: null,
+                'session_fingerprint' => session_id() ? hash('sha256', session_id()) : null,
             ];
 
             $payload = array_merge([
-                'request_id' => bin2hex(random_bytes(8)),
+                'request_id' => \app\Core\ApiResponse::requestId(),
                 'ip' => $ip,
                 'country' => $countryName,
                 'isp' => $isp,

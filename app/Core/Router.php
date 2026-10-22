@@ -1,14 +1,4 @@
 <?php
-
-/**
- * @author      Payperlez Team <inna@payperlez.org>
- * @copyright   Copyright (C), 2019. Payperlez Inc.
- * @license     MIT LICENSE (https://opensource.org/licenses/MIT)
- *              Refer to the LICENSE file distributed within the package.
- *
- *
- */
-
 namespace app\Core;
 
 use app\ext\AppExtension;
@@ -16,133 +6,91 @@ use Twig\Extra\String\StringExtension;
 
 class Router
 {
-    public Request $request;
-    public Response $response;
     private array $routeMap = [];
 
-    public function __construct(Request $request, Response $response)
+    public function __construct(public Request $request, public Response $response) {}
+    public function get(string $url, $callback) { $this->routeMap['get'][$this->normalize($url)] = $callback; }
+    public function post(string $url, $callback) { $this->routeMap['post'][$this->normalize($url)] = $callback; }
+    public function put(string $url, $callback): void { $this->routeMap['put'][$this->normalize($url)] = $callback; }
+    public function patch(string $url, $callback): void { $this->routeMap['patch'][$this->normalize($url)] = $callback; }
+    public function delete(string $url, $callback): void { $this->routeMap['delete'][$this->normalize($url)] = $callback; }
+    public function getRouteMap($method): array { return $this->routeMap[$method] ?? []; }
+
+    private function normalize(string $path): string { return '/' . trim($path, '/'); }
+
+    private function match(string $route, string $url): ?array
     {
-        $this->request = $request;
-        $this->response = $response;
+        $pattern = '';
+        $offset = 0;
+        preg_match_all('/\\{([a-zA-Z_]\\w*)(?::([^{}]+))?\\}/', $route, $tokens, PREG_OFFSET_CAPTURE);
+        foreach ($tokens[0] as $index => [$token, $start]) {
+            $pattern .= preg_quote(substr($route, $offset, $start - $offset), '~');
+            $name = $tokens[1][$index][0];
+            $constraint = $tokens[2][$index][0] ?? '';
+            $pattern .= '(?P<' . $name . '>' . ($constraint !== '' ? str_replace('~', '\\~', $constraint) : '[^/]+') . ')';
+            $offset = $start + strlen($token);
+        }
+        $pattern .= preg_quote(substr($route, $offset), '~');
+        if (!preg_match('~^' . $pattern . '$~D', $url, $values)) return null;
+        return array_filter($values, 'is_string', ARRAY_FILTER_USE_KEY);
     }
 
-    public function get(string $url, $callback)
+    private function find(string $method, string $url): mixed
     {
-        $this->routeMap['get'][$url] = $callback;
-    }
-
-    public function post(string $url, $callback)
-    {
-        $this->routeMap['post'][$url] = $callback;
-    }
-
-    /**
-     * @return array
-     */
-
-    public function getRouteMap($method): array
-    {
-        return $this->routeMap[$method] ?? [];
-    }
-
-
-    /**
-     * get callback 
-     */
-    public function getCallback()
-    {
-        $method = $this->request->getMethod();
-        $url = $this->request->getUrl();
-
-        $url = trim($url, '/');
-
         $routes = $this->getRouteMap($method);
-
-        $routeParams = false;
-
+        if (isset($routes[$url])) {
+            $this->request->setRouteParams([]);
+            $this->request->setAttribute('route_template', $url);
+            return $routes[$url];
+        }
         foreach ($routes as $route => $callback) {
-
-            $route = trim($route, '/');
-            $routeNames = [];
-
-            if (!$route) {
-                continue;
-            }
-
-            if (preg_match_all('/\{(\w+)(:[^}]+)?}/', $route, $matches)) {
-                $routeNames = $matches[1];
-            }
-
-            $routeRegex = "@^" . preg_replace_callback('/\{\w+(:([^}]+))?}/', fn ($m) => isset($m[2]) ? "({$m[2]})" : '(\w+)', $route) . "$@";
-
-            if (preg_match_all($routeRegex, $url, $valueMatches)) {
-                $values = [];
-                for ($i = 1; $i < count($valueMatches); $i++) {
-                    $values[] = $valueMatches[$i][0];
-                }
-                $routeParams = array_combine($routeNames, $values);
-
-                $this->request->setRouteParams($routeParams);
+            $params = $this->match($route, $url);
+            if ($params !== null) {
+                $this->request->setRouteParams($params);
+                $this->request->setAttribute('route_template', $route);
                 return $callback;
             }
         }
-
         return false;
     }
 
-    /**
-     * resolving request
-     */
-    public function resolve()
+    public function getCallback()
     {
         $method = $this->request->getMethod();
-        $url = $this->request->getUrl();
+        return $this->find($method === 'head' ? 'get' : $method, $this->normalize($this->request->getUrl()));
+    }
 
-        // Normalize URL: remove trailing slash except for root
-        $normalizedUrl = rtrim($url, '/');
-        if ($normalizedUrl === '') {
-            $normalizedUrl = '/';
-        }
-
-        // Try exact match with normalized URL first
-        $callback = $this->routeMap[$method][$normalizedUrl] ?? false;
-
-        // Also try original URL in case it's needed
-        if (!$callback) {
-            $callback = $this->routeMap[$method][$url] ?? false;
-        }
-
-        if (!$callback) {
-
-            $callback = $this->getCallback();
-
-            if ($callback === false) {
-                $data = [
-                    'static' => STATIC_URL,
-                    'date' => date('Y-m-d'),
-                ];
-                return $this->render('404', $data);
+    public function resolve()
+    {
+        $callback = $this->getCallback();
+        if ($callback === false) {
+            $allowed = [];
+            $url = $this->normalize($this->request->getUrl());
+            foreach ($this->routeMap as $method => $routes) {
+                foreach ($routes as $route => $_) {
+                    if ($this->match($route, $url) !== null) { $allowed[] = strtoupper($method); break; }
+                }
             }
+            if (in_array('GET', $allowed, true)) $allowed[] = 'HEAD';
+            if ($allowed) {
+                $allowed[] = 'OPTIONS';
+                header('Allow: ' . implode(', ', $allowed));
+                if ($this->request->getMethod() === 'options') { $this->response->setStatusCode(204); return ''; }
+                throw new ApiException('METHOD_NOT_ALLOWED', 'Method not allowed for this endpoint.', 405);
+            }
+            throw new ApiException('NOT_FOUND', 'Page not found.', 404);
         }
-        if (is_string($callback)) {
-            return $this->render($callback);
-        }
-        if (is_array($callback)) {
+        if (is_string($callback)) return $this->render($callback);
+        if (is_array($callback) && is_string($callback[0])) {
             $controller = new $callback[0];
             $controller->action = $callback[1];
             Application::$app->controller = $controller;
-            $middlewares = $controller->getMiddlewares();
-            foreach ($middlewares as $middleware) {
-                $middleware->execute();
-            }
+            foreach ($controller->getMiddlewares() as $middleware) $middleware->execute();
             $callback[0] = $controller;
         }
         return call_user_func($callback, $this->request, $this->response);
     }
 
-    /**
-     * rending view using twig
-     */
     public function render($view, $data = [])
     {
         //   var_dump($data);

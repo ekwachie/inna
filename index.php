@@ -20,11 +20,13 @@ use app\Controllers\AuthController;
 use app\Controllers\ApiController;
 use app\Controllers\DocsController;
 
-$app->router->get('/', [DocsController::class, 'index']);
+$app->router->get('/', [HomeController::class, 'home']);
 
 $app->router->get('/about', [HomeController::class, 'about']);
 
 // Documentation routes - must be before catch-all route
+$app->router->get('/documentation', [DocsController::class, 'index']);
+$app->router->get('/docs', [DocsController::class, 'index']);
 $app->router->get('/documentation/{path:[\w\/-]+}', [DocsController::class, 'show']);
 
 $app->router->get('/contact', [HomeController::class, 'contact']);

@@ -1,151 +1,51 @@
-# API Development
+# Building APIs
 
-Inna provides a powerful foundation for building RESTful APIs with JWT authentication support.
+Use DApiController, strict JSON input, explicit authentication and standard response envelopes.
 
-## API Controllers
+## A complete endpoint
 
-API controllers extend `DApiController` which provides:
-
-- JSON response formatting
-- JWT token management
-- Standardized error handling
-- HTTP header management
-
-### Basic API Controller
+Create app/Controllers/EchoController.php:
 
 ```php
 <?php
-
 namespace app\Controllers;
 
+use app\Core\ApiException;
 use app\Core\DApiController;
 use app\Core\Request;
-use app\Core\Response;
 
-class ApiController extends DApiController
+final class EchoController extends DApiController
 {
-    public function index(Request $request, Response $response)
+    public function create(Request $request)
     {
-        return $this->message(true, [
-            'message' => 'API is working',
-            'version' => '1.0'
-        ]);
-    }
-}
-```
-
-## API Response Format
-
-### Success Response
-
-```php
-return $this->message(true, [
-    'id' => 1,
-    'name' => 'John'
-]);
-```
-
-Returns:
-
-```json
-{
-    "success": true,
-    "data": {
-        "id": 1,
-        "name": "John"
-    }
-}
-```
-
-### Error Response
-
-```php
-return $this->message(false, 'User not found', 'USER_NOT_FOUND');
-```
-
-Returns:
-
-```json
-{
-    "success": false,
-    "data": "User not found",
-    "error_code": "USER_NOT_FOUND"
-}
-```
-
-## API Routes
-
-Define API routes in `index.php`:
-
-```php
-// Public endpoints
-$app->router->get('/api/public', [ApiController::class, 'public']);
-
-// Protected endpoints
-$app->router->get('/api/profile', [ApiController::class, 'profile']);
-$app->router->get('/api/users', [ApiController::class, 'users']);
-```
-
-## Complete API Example
-
-```php
-<?php
-
-namespace app\Controllers;
-
-use app\Core\DApiController;
-use app\Core\Request;
-use app\Core\Response;
-use app\Core\Application;
-
-class ApiController extends DApiController
-{
-    // Public endpoint
-    public function public(Request $request, Response $response)
-    {
-        return $this->message(true, [
-            'message' => 'This is a public endpoint'
-        ]);
-    }
-    
-    // Protected endpoint
-    public function profile(Request $request, Response $response)
-    {
-        $payload = $this->requireJwt();
-        $userId = $payload['sub'];
-        
-        $db = Application::$app->db;
-        $user = $db->select(
-            "SELECT id, name, email FROM users WHERE id = :id",
-            ['id' => $userId]
-        );
-        
-        if (empty($user)) {
-            return $this->message(false, 'User not found', 'USER_NOT_FOUND');
+        $body = $request->getJsonBody();
+        if (!is_string($body['name'] ?? null) || trim($body['name']) === '') {
+            throw new ApiException('VALIDATION_ERROR', 'Provide a name.', 422);
         }
-        
-        return $this->message(true, $user[0]);
-    }
-    
-    // List users (admin only)
-    public function users(Request $request, Response $response)
-    {
-        $payload = $this->requireJwt(['admin']);
-        
-        $db = Application::$app->db;
-        $users = $db->select("SELECT id, name, email FROM users");
-        
-        return $this->message(true, [
-            'users' => $users,
-            'count' => count($users)
-        ]);
+        $this->success(['name' => $body['name']], 201);
     }
 }
 ```
 
-## Next Steps
+Register it before $app->run():
 
-- [API Controllers](controllers.md) - Learn more about API controllers
-- [API Authentication](authentication.md) - Learn about JWT authentication
-- [API Responses](responses.md) - Learn about response formatting
+```php
+$app->router->post('/api/echo', [\app\Controllers\EchoController::class, 'create']);
+```
+
+Test it:
+
+```bash
+curl -i http://127.0.0.1:8080/api/echo \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Ama"}'
+```
+
+Expect HTTP 201 with success=true, data.name=Ama and meta.request_id.
+
+## API design
+
+Use GET for reads, POST for creation, PATCH for partial updates, PUT for replacement and DELETE for deletion. Register each explicitly. Validate inputs before passing them to models/services.
+
+Inna does not enable wildcard CORS. Keep APIs same-origin or configure explicit trusted origins and preflight handling for your application. API credentials belong on servers.
 

@@ -292,6 +292,7 @@ use \PDO as PDO;
      * beginTransaction - Overloading default method
      */
     public function beginTransaction() {
+        if ($this->inTransaction()) throw new \LogicException('Nested transactions require an explicit savepoint strategy.');
         Application::$app->db->pdo->beginTransaction();
         $this->activeTransaction = true;
     }
@@ -311,6 +312,22 @@ use \PDO as PDO;
     public function rollback() {
         Application::$app->db->pdo->rollback();
         $this->activeTransaction = false;
+    }
+
+    public function inTransaction(): bool {
+        return Application::$app->db->pdo->inTransaction();
+    }
+
+    public function transaction(callable $operation): mixed {
+        $this->beginTransaction();
+        try {
+            $result = $operation($this);
+            $this->commit();
+            return $result;
+        } catch (\Throwable $error) {
+            if ($this->inTransaction()) $this->rollback();
+            throw $error;
+        }
     }
 
     /**
@@ -349,7 +366,11 @@ use \PDO as PDO;
         }
 
         foreach ($data as $key => $value) {
-            if (is_int($value)) {
+            if ($value === null) {
+                $sth->bindValue(":$key", null, PDO::PARAM_NULL);
+            } elseif (is_bool($value)) {
+                $sth->bindValue(":$key", $value, PDO::PARAM_BOOL);
+            } elseif (is_int($value)) {
                 $sth->bindValue(":$key", $value, PDO::PARAM_INT);
             } else {
                 $sth->bindValue(":$key", $value, PDO::PARAM_STR);

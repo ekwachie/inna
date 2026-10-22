@@ -15,11 +15,28 @@
         }
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.4",
+        "ext-curl": "*",
+        "ext-fileinfo": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-sodium": "*",
         "twig/twig": "^3.27",
         "vlucas/phpdotenv": "^5.4",
         "twig/string-extra": "^3.3",
         "phpmailer/phpmailer": "^6.8",
-        "geoip2/geoip2": "~2.0"
+        "geoip2/geoip2": "~2.0",
+        "league/commonmark": "^2.7",
+        "firebase/php-jwt": "^7.0"
+    },
+    "scripts": {
+        "post-create-project-cmd": "@php -r \"if (!is_file('.env') && !copy('env.example', '.env')) { exit(1); }\"",
+        "test": ["php tests/framework.php", "php tests/documentation.php"],
+        "test:http": "php tests/http.php"
+    },
+    "suggest": {
+        "ext-gd": "Optimize and store intentionally public images",
+        "ext-pdo_mysql": "Use the bundled MySQL/MariaDB migrations"
     }
 }

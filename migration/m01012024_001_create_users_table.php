@@ -23,15 +23,11 @@ class m01012024_001_create_users_table
                 // Verify the id column exists
                 $stmt = $db->pdo->query("SHOW COLUMNS FROM users WHERE Field = 'id'");
                 if ($stmt->rowCount() === 0) {
-                    // Table exists but doesn't have id column, drop and recreate
-                    echo "Users table exists but is missing 'id' column. Dropping and recreating...\n";
-                    $db->pdo->exec("DROP TABLE IF EXISTS users");
-                    $tableExists = false;
+                    throw new \RuntimeException('Existing users table is incompatible. Write an explicit data-preserving migration.');
                 }
             }
         } catch (\PDOException $e) {
-            // If we can't check, proceed with creation
-            echo "Note: Could not verify users table structure: " . $e->getMessage() . "\n";
+            throw new \RuntimeException('Cannot inspect users table before migration.', 0, $e);
         }
         
         if (!$tableExists) {

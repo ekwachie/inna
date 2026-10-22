@@ -13,19 +13,21 @@ class Mailer extends DbModel
 
         $mail->isSMTP();
         //Set SMTP host name                          
-        $mail->Host = "smtp.gmail.com";
+        $mail->Host = $_ENV['SMTP_HOST'] ?? '';
+        if ($mail->Host === '') throw new \RuntimeException('Configure SMTP_HOST before sending mail.');
         //Set this to true if SMTP host requires authentication to send email
-        $mail->SMTPAuth = true;
+        $mail->SMTPAuth = ($_ENV['SMTP_USERNAME'] ?? '') !== '';
         //Provide username and password     
-        $mail->Username = "";
-        $mail->Password = "";
+        $mail->Username = $_ENV['SMTP_USERNAME'] ?? '';
+        $mail->Password = $_ENV['SMTP_PASSWORD'] ?? '';
         //If SMTP requires TLS encryption then set it
         $mail->SMTPSecure = "tls";
         //Set TCP port to connect to
-        $mail->Port = 587;
+        $mail->Port = (int) ($_ENV['SMTP_PORT'] ?? 587);
 
-        $mail->From = "no-reply@myblogpay.com";
-        $mail->FromName = "";
+        $mail->From = $_ENV['SMTP_FROM_ADDRESS'] ?? '';
+        if (!filter_var($mail->From, FILTER_VALIDATE_EMAIL)) throw new \RuntimeException('Configure SMTP_FROM_ADDRESS.');
+        $mail->FromName = $_ENV['SMTP_FROM_NAME'] ?? ($_ENV['APP_NAME'] ?? 'Inna');
 
         $mail->addAddress($mailTo, ""); //Recipient name is optional 
         $mail->isHTML(true);
@@ -49,7 +51,7 @@ class Mailer extends DbModel
     {
         // Get app name from env or use default
         $appName = $_ENV['APP_NAME'] ?? 'Inna Framework';
-        $appUrl = BASE_URL ?? 'https://payperlez.org';
+        $appUrl = defined('BASE_URL') ? BASE_URL : 'https://payperlez.org';
         $currentYear = date('Y');
         
         // Get template file path

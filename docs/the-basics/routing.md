@@ -1,226 +1,36 @@
 # Routing
 
-Routing in Inna allows you to map URLs to controller actions or closures. All routes are defined in `index.php`.
+Define routes in index.php before $app->run(). Callback signatures receive Request and Response; closures may omit unused arguments.
 
-## Basic Routing
-
-### GET Routes
+## Methods
 
 ```php
-$app->router->get('/about', [HomeController::class, 'about']);
+$app->router->get('/orders', [OrderController::class, 'index']);
+$app->router->post('/orders', [OrderController::class, 'create']);
+$app->router->put('/orders/{id}', [OrderController::class, 'replace']);
+$app->router->patch('/orders/{id}', [OrderController::class, 'update']);
+$app->router->delete('/orders/{id}', [OrderController::class, 'remove']);
 ```
 
-### POST Routes
+Import your controller class first. Inna does not automatically create CRUD actions, routes or database tables.
+
+## Parameters
 
 ```php
-$app->router->post('/contact', [ContactController::class, 'submit']);
+$app->router->get('/orders/{id:[0-9]+}', function ($request) {
+    return 'Order ' . $request->getRouteParam('id');
+});
 ```
 
-## Route Parameters
+Unconstrained parameters match one non-empty path segment, including hyphens. Use getRouteParams() for all named values. Constraint patterns can use character classes and + or *; brace quantifiers are not supported in route placeholders.
 
-### Named Parameters
+## Matching and status
 
-Capture URL segments as parameters:
+Trailing slashes normalize to the same route. Static route punctuation is literal. Exact matches take precedence. Put more-specific parameter routes ahead of broader patterns.
 
-```php
-// Route: /user/{id}
-$app->router->get('/user/{id}', [UserController::class, 'show']);
+GET routes also accept HEAD. The router returns 405 with Allow for an unsupported method on a known path, and 404 for unknown paths. OPTIONS on a registered path returns 204 with Allow. This is method discovery, not automatic cross-origin authorization.
 
-// In controller:
-public function show(Request $request, Response $response)
-{
-    $id = $request->getRouteParam('id');
-    // $id contains the value from URL
-}
-```
+## Middleware
 
-### Parameter Constraints
-
-You can add regex constraints to parameters:
-
-```php
-// Only numeric IDs
-$app->router->get('/user/{id:[\d]+}', [UserController::class, 'show']);
-
-// Alphanumeric with hyphens
-$app->router->get('/{category}/{slug:[\w\d-]+}', [PostController::class, 'show']);
-```
-
-### Multiple Parameters
-
-```php
-$app->router->get('/post/{category}/{id}', [PostController::class, 'show']);
-
-// In controller:
-public function show(Request $request, Response $response)
-{
-    $category = $request->getRouteParam('category');
-    $id = $request->getRouteParam('id');
-}
-```
-
-## Route Examples
-
-### Simple Route
-
-```php
-$app->router->get('/', [HomeController::class, 'index']);
-```
-
-### Route with Parameters
-
-```php
-$app->router->get('/user/{id}', [UserController::class, 'profile']);
-```
-
-### Route with Constraint
-
-```php
-$app->router->get('/post/{id:[\d]+}', [PostController::class, 'show']);
-```
-
-### Route with Multiple Segments
-
-```php
-$app->router->get('/blog/{year}/{month}/{slug}', [BlogController::class, 'post']);
-```
-
-### Complex Pattern
-
-```php
-// Matches: /api/v1/users/123
-$app->router->get('/api/v1/users/{id:[\d]+}', [ApiController::class, 'getUser']);
-```
-
-## Accessing Route Parameters
-
-In your controller, access parameters via the Request object:
-
-```php
-use app\Core\Request;
-use app\Core\Response;
-
-class UserController extends Controller
-{
-    public function show(Request $request, Response $response)
-    {
-        // Get single parameter
-        $id = $request->getRouteParam('id');
-        
-        // Get all parameters
-        $params = $request->getRouteParams();
-        
-        // Get parameter with default
-        $page = $request->getRouteParam('page', 1);
-    }
-}
-```
-
-## Route Matching
-
-Routes are matched in this order:
-
-1. **Exact Match**: Direct URL match
-2. **Pattern Match**: Regex pattern matching with parameters
-3. **404**: If no match found, renders `404.twig`
-
-### Example Matching
-
-```php
-// Route definition
-$app->router->get('/user/{id}', [UserController::class, 'show']);
-
-// Matches:
-// ✅ /user/123
-// ✅ /user/456
-// ❌ /user/123/posts (doesn't match)
-```
-
-## Route Patterns
-
-### Common Patterns
-
-```php
-// Numeric only
-{id:[\d]+}
-
-// Alphanumeric with hyphens
-{slug:[\w\d-]+}
-
-// Letters only
-{name:[\w]+}
-
-// Any character (be careful!)
-{any:.*}
-```
-
-## Route Organization
-
-### Grouping by Controller
-
-```php
-// Home routes
-$app->router->get('/', [HomeController::class, 'index']);
-$app->router->get('/about', [HomeController::class, 'about']);
-$app->router->get('/contact', [HomeController::class, 'contact']);
-
-// User routes
-$app->router->get('/user/{id}', [UserController::class, 'show']);
-$app->router->post('/user', [UserController::class, 'create']);
-
-// API routes
-$app->router->post('/api/login', [ApiController::class, 'login']);
-$app->router->get('/api/user', [ApiController::class, 'user']);
-```
-
-## 404 Handling
-
-If no route matches, the framework automatically renders the `404.twig` template located in `public/views/404.twig`.
-
-You can customize this by editing the template file.
-
-## Best Practices
-
-1. **Use descriptive URLs**: `/user/profile` instead of `/u/p`
-2. **Use constraints**: Always validate parameter patterns
-3. **Organize routes**: Group related routes together
-4. **Use RESTful conventions**: 
-   - GET for reading
-   - POST for creating
-   - PUT/PATCH for updating (if supported)
-   - DELETE for deleting (if supported)
-
-## Common Patterns
-
-### RESTful Routes
-
-```php
-// List all
-$app->router->get('/posts', [PostController::class, 'index']);
-
-// Show one
-$app->router->get('/post/{id}', [PostController::class, 'show']);
-
-// Create
-$app->router->post('/post', [PostController::class, 'create']);
-
-// Update
-$app->router->post('/post/{id}', [PostController::class, 'update']);
-
-// Delete
-$app->router->post('/post/{id}/delete', [PostController::class, 'delete']);
-```
-
-### API Routes
-
-```php
-$app->router->post('/api/login', [ApiController::class, 'login']);
-$app->router->get('/api/user', [ApiController::class, 'user']);
-$app->router->get('/api/posts', [ApiController::class, 'posts']);
-```
-
-## Next Steps
-
-- [Controllers](the-basics/controllers.md) - Learn about controllers
-- [Middleware](/security/middleware.md) - Add middleware to routes
+Middleware is registered in a controller constructor, not on the route object. See [middleware](security/middleware.md). Inna currently has no route-group or fluent route-middleware API.
 

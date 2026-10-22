@@ -135,10 +135,9 @@ class Model
      */
     public function required()
     {
-        if (
-            (isset($this->file) && $this->file['error'] == 4) ||
-            ($this->value == '' || $this->value == null)
-        ) {
+        $missing = isset($this->file) ? (($this->file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE)
+            : ($this->value === '' || $this->value === null || $this->value === []);
+        if ($missing) {
             $this->errors[] = 'Field ' . $this->name . ' required.';
         }
         return $this;
@@ -332,7 +331,7 @@ class Model
      */
     public static function is_int($value)
     {
-        if (filter_var($value, FILTER_VALIDATE_INT)) {
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
             return true;
         } else {
             return false;
@@ -347,7 +346,7 @@ class Model
      */
     public static function is_float($value)
     {
-        if (filter_var($value, FILTER_VALIDATE_FLOAT)) {
+        if (filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
             return true;
         } else {
             return false;

@@ -26,8 +26,10 @@ class User extends DbModel
         try {
             $find = $this->findOne($username);
             if ($find !== false) {
-                $stmt = $this->select("SELECT concat(fname, ' ', lname) AS name, email, username, auth, role, password, county_set, country_id FROM users WHERE username = :username", array('username' => $username));
-                if (DUtil::passVerify($password, $stmt[0]['password'])) {
+                $stmt = $this->select("SELECT id, firstname, lastname, email, username, role, password, is_active, is_suspended FROM users WHERE username = :username", array('username' => $username));
+                if (!empty($stmt[0]['is_active']) && empty($stmt[0]['is_suspended']) && DUtil::passVerify($password, $stmt[0]['password'])) {
+                    unset($stmt[0]['password']);
+                    Session::regenerate();
                     Session::set('user', $stmt);
                     if (!empty(Session::get('user'))) {
                         // DUtil::debug($stmt);

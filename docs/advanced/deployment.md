@@ -1,205 +1,57 @@
 # Deployment
 
-This guide covers deploying your Inna application to production.
+## Prepare a release
 
-## Pre-Deployment Checklist
+Require PHP >=8.4 and run composer check-platform-reqs, composer test and php tests/http.php. Install locked dependencies with composer install --no-dev --prefer-dist --optimize-autoloader. Do not update dependencies on production.
 
-- [ ] Set `APP_ENV=production` in `.env`
-- [ ] Generate strong `JWT_SECRET`
-- [ ] Configure database credentials
-- [ ] Set up error logging
-- [ ] Enable HTTPS
-- [ ] Configure web server
-- [ ] Set proper file permissions
-- [ ] Run migrations
-- [ ] Clear Twig cache
+Set APP_ENV=production, the real DOMAIN and feature-specific credentials. PHP error display remains disabled. Use HTTPS and configure trusted proxies at the web server.
 
-## Environment Configuration
+## Apache
 
-### Production `.env`
+Serve the repository entry point with DirectoryIndex index.php and mod_rewrite enabled. The supplied .htaccess routes requests through index.php and denies direct access to application/config/vendor/migration/log/test directories and sensitive root files. Allow the required override directives in the virtual host.
 
-```env
-APP_ENV=production
-DOMAIN=yourdomain.com
+Public uploads must be static-only. Disable PHP execution there in the virtual host; do not rely on uploaded filenames to control execution. Test the actual host rules after deployment.
 
-DB_DSN=mysql:host=localhost;dbname=production_db
-DB_USER=production_user
-DB_PASSWORD=strong_password
+## Nginx
 
-JWT_SECRET=your_production_secret_key
-JWT_ISSUER=yourdomain_api
-JWT_TTL=3600
-```
-
-## Web Server Configuration
-
-### Apache
-
-Ensure `.htaccess` is configured:
-
-```apache
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
-</IfModule>
-```
-
-### Nginx
+The project entry point is at the checkout root, not public/index.php. A starting configuration:
 
 ```nginx
 server {
-    listen 80;
-    server_name yourdomain.com;
-    root /var/www/inna/public;
+    listen 443 ssl;
+    server_name app.example.com;
+    root /srv/my-app;
     index index.php;
 
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
+    location ~ /\.(?!well-known) { deny all; }
+    location ~ ^/(app|config|vendor|migration|log|tests|design-preview)(/|$) { deny all; }
+    location ~ ^/(composer\.(json|lock)|env\.example|dev-router\.php|migrations)$ { deny all; }
+    location / { try_files $uri $uri/ /index.php?$query_string; }
+
+    location = /index.php {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root/index.php;
+        fastcgi_param HTTPS on;
+        fastcgi_pass unix:/run/php/php8.4-fpm.sock;
     }
 
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
+    location ~ \.php$ { deny all; }
 }
 ```
 
-## File Permissions
+Add your TLS certificate configuration, upload/body limits and access logging. Validate with nginx -t and use paths appropriate to your host. This template is a starting point, not an automatic provisioner.
 
-Set proper permissions:
+## Persistent data
 
-```bash
-# Directories
-find . -type d -exec chmod 755 {} \;
+Keep .env, private storage, encryption keys, database data and protected logs outside disposable release assets or preserve them explicitly. Give PHP write access only where needed: Twig runtime, intentional public uploads and private storage/log directories. Never make the entire checkout writable.
 
-# Files
-find . -type f -exec chmod 644 {} \;
+Back up encrypted files and their keys with database metadata. Migrate data in a planned window; a database-only restore cannot recover private uploaded files.
 
-# Writable directories
-chmod -R 775 log/
-chmod -R 775 public/runtime/
-```
+## Payments and workers
 
-## Database Setup
+Use a test key in non-production environments. Persist operations and idempotency keys, verify signed webhooks and run application-specific reconciliation/outbox workers. Inna's client does not run the Payperlez Biz provider/settlement workers inside your application.
 
-### Run Migrations
+## Health and rollout
 
-```bash
-./migrations update
-```
-
-### Backup Database
-
-Always backup before deployment:
-
-```bash
-mysqldump -u user -p database_name > backup.sql
-```
-
-## Security Checklist
-
-- [ ] Use HTTPS
-- [ ] Strong database passwords
-- [ ] Secure JWT secret
-- [ ] Disable error display
-- [ ] Set secure session cookies
-- [ ] Configure security headers
-- [ ] Restrict file permissions
-- [ ] Use environment variables
-
-## Performance Optimization
-
-### Enable OpCache
-
-In `php.ini`:
-
-```ini
-opcache.enable=1
-opcache.memory_consumption=128
-opcache.max_accelerated_files=10000
-```
-
-### Clear Cache
-
-Clear Twig cache:
-
-```bash
-rm -rf public/runtime/*
-```
-
-## Monitoring
-
-### Error Monitoring
-
-Monitor error logs:
-- `log/errors/error_log_*.log`
-- `log/app_error_log_*.log`
-
-### Activity Logs
-
-Monitor activity:
-- `log/activity/log_*.log`
-
-## SSL/HTTPS
-
-### Let's Encrypt
-
-```bash
-sudo certbot --nginx -d yourdomain.com
-```
-
-### Force HTTPS
-
-In your application, ensure HTTPS is used in production (automatically handled by the framework).
-
-## Backup Strategy
-
-### Database Backups
-
-Set up automated database backups:
-
-```bash
-# Daily backup script
-mysqldump -u user -p database_name > /backups/db_$(date +%Y%m%d).sql
-```
-
-### File Backups
-
-Backup important files:
-
-```bash
-tar -czf backup_$(date +%Y%m%d).tar.gz app/ config/ migration/
-```
-
-## Troubleshooting
-
-### Check Logs
-
-```bash
-tail -f log/errors/error_log_*.log
-tail -f log/app_error_log_*.log
-```
-
-### Check Permissions
-
-```bash
-ls -la
-```
-
-### Test Database Connection
-
-```php
-// Test script
-$db = new Database($config['db']);
-echo "Connected!";
-```
-
-## Next Steps
-
-- [Configuration](/getting-started/configuration.md) - Review configuration
-- [Security](/security/authentication.md) - Review security settings
+Verify the landing page, documentation, a real database read, a private upload/download and your webhook receiver in an appropriate test environment. Keep a rollback plan that includes schema compatibility; reverting application files does not reverse database changes or key rotation.
 

@@ -1,64 +1,16 @@
-# Inna Framework Migrations
+# Database Migrations
 
-This directory contains database migrations for the Inna framework.
+Migration classes live in this directory. The maintained guide is [docs/database/migrations.md](../docs/database/migrations.md).
 
-## Included Migrations
+The bundled schema files, in execution order, are:
 
-### 1. `m01012024_create_inna_database.php`
-Creates the `inna` database with UTF8MB4 character set.
+1. m01012024_000_create_inna_database.php
+2. m01012024_001_create_users_table.php
+3. m01012024_002_create_otp_verifications_table.php
 
-**Note:** This migration may need to be run manually if your DSN already specifies a database. To create the database manually:
-```sql
-CREATE DATABASE IF NOT EXISTS inna CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
+They target MySQL/MariaDB. Review database privileges and compatibility with your existing schema before applying them. The users migration does not drop an incompatible existing users table.
 
-### 2. `m01012024_create_users_table.php`
-Creates the `users` table with:
-- **Bio data**: firstname, lastname, middlename, date_of_birth, gender, profile_picture, bio, address, city, state, country, postal_code
-- **Contact**: email, phone
-- **Verification**: email_verified, email_verified_at, phone_verified, phone_verified_at
-- **Account management**: is_active, is_suspended, role, last_login
-- **Timestamps**: created_at, updated_at
+Run ./migrations update from the project root. Successful migrations are recorded individually; the runner stops and exits nonzero at the first failure. MySQL DDL may commit implicitly. Inspect partial schema changes before retrying and use a single deployment runner.
 
-### 3. `m01012024_create_otp_verifications_table.php`
-Creates the `otp_verifications` table for OTP-based verification:
-- Supports multiple verification types: email, phone, password_reset, two_factor
-- Tracks OTP codes with expiration
-- Limits attempts (default: 5)
-- Records IP address and user agent
-- Links to users table via foreign key
-
-## Running Migrations
-
-To apply all migrations:
-```bash
-./migrations update
-```
-
-To create a new migration:
-```bash
-./migrations add table_name column:type column:type ...
-```
-
-## Migration Order
-
-Migrations are applied in alphabetical order. The naming convention `m01012024_*` ensures proper ordering:
-1. Database creation (if needed)
-2. Users table
-3. OTP verifications table (depends on users table)
-
-## Database Setup
-
-Before running migrations, ensure your `.env` file has the correct database configuration:
-
-```env
-DB_DSN=mysql:host=127.0.0.1;port=3306;dbname=inna;charset=utf8mb4
-DB_USER=root
-DB_PASSWORD=your_password
-```
-
-If the database doesn't exist yet, you may need to:
-1. Connect to MySQL without specifying a database
-2. Run the database creation migration manually
-3. Then run the table migrations
+Generate a reviewed starter with ./migrations add projects name:string. The generated class is only a starting point: add IDs, indexes, foreign keys and resumable behavior deliberately. There is no automatic rollback/down CLI command.
 

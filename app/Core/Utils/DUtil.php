@@ -61,27 +61,17 @@ class DUtil
      */
     public static function get_ip()
     {
-        if (function_exists('apache_request_headers')) {
-            $headers = apache_request_headers();
-        } else {
-            $headers = $_SERVER;
+        $remote = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        if (!filter_var($remote, FILTER_VALIDATE_IP)) return '127.0.0.1';
+        $trusted = array_filter(array_map('trim', explode(',', $_ENV['TRUSTED_PROXY_IPS'] ?? '')));
+        if (!in_array($remote, $trusted, true)) return $remote;
+        $chain = array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''));
+        $chain[] = $remote;
+        foreach (array_reverse($chain) as $ip) {
+            if (!filter_var($ip, FILTER_VALIDATE_IP)) return $remote;
+            if (!in_array($ip, $trusted, true)) return $ip;
         }
-
-        if (
-            array_key_exists('X-Forwarded-For', $headers) &&
-            filter_var($headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
-        ) {
-            $the_ip = $headers['X-Forwarded-For'];
-        } elseif (
-            array_key_exists('HTTP_X_FORWARDED_FOR', $headers) &&
-            filter_var($headers['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
-        ) {
-            $the_ip = $headers['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $the_ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
-        }
-
-        return $the_ip;
+        return $remote;
     }
 
     /**

@@ -1,265 +1,37 @@
 # Validation
 
-Inna includes a powerful validation system based on the `Model` class for validating user input.
+Model contains a small fluent validator. It is not a schema engine: validate input types before applying rules, and choose exact business rules in your controller/service.
 
-## Basic Validation
-
-### Creating a Validator
+## Validate text
 
 ```php
 use app\Core\Model;
+use app\Core\ApiException;
+
+$body = $request->getJsonBody();
+$name = $body['name'] ?? null;
+if (!is_string($name)) throw new ApiException('VALIDATION_ERROR', 'Name must be text.', 422);
 
 $validation = new Model();
-
-// Validate name
-$validation->name('name')
-    ->value($request->getBody()['name'] ?? '')
-    ->required()
-    ->min(3)
-    ->max(100);
-
-// Validate email
-$validation->name('email')
-    ->value($request->getBody()['email'] ?? '')
-    ->required()
-    ->pattern('email');
-
-// Check if valid
-if ($validation->isSuccess()) {
-    // Validation passed
-} else {
-    $errors = $validation->getErrors();
-    // Handle errors
+$validation->name('name')->value($name)->required()->min(2)->max(100);
+if (!$validation->isSuccess()) {
+    throw new ApiException('VALIDATION_ERROR', 'Check the supplied values.', 422, ['name' => implode(' ', $validation->getErrors())]);
 }
 ```
 
-## Validation Rules
+required rejects null, the empty string and an empty array; integer zero is valid. min/max measure bytes for strings and compare values for numeric inputs. Trim text deliberately when your business rule requires it.
 
-### required()
+## Available rules
 
-Field must not be empty:
+pattern(name) checks one of Model::$patterns, such as alpha, alphanum, int or date_ymd. customPattern(pattern) wraps your expression in full-string anchors. equal(value) checks equality. isSuccess returns whether the error list is empty, and getErrors returns its messages.
 
-```php
-$validation->name('email')->value($email)->required();
-```
+The legacy pattern collection is basic format checking, not full validation of calendar dates, URLs or all email address forms. Prefer filter_var($email, FILTER_VALIDATE_EMAIL) for email and domain-specific parsers where appropriate. Static Model::is_email/is_int/is_float are boolean checks; they do not append errors to a fluent validator.
 
-### min()
+## Files
 
-Minimum length or value:
+The legacy file/ext/maxSize helpers do not establish MIME authenticity or trusted upload origin. Use UploadPolicy through EncryptedStorage or PublicImageStorage for uploads. See [file upload](utilities/file-upload.md).
 
-```php
-// String length
-$validation->name('password')->value($password)->min(8);
+## Output and persistence
 
-// Numeric value
-$validation->name('age')->value($age)->min(18);
-```
-
-### max()
-
-Maximum length or value:
-
-```php
-// String length
-$validation->name('title')->value($title)->max(255);
-
-// Numeric value
-$validation->name('quantity')->value($quantity)->max(100);
-```
-
-### pattern()
-
-Validate against predefined patterns:
-
-```php
-// Email
-$validation->name('email')->value($email)->pattern('email');
-
-// URL
-$validation->name('website')->value($website)->pattern('url');
-
-// Integer
-$validation->name('age')->value($age)->pattern('int');
-
-// Alpha only
-$validation->name('name')->value($name)->pattern('alpha');
-
-// Alphanumeric
-$validation->name('username')->value($username)->pattern('alphanum');
-```
-
-Available patterns:
-- `email` - Email address
-- `url` - URL
-- `int` - Integer
-- `float` - Float number
-- `alpha` - Letters only
-- `alphanum` - Letters and numbers
-- `text` - Text with common characters
-- `date_dmy` - Date (DD-MM-YYYY)
-- `date_ymd` - Date (YYYY-MM-DD)
-- `tel` - Telephone number
-
-### customPattern()
-
-Custom regex pattern:
-
-```php
-$validation->name('phone')
-    ->value($phone)
-    ->customPattern('^\+?[1-9]\d{1,14}$');
-```
-
-### equal()
-
-Value must match:
-
-```php
-$validation->name('password_confirm')
-    ->value($confirmPassword)
-    ->equal($password);
-```
-
-## File Validation
-
-### File Size
-
-```php
-$validation->name('avatar')
-    ->file($_FILES['avatar'] ?? [])
-    ->maxSize(2097152); // 2MB in bytes
-```
-
-### File Extension
-
-```php
-$validation->name('document')
-    ->file($_FILES['document'] ?? [])
-    ->ext('pdf');
-```
-
-## Complete Example
-
-```php
-use app\Core\Model;
-
-public function register(Request $request, Response $response)
-{
-    if ($request->isPost()) {
-        $body = $request->getBody();
-        $validation = new Model();
-        
-        // Name validation
-        $validation->name('name')
-            ->value($body['name'] ?? '')
-            ->required()
-            ->min(3)
-            ->max(100);
-        
-        // Email validation
-        $validation->name('email')
-            ->value($body['email'] ?? '')
-            ->required()
-            ->pattern('email');
-        
-        // Password validation
-        $validation->name('password')
-            ->value($body['password'] ?? '')
-            ->required()
-            ->min(8);
-        
-        // Confirm password
-        $validation->name('password_confirm')
-            ->value($body['password_confirm'] ?? '')
-            ->required()
-            ->equal($body['password'] ?? '');
-        
-        // Check validation
-        if (!$validation->isSuccess()) {
-            $errors = $validation->getErrors();
-            echo $this->setFlash('error', implode(', ', $errors));
-            return $this->render('auth/register');
-        }
-        
-        // Validation passed, create user
-        // ...
-    }
-    
-    return $this->render('auth/register');
-}
-```
-
-## Getting Errors
-
-### All Errors
-
-```php
-$errors = $validation->getErrors();
-// Returns: ['Field name required.', 'Field email invalid.']
-```
-
-### Display Errors
-
-```php
-echo $validation->displayErrors();
-// Returns HTML formatted errors
-```
-
-### Check Success
-
-```php
-if ($validation->isSuccess()) {
-    // No errors
-} else {
-    // Has errors
-}
-```
-
-## Sanitization
-
-### purify()
-
-Sanitize strings to prevent XSS:
-
-```php
-$clean = $validation->purify($userInput);
-// Returns HTML-escaped string
-```
-
-## Static Validation Methods
-
-### Quick Checks
-
-```php
-use app\Core\Model;
-
-if (Model::is_email($email)) {
-    // Valid email
-}
-
-if (Model::is_int($value)) {
-    // Valid integer
-}
-
-if (Model::is_url($url)) {
-    // Valid URL
-}
-
-if (Model::is_alpha($text)) {
-    // Letters only
-}
-```
-
-## Best Practices
-
-1. **Validate early**: Validate input as soon as possible
-2. **Use appropriate rules**: Choose the right validation rule
-3. **Provide clear errors**: Give users helpful error messages
-4. **Sanitize output**: Always sanitize user input before displaying
-5. **Server-side validation**: Never rely only on client-side validation
-
-## Next Steps
-
-- [Forms](/advanced/forms.md) - Learn about form handling
-- [Security](/security/authentication.md) - Learn about security
+Validate before persistence; bind SQL values rather than concatenating them. Escape when rendering into HTML. purify is an HTML-escaping helper, not malware scanning, SQL protection or universal sanitization. Never escape/normalize passwords before password verification.
 

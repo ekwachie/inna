@@ -1,178 +1,65 @@
-# Forms
+# Forms and CSRF
 
-Inna provides form helpers for building and validating forms.
+Use explicit Twig forms. The legacy PHP form field renderer is incomplete and should not be used as a generic form builder.
 
-## Form Helper
+## Controller
 
-The framework includes a `Form` class for building forms. Check `app/Core/form/Form.php` and `app/ext/AppForm.php`.
-
-### Basic Form
-
-```php
-use app\core\form\Form;
-
-// Start form
-$form = Form::begin('/contact', 'POST');
-
-// Form fields
-echo Form::field($model, 'name');
-echo Form::field($model, 'email');
-echo Form::field($model, 'message');
-
-// End form
-Form::end();
-```
-
-## Form Validation
-
-Combine forms with the validation system:
-
-```php
-use app\Core\Model;
-use app\core\form\Form;
-
-$model = new Model();
-
-// In controller
-if ($request->isPost()) {
-    $body = $request->getBody();
-    
-    $validation = new Model();
-    $validation->name('name')
-        ->value($body['name'] ?? '')
-        ->required()
-        ->min(3);
-    
-    if ($validation->isSuccess()) {
-        // Process form
-    }
-}
-```
-
-## CSRF Protection
-
-Implement CSRF protection:
-
-### Generate Token
-
-```php
-use app\Core\Application;
-
-$session = Application::$app->session;
-$token = bin2hex(random_bytes(32));
-$session->set('csrf_token', $token);
-```
-
-### In Form
-
-```html
-<input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
-```
-
-### Validate Token
-
-```php
-$session = Application::$app->session;
-$body = $request->getBody();
-
-if ($body['csrf_token'] !== $session->get('csrf_token')) {
-    echo $this->setFlash('error', 'Invalid token');
-    return $this->render('form');
-}
-```
-
-## Complete Form Example
+A controller serving and accepting a form should register CsrfMiddleware:
 
 ```php
 <?php
-
 namespace app\Controllers;
 
 use app\Core\Controller;
 use app\Core\Request;
-use app\Core\Response;
-use app\Core\Application;
-use app\Core\Model;
+use app\Core\Middlewares\CsrfMiddleware;
+use app\Core\Utils\DUtil;
 
-class ContactController extends Controller
+final class MessageController extends Controller
 {
-    public function index(Request $request, Response $response)
+    public function __construct()
     {
-        if ($request->isPost()) {
-            $body = $request->getBody();
-            $validation = new Model();
-            
-            // Validate
-            $validation->name('name')
-                ->value($body['name'] ?? '')
-                ->required()
-                ->min(3);
-            
-            $validation->name('email')
-                ->value($body['email'] ?? '')
-                ->required()
-                ->pattern('email');
-            
-            $validation->name('message')
-                ->value($body['message'] ?? '')
-                ->required()
-                ->min(10);
-            
-            if ($validation->isSuccess()) {
-                // Send email or save to database
-                echo $this->setFlash('success', 'Message sent!');
-                return $response->redirect('/contact');
-            } else {
-                $errors = $validation->getErrors();
-                echo $this->setFlash('error', implode(', ', $errors));
-            }
+        $this->middleware(new CsrfMiddleware());
+    }
+
+    public function form(Request $request)
+    {
+        return $this->render('message', ['csrf_token' => DUtil::csrf_token()]);
+    }
+
+    public function submit(Request $request)
+    {
+        $name = $_POST['name'] ?? null;
+        if (!is_string($name) || trim($name) === '') {
+            throw new \app\Core\ApiException('VALIDATION_ERROR', 'Provide a name.', 422);
         }
-        
-        // Generate CSRF token
-        $session = Application::$app->session;
-        $token = bin2hex(random_bytes(32));
-        $session->set('csrf_token', $token);
-        
-        return $this->render('contact', ['csrf_token' => $token]);
+        return $this->render('message', [
+            'csrf_token' => DUtil::csrf_token(),
+            'notice' => 'Thanks, ' . $name,
+        ]);
     }
 }
 ```
 
-## View Template
+Register GET /message to form and POST /message to submit.
+
+## Template
+
+Create public/views/message.twig:
 
 ```twig
-<form action="/contact" method="POST">
+<form action="/message" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    
-    <div>
-        <label for="name">Name</label>
-        <input type="text" name="name" id="name" value="{{ old.name|default('') }}" required>
-    </div>
-    
-    <div>
-        <label for="email">Email</label>
-        <input type="email" name="email" id="email" value="{{ old.email|default('') }}" required>
-    </div>
-    
-    <div>
-        <label for="message">Message</label>
-        <textarea name="message" id="message" required>{{ old.message|default('') }}</textarea>
-    </div>
-    
+    <label for="name">Name</label>
+    <input id="name" name="name" required maxlength="100">
     <button type="submit">Send</button>
 </form>
+{% if notice is defined %}<p>{{ notice }}</p>{% endif %}
 ```
 
-## Best Practices
+Twig escapes the notice. Validate length and business rules server-side even when HTML fields have constraints. Add AuthMiddleware when the form needs a signed-in actor.
 
-1. **Always validate**: Validate all form input
-2. **Use CSRF tokens**: Protect against CSRF attacks
-3. **Sanitize output**: Always sanitize user input
-4. **Provide feedback**: Show success/error messages
-5. **Preserve input**: Preserve user input on validation errors
+## Upload forms
 
-## Next Steps
-
-- [Validation](/utilities/validation.md) - Learn about validation
-- [Security](/security/authentication.md) - Learn about security
+Use enctype="multipart/form-data" and a file input. Check authorization, then pass $_FILES['file'] to a storage service. PHP upload limits and the service's byte limit both apply. See [encrypted uploads](storage/encrypted-uploads.md).
 

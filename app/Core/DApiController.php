@@ -11,10 +11,19 @@
 namespace app\Core;
 
 use app\Core\Utils\Jwt;
-use Exception;
 
 class DApiController extends Controller
 {
+    public function success(mixed $data, int $status = 200): never
+    {
+        ApiResponse::success($data, $status);
+    }
+
+    public function error(string $code, string $message, int $status = 400, array $fields = []): never
+    {
+        ApiResponse::error($code, $message, $status, $fields);
+    }
+
     public function message($status, $message, $errorCode = null)
     {
 
@@ -111,39 +120,16 @@ class DApiController extends Controller
         $token = $this->getBearerToken();
         if (!$token) {
             $this->header('WWW-Authenticate: Bearer');
-            $this->json([
-                'success' => false,
-                'data' => 'Missing Authorization Bearer token',
-                'error_code' => 'AUTH_MISSING_BEARER'
-            ]);
+            throw new ApiException('AUTH_MISSING_BEARER', 'Provide an Authorization Bearer token.', 401);
         }
-
-        try {
-            $jwt = new Jwt();
-            $payload = $jwt->decode($token);
-
-            if (!empty($requiredRoles)) {
-                $roles = isset($payload['roles']) && is_array($payload['roles']) ? $payload['roles'] : [];
-                $hasRole = count(array_intersect($requiredRoles, $roles)) > 0;
-                if (!$hasRole) {
-                    $this->json([
-                        'success' => false,
-                        'data' => 'Forbidden: insufficient role',
-                        'error_code' => 'AUTH_FORBIDDEN'
-                    ]);
-                }
-            }
-
-            return $payload;
-        } catch (Exception $e) {
+        $jwt = new Jwt();
+        try { $payload = $jwt->decode($token); }
+        catch (\Throwable) {
             $this->header('WWW-Authenticate: Bearer error="invalid_token"');
-            $this->json([
-                'success' => false,
-                'data' => 'Unauthorized: ' . $e->getMessage(),
-                'error_code' => 'AUTH_INVALID_TOKEN'
-            ]);
+            throw new ApiException('AUTH_INVALID_TOKEN', 'Token is invalid or expired.', 401);
         }
-
-        return [];
+        $roles = is_array($payload['roles'] ?? null) ? $payload['roles'] : [];
+        if ($requiredRoles && !array_intersect($requiredRoles, $roles)) throw new ApiException('AUTH_FORBIDDEN', 'Required role is missing.', 403);
+        return $payload;
     }
 }

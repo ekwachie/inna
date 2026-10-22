@@ -1,134 +1,29 @@
 # API Authentication
 
-This guide covers JWT authentication for API endpoints. For detailed JWT usage, see the [JWT Authentication](/security/jwt.md) guide.
+## Obtain a token
 
-## Quick Start
+POST JSON to /api/login with username and password for an existing active user in the bundled schema. The response contains data.token and a limited public user record.
 
-### 1. Setup Environment
-
-```env
-JWT_SECRET=your_secret_key_here
-JWT_ISSUER=inna_api
-JWT_TTL=3600
+```bash
+curl http://127.0.0.1:8080/api/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"ama","password":"your-password"}'
 ```
 
-### 2. Login Endpoint
+The framework does not seed credentials or automatically create a user. Add rate limiting before exposing login.
 
-```php
-public function login(Request $request, Response $response)
-{
-    $body = $request->getBody();
-    
-    // Authenticate user
-    $user = authenticateUser($body['email'], $body['password']);
-    
-    if ($user) {
-        $token = $this->issueToken([
-            'sub' => $user['id'],
-            'email' => $user['email'],
-            'roles' => $user['roles']
-        ]);
-        
-        return $this->message(true, [
-            'token' => $token,
-            'user' => $user
-        ]);
-    }
-    
-    return $this->message(false, 'Invalid credentials', 'AUTH_FAILED');
-}
+## Send Bearer authentication
+
+```bash
+curl http://127.0.0.1:8080/api/profile \
+  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
-### 3. Protect Endpoints
+GET /api/admin/users also requires an admin role and rechecks the current account. POST /api/refresh issues another access token only for a valid, active account. It is not a durable refresh-token mechanism.
 
-```php
-public function profile(Request $request, Response $response)
-{
-    $payload = $this->requireJwt();
-    // Token validated, access user data
-    $userId = $payload['sub'];
-    
-    return $this->message(true, $userData);
-}
-```
+## Different credentials
 
-## Role-Based Access
+JWT identifies your application's user. A Payperlez X-API-Key identifies a business and test/live environment to the external API. A webhook signing secret authenticates inbound events. These are different credentials and must not be substituted for each other.
 
-```php
-// Require admin role
-public function adminEndpoint(Request $request, Response $response)
-{
-    $payload = $this->requireJwt(['admin']);
-    // Only admins can access
-}
-
-// Require one of multiple roles
-public function moderatorEndpoint(Request $request, Response $response)
-{
-    $payload = $this->requireJwt(['admin', 'moderator']);
-    // Admins or moderators can access
-}
-```
-
-## Client Implementation
-
-### JavaScript Example
-
-```javascript
-// Login
-const login = async (email, password) => {
-  const response = await fetch('/api/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password })
-  });
-  
-  const data = await response.json();
-  
-  if (data.success) {
-    localStorage.setItem('token', data.data.token);
-    return data.data;
-  }
-  
-  throw new Error(data.data);
-};
-
-// Authenticated request
-const getProfile = async () => {
-  const token = localStorage.getItem('token');
-  
-  const response = await fetch('/api/profile', {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  
-  return response.json();
-};
-```
-
-## Token Refresh
-
-```php
-public function refresh(Request $request, Response $response)
-{
-    $payload = $this->requireJwt();
-    
-    // Issue new token
-    $token = $this->issueToken([
-        'sub' => $payload['sub'],
-        'email' => $payload['email'],
-        'roles' => $payload['roles'] ?? []
-    ]);
-    
-    return $this->message(true, ['token' => $token]);
-}
-```
-
-## Next Steps
-
-- [JWT Authentication](/security/jwt.md) - Complete JWT guide
-- [API Controllers](controllers.md) - Learn about API controllers
+See [JWT](security/jwt.md) and [Payperlez services](services/configuration.md).
 

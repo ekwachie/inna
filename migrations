@@ -74,4 +74,10 @@ foreach ($columns as $column) {
 }
 
 // Start migration with dynamic columns
-$app->db->startMigration($action, $migrationName, $parsedColumns);
+try {
+    if (!in_array($action, ['add', 'update'], true)) throw new \InvalidArgumentException('Usage: ./migrations add table column:type ... | ./migrations update');
+    $app->db->startMigration($action, $migrationName, $parsedColumns);
+} catch (\Throwable $error) {
+    fwrite(STDERR, $error->getMessage() . PHP_EOL);
+    exit(1);
+}

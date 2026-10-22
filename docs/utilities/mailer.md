@@ -1,78 +1,29 @@
-# Mailer
+# Mail
 
-Inna includes a `Mailer` utility class for sending emails using PHPMailer.
+Mailer sends an HTML email through PHPMailer and the bundled app/templates/email/default.html template. Configure SMTP before calling it; merely booting Inna does not send mail.
 
-## Basic Usage
+## Configure
 
-### Sending Email
+Set SMTP_HOST, SMTP_PORT=587, SMTP_USERNAME, SMTP_PASSWORD, SMTP_FROM_ADDRESS and SMTP_FROM_NAME in .env. The helper uses STARTTLS and authenticates when a username is configured. Use an authorized sender address. It does not disable certificate verification.
+
+## Send
 
 ```php
 use app\Core\Utils\Mailer;
 
-$mailer = new Mailer();
-
-$mailer->sendMail(
-    'recipient@example.com',  // To email
-    'John Doe',                // Recipient name
-    'Welcome!',                 // Subject
-    'Welcome to our platform!'  // Message
+$sent = (new Mailer())->sendMail(
+    'ama@example.com',
+    'Ama',
+    'Project created',
+    'Your project is ready.'
 );
 ```
 
-## Configuration
+The template substitutes the application name, recipient, greeting, message, year and base URL. Recipient/name/message content is HTML-escaped; messages preserve line breaks. sendMail returns a boolean on completion, but PHPMailer/configuration errors can throw. Handle them at the application boundary without exposing credentials.
 
-The Mailer class uses PHPMailer and needs to be configured. Check `app/Core/Utils/Mailer.php` for SMTP settings.
+## Delivery workflows
 
-### SMTP Configuration
+This helper sends synchronously and does not provide a queue, idempotency or delivery receipts. For important notifications, persist a notification/outbox record and process it with your own worker. Avoid sending mail inside a long-running database transaction.
 
-Edit the Mailer class to configure:
-
-```php
-$mail->Host = "smtp.gmail.com";
-$mail->SMTPAuth = true;
-$mail->Username = "your-email@gmail.com";
-$mail->Password = "your-password";
-$mail->SMTPSecure = "tls";
-$mail->Port = 587;
-```
-
-## Email Templates
-
-The Mailer class includes email template support. Templates are located in `app/templates/email/`.
-
-### Using Templates
-
-The Mailer automatically loads templates from `app/templates/email/default.html`.
-
-## Complete Example
-
-```php
-use app\Core\Utils\Mailer;
-
-public function sendWelcomeEmail($userEmail, $userName)
-{
-    $mailer = new Mailer();
-    
-    $subject = 'Welcome to Our Platform!';
-    $message = "Hi $userName, welcome to our platform!";
-    
-    if ($mailer->sendMail($userEmail, $userName, $subject, $message)) {
-        echo "Email sent successfully";
-    } else {
-        echo "Email failed to send";
-    }
-}
-```
-
-## Best Practices
-
-1. **Use environment variables**: Store SMTP credentials in `.env`
-2. **Handle errors**: Always check return value
-3. **Use templates**: Use HTML email templates for better formatting
-4. **Test emails**: Test email sending in development
-5. **Queue emails**: Consider queuing emails for better performance
-
-## Next Steps
-
-- [Configuration](/getting-started/configuration.md) - Learn about configuration
+Customize the HTML template in app/templates/email/default.html and verify it in the email clients your application supports.
 

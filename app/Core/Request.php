@@ -17,6 +17,54 @@ namespace app\Core;
 class Request
 {
     private array $routeParams = [];
+    private array $attributes = [];
+    private ?string $rawBody = null;
+
+    public function setAttribute(string $name, mixed $value): void
+    {
+        $this->attributes[$name] = $value;
+    }
+
+    public function getAttribute(string $name, mixed $default = null): mixed
+    {
+        return $this->attributes[$name] ?? $default;
+    }
+
+    public function getHeader(string $name, ?string $default = null): ?string
+    {
+        $key = strtoupper(str_replace('-', '_', $name));
+        return $_SERVER['HTTP_' . $key] ?? $_SERVER[$key] ?? $default;
+    }
+
+    public function getQueryParams(): array
+    {
+        return $_GET;
+    }
+
+    public function getRawBody(int $maxBytes = 1048576): string
+    {
+        if ($maxBytes < 1) throw new \InvalidArgumentException('Body limit must be positive.');
+        if ($this->rawBody === null) {
+            $raw = file_get_contents('php://input', false, null, 0, $maxBytes + 1);
+            if ($raw === false || strlen($raw) > $maxBytes) throw new ApiException('PAYLOAD_TOO_LARGE', 'Request body is too large.', 413);
+            $this->rawBody = $raw;
+        }
+        if (strlen($this->rawBody) > $maxBytes) throw new ApiException('PAYLOAD_TOO_LARGE', 'Request body is too large.', 413);
+        return $this->rawBody;
+    }
+
+    public function getJsonBody(int $maxBytes = 65536): array
+    {
+        $type = strtolower(trim(explode(';', $this->getHeader('Content-Type', ''))[0]));
+        if ($type !== 'application/json') throw new ApiException('UNSUPPORTED_MEDIA_TYPE', 'Use Content-Type: application/json.', 415);
+        try {
+            $value = json_decode($this->getRawBody($maxBytes), false, 32, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $error) {
+            throw new ApiException('INVALID_JSON', 'Request body must be valid JSON.', 400);
+        }
+        if (!$value instanceof \stdClass) throw new ApiException('INVALID_JSON', 'Request body must be a JSON object.', 400);
+        return (array) $value;
+    }
 
     public function getMethod()
     {

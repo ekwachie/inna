@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <script>
+        (() => {
+            let theme;
+            try { theme = localStorage.getItem('inna-theme'); } catch {}
+            document.documentElement.dataset.theme = ['light', 'dark'].includes(theme) ? theme : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        })();
+    </script>
+    <meta name="description" content="Inna is a minimal PHP framework by Payperlez. Explore the framework and its documentation.">
+    <title>{% block title %}Inna — A little framework. A lot of possibility.{% endblock %}</title>
+    <link rel="stylesheet" href="/public/static/css/site.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/public/static/js/site.js" defer></script>
+</head>
+<body class="{% block body_class %}landing{% endblock %}">
+    {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,137 +1,50 @@
 # Installation
 
-## Server Requirements
+## Requirements
 
-Before installing Inna, ensure your server meets the following requirements:
-
-- **PHP** >= 8.0
-- **Composer** (for dependency management)
-- **MySQL** 5.7+ or **MariaDB** 10.2+ (or compatible database)
-- **Web Server** (Apache with mod_rewrite or Nginx)
-- **OpenSSL** PHP Extension
-- **PDO** PHP Extension
-- **Mbstring** PHP Extension
-- **JSON** PHP Extension
-
-## Installing Inna
-
-### Via Composer (Recommended)
-
-The easiest way to install Inna is using Composer's `create-project` command:
+Use PHP >=8.4 and Composer 2. Required extensions are curl, fileinfo, mbstring, openssl, PDO and sodium, plus the requirements of Composer dependencies. Add pdo_mysql for MySQL/MariaDB and gd for optional public-image optimization. SQLite is used by the framework test suite.
 
 ```bash
-composer create-project payperlez/inna my-project -s stable
+php -v
+composer check-platform-reqs
 ```
 
-This will create a new `my-project` directory with a fresh Inna installation.
+## Install from source
 
-### Manual Installation
+Clone the repository into a new directory:
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/payperlez/inna.git my-project
-cd my-project
-```
-
-2. Install dependencies:
-```bash
+git clone https://github.com/ekwachie/inna.git my-app
+cd my-app
 composer install
-```
-
-## Configuration
-
-### Environment Setup
-
-1. Copy the example environment file:
-```bash
 cp env.example .env
 ```
 
-2. Generate an application key:
+To install the 2.0 release into a new, empty directory:
+
 ```bash
-openssl rand -hex 32
+composer create-project payperlez/inna my-app '^2.0' -s stable
 ```
 
-3. Edit the `.env` file with your configuration:
+The first-install script copies env.example to .env if it does not already exist. Generate your JWT secret and configure optional features before using them.
 
-```env
-# Application
-APP_ENV=development
-DOMAIN=localhost
+## Configure optional features
 
-# Database
-DB_DSN=mysql:host=localhost;dbname=inna_db
-DB_USER=root
-DB_PASSWORD=
+The homepage does not require a database. Set a real DB_DSN, DB_USER and DB_PASSWORD before calling model methods or running migrations. Generate JWT_SECRET with openssl rand -hex 32 before issuing tokens. Generate a different key for encrypted storage.
 
-# JWT (for API authentication)
-JWT_SECRET=your_generated_secret_key_here
-JWT_ISSUER=inna_api
-JWT_TTL=3600
-```
+See [configuration](getting-started/configuration.md) for all settings and [deployment](advanced/deployment.md) for web-server setup.
 
-### Database Configuration
+## Verify
 
-1. Create your database:
-```sql
-CREATE DATABASE inna_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-2. Update your `.env` file with database credentials.
-
-3. Run migrations:
 ```bash
-./migrations update
+composer test
+php tests/http.php
+php -S 127.0.0.1:8080 -t . dev-router.php
 ```
 
-## Web Server Configuration
+The HTTP test starts its own isolated loopback server and removes its temporary storage afterward. It does not call live payment or SMS services.
 
-### Apache Configuration
+## Common problems
 
-Ensure `mod_rewrite` is enabled and configure your `.htaccess` file:
-
-```apache
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
-</IfModule>
-```
-
-### Nginx Configuration
-
-```nginx
-server {
-    listen 80;
-    server_name localhost;
-    root /path/to/inna/public;
-    index index.php;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-}
-```
-
-## Verifying Installation
-
-After installation, you can verify everything is working by:
-
-1. Starting your web server
-2. Visiting `http://localhost` in your browser
-3. You should see the Inna welcome page
-
-## Next Steps
-
-- [Configuration](/getting-started/configuration.md) - Learn about framework configuration
-- [Directory Structure](/getting-started/directory-structure.md) - Understand the project layout
-- [Routing](the-basics/routing.md) - Define your first routes
+A non-empty create-project directory must be preserved or replaced deliberately; Composer will not merge projects. Missing PHP extensions are reported by check-platform-reqs. For database connection errors, verify the PDO driver and credentials. Do not run migrations on production simply to test connectivity.
 

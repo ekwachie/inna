@@ -31,11 +31,11 @@ class AuthMiddleware extends BaseMiddleware
      */
     public function execute()
     {
-        if (empty(Session::issert('user'))) {
-            if (empty($this->action) || in_array(Application::$app->controller->action, $this->actions)) {
-                throw new \Exception('APPx001 - You do not have access');
-                // Application::$app->response->redirect('/');
-            }
+        if ($this->actions && !in_array(Application::$app->controller->action, $this->actions, true)) return;
+        $user = Session::get('user');
+        $user = is_array($user) ? ($user[0] ?? $user) : [];
+        if (!is_array($user) || (empty($user['id']) && empty($user['username']))) {
+            throw new \app\Core\ApiException('UNAUTHENTICATED', 'Sign in to continue.', 401);
         }
     }
 }

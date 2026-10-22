@@ -1,5 +1,12 @@
+DirectoryIndex index.php index.html
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
+
+RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
+RewriteRule ^(?:app|config|vendor|migration|log|tests|design-preview)(?:/|$) - [F,L]
+RewriteRule ^(?:composer\.(?:json|lock)|env\.example|dev-router\.php|migrations)$ - [F,L]
+RewriteRule ^public/uploads/.*\.(?:php[0-9]?|phtml|phar)$ - [F,L,NC]
 
 ErrorDocument 404 /404
 

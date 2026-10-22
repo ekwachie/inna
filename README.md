@@ -1,50 +1,42 @@
-# INNA
+# Inna
 
-INNA: A PHP minimal framework which allows you to control every bit of it. Special thanks to our Payperlez Team working on this.
+A minimal PHP MVC framework by Payperlez. PHP **>=8.4** is required.
 
-![Screenshot][def]
+This is **Inna 2.0**. Read the upgrade guide before applying framework changes to an existing application.
 
-[def]: screenshot.png
-
-# HOW TO USE
-
-- Install composer globally. Do the following on a Linux. Visit [here](https://getcomposer.org/doc/00-intro.md) for windows.
+## Start from this checkout
 
 ```bash
-$ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-$ php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
-$ php composer-setup.php
-$ php -r "unlink('composer-setup.php');"
-$ mv composer.phar /usr/local/bin/composer
+composer install
+cp env.example .env
+php -S 127.0.0.1:8080 -t . dev-router.php
 ```
 
-- Create a new project using composer.
+Do not overwrite an existing .env. Set DOMAIN=127.0.0.1:8080. Open the landing page at http://127.0.0.1:8080 and developer guides at http://127.0.0.1:8080/documentation.
+
+The homepage and documentation do not require a database connection, Payperlez credentials or private-storage keys. Configure those features when you use them.
+
+## Developer guide
+
+- [Quickstart](docs/getting-started/quickstart.md) and [configuration](docs/getting-started/configuration.md)
+- [Routing](docs/the-basics/routing.md), [controllers](docs/the-basics/controllers.md) and [views](docs/the-basics/views.md)
+- [Database](docs/database/basics.md) and [migrations](docs/database/migrations.md)
+- [Authentication](docs/security/authentication.md) and [JWT](docs/security/jwt.md)
+- [Private encrypted uploads](docs/storage/encrypted-uploads.md) and [public images](docs/storage/public-images.md)
+- [Payperlez payments](docs/services/payments.md), [SMS/OTP](docs/services/sms.md) and [webhooks](docs/services/webhooks.md)
+- [Deployment](docs/advanced/deployment.md), [testing](docs/advanced/testing.md) and [upgrading to 2.0](docs/advanced/upgrading.md)
+
+## Verify
 
 ```bash
-$ composer create-project payperlez/inna [project_name] -s stable
+composer check-platform-reqs
+composer validate --strict
+composer test
+php tests/http.php
 ```
 
-- Generate Keys
-```bash
- $ openssl rand -hex 32
-```       
+The HTTP suite starts its own isolated localhost server. Tests use simulated Payperlez responses; no real payment or SMS is initiated.
 
-- Create migrations
+## License
 
-```bash
-$ ./migrations add table_name column:type column:type ...
-```
-
-- Apply migrations
-
-```bash
-$ ./migrations update
-```
-
-- Built With [ List of applications using INNA PHP FRAMEWORK ]
-```bash
-1. myblogpay.com
-```
-
-# Todo
-- Work on database migrations [ Alter tables etc ]
+MIT. Maintained by the Payperlez team.

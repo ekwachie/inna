@@ -31,11 +31,14 @@ class AdminMiddleware extends BaseMiddleware
      */
     public function execute()
     {
-        if (empty(Session::issert('user'))) {
-            if (empty($this->action) || in_array(Application::$app->controller->action, $this->actions)) {
-                throw new \Exception('ADMIN001 - You do not have access');
-                // Application::$app->response->redirect('/');
-            }
+        if ($this->actions && !in_array(Application::$app->controller->action, $this->actions, true)) return;
+        (new AuthMiddleware())->execute();
+        $user = Session::get('user');
+        $user = $user[0] ?? $user;
+        $roles = $user['roles'] ?? $user['role'] ?? [];
+        $roles = is_string($roles) ? array_map('trim', explode(',', $roles)) : $roles;
+        if (!is_array($roles) || !in_array('admin', $roles, true)) {
+            throw new \app\Core\ApiException('FORBIDDEN', 'Administrator access is required.', 403);
         }
     }
 }
